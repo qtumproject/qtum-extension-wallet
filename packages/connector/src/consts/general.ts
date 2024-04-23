@@ -1,0 +1,1 @@
+export const SUPPORTED_METAMASK_VERSION = '11.5.0';

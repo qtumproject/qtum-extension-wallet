@@ -1,0 +1,93 @@
+{
+  "name": "@qtumproject/wallet-snap",
+  "version": "0.1.0-rc.5",
+  "description": "Qtum Snap is a MetaMask Snap that allows you to work with Qtum network by using ethers js providers.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qtumproject/qtum-snap.git"
+  },
+  "license": "(MIT-0 OR Apache-2.0)",
+  "files": [
+    "dist/**/*",
+    "images/**/*",
+    "snap.manifest.json",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "yarn clean && node build.js && yarn build:post && yarn bundle:eval && yarn bundle:manifest",
+    "build:post": "node post-process.js",
+    "bundle:eval": "mm-snap eval -b dist/bundle.js",
+    "bundle:manifest": "mm-snap manifest --fix",
+    "build:clean": "yarn clean && yarn build",
+    "clean": "rimraf dist",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path .gitignore",
+    "serve": "mm-snap serve",
+    "start": "nodemon --watch src/ --ext ts --exec 'yarn build && yarn serve'",
+    "test:vc": "node --experimental-vm-modules --trace-warnings ../../node_modules/jest/bin/jest.js --findRelatedTests ./src/tests/verifiable-credentials.test.ts",
+    "test:snap": "node --experimental-vm-modules --trace-warnings ../../node_modules/jest/bin/jest.js --findRelatedTests ./src/index.test.ts",
+    "test": "yarn test:vc && yarn test:snap",
+    "typia:generate": "typia generate --input src/typia-templates --output src/typia-generated --project tsconfig.json",
+    "generate-ether-types": "typechain --target=ethers-v5 'abis/**/*.json' --out-dir src/types/contracts",
+    "prepublishOnly": "yarn && yarn build",
+    "preversion": "yarn && yarn build && git add snap.manifest.json"
+  },
+  "dependencies": {
+    "@ethersproject/abstract-provider": "^5.7.0",
+    "@ethersproject/abstract-signer": "^5.7.0",
+    "@ethersproject/properties": "^5.7.0",
+    "@metamask/metamask-eth-abis": "^3.1.1",
+    "@metamask/snaps-jest": "^5.0.0",
+    "@metamask/snaps-sdk": "^3.0.1",
+    "@metamask/snaps-utils": "^7.0.3",
+    "@metamask/transaction-controller": "^27.0.1",
+    "@qtumproject/wallet-snap-connector": "workspace:^",
+    "buffer": "6.0.3",
+    "ethers": "5.7.2",
+    "intl": "1.2.5",
+    "key-did-provider-ed25519": "3.0.2",
+    "key-did-resolver": "3.0.0",
+    "lodash": "^4.17.21",
+    "qtum-ethers-wrapper": "^2.1.2",
+    "qtumjs-lib": "^0.0.8",
+    "setimmediate": "^1.0.5",
+    "typia": "4.1.3",
+    "uuid": "9.0.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "29.5.0",
+    "@lavamoat/allow-scripts": "2.0.3",
+    "@metamask/auto-changelog": "^3.4.4",
+    "@metamask/snaps-cli": "^6.1.0",
+    "@types/intl": "1.2.0",
+    "@types/lodash": "^4.14.202",
+    "@types/uuid": "9.0.2",
+    "@typescript-eslint/eslint-plugin": "5.33.0",
+    "@typescript-eslint/parser": "5.33.0",
+    "esbuild": "0.17.19",
+    "eslint": "^8.27.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jest": "26.8.2",
+    "eslint-plugin-jsdoc": "^41.1.2",
+    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "node-stdlib-browser": "1.2.0",
+    "nodemon": "2.0.20",
+    "npm-commands": "^1.2.1",
+    "prettier": "^2.7.1",
+    "rimraf": "3.0.2",
+    "typescript": "4.7.4"
+  },
+  "packageManager": "yarn@3.2.1",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
