@@ -4,7 +4,7 @@
   "description": "A Provider to be used in ethers.js to interact with Qtum's Snap",
   "repository": {
     "type": "git",
-    "url": "https://github.com/qtumproject/qtum-snap"
+    "url": "https://github.com/qtumproject/metamasksnap"
   },
   "license": "(MIT-0 OR Apache-2.0)",
   "sideEffects": false,

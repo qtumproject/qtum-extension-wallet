@@ -2,13 +2,13 @@
   "name": "qtum-snap-monorepo",
   "private": true,
   "description": "",
-  "homepage": "https://github.com/qtumproject/qtum-snap#readme",
+  "homepage": "https://github.com/qtumproject/metamasksnap#readme",
   "bugs": {
-    "url": "https://github.com/qtumproject/qtum-snap/issues"
+    "url": "https://github.com/qtumproject/metamasksnap/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qtumproject/qtum-snap.git"
+    "url": "git+https://github.com/qtumproject/metamasksnap.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
   "author": "Distributed Lab",

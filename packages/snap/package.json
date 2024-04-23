@@ -4,7 +4,7 @@
   "description": "Qtum Snap is a MetaMask Snap that allows you to work with Qtum network by using ethers js providers.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/qtumproject/qtum-snap.git"
+    "url": "https://github.com/qtumproject/metamasksnap.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
   "files": [
