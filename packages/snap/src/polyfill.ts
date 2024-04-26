@@ -6,7 +6,10 @@ import intl from 'intl/lib/core';
 
 // TODO: try
 if (!window.setImmediate) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   window.setImmediate = function (callback) {
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
     setTimeout(callback, 0);
   };
 }

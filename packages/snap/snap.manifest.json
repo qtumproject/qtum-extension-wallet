@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0-rc.5",
+  "version": "0.1.0-rc.6",
   "description": "Securely store and manage all of your identity credentials. Use them across chains with ZK-protected privacy guarantees.",
   "proposedName": "QtumSnap",
   "repository": {
@@ -7,7 +7,7 @@
     "url": "https://github.com/qtumproject/metamasksnap.git"
   },
   "source": {
-    "shasum": "vi2hrqSeWdRqm/HOFuBTrSZzDl12Uauvg3oHMMLUyo8=",
+    "shasum": "2IL+Mop5qkYwNrO1mxwnMtaM6byBKFsjKKZdLMMKO5w=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",

@@ -1,6 +1,6 @@
 {
   "name": "@qtumproject/wallet-snap-connector",
-  "version": "0.1.0-rc.5",
+  "version": "0.1.0-rc.6",
   "description": "A Provider to be used in ethers.js to interact with Qtum's Snap",
   "repository": {
     "type": "git",
@@ -39,15 +39,15 @@
     "build": "yarn clean && yarn build:types && yarn build:cjs && yarn build:esm && node ./postbuild.js",
     "build:cjs": "npx swc src -d ./dist/cjs --config-file ./.swcrc -C module.type=commonjs --copy-files",
     "build:esm": "npx swc src -d ./dist/esm --config-file ./.swcrc -C module.type=es6 isModule=true --copy-files",
-    "clean": "rm -rf dist",
     "build:lib": "tsc --build tsconfig.json",
     "build:types": "tsc -p tsconfig.build.json --outDir ./dist/types --declaration --emitDeclarationOnly",
+    "clean": "rm -rf dist",
+    "generate:ether-types": "typechain --target=ethers-v5 'abis/**/*.json' --out-dir src/types/contracts",
     "lint": "yarn run lint:style && yarn run lint:types",
     "lint:style": "eslint --color 'src/**/*.{js,ts,tsx}'",
     "lint:style:fix": "yarn run lint:style --fix",
     "lint:types": "tsc --noEmit --pretty",
-    "prepublishOnly": "yarn build",
-    "generate:ether-types": "typechain --target=ethers-v5 'abis/**/*.json' --out-dir src/types/contracts"
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "@ethersproject/abstract-provider": "5.7.0",

@@ -469,10 +469,10 @@ export const onRpcRequest = async ({
     case RPCMethods.EthGetBalance: {
       console.log('RPCMethods.EthGetBalance');
       console.log('request.params', JSON.stringify(request.params));
-      const [address, blockTag] = request.params as [
-        string,
-        string | undefined,
-      ];
+      // const [address, blockTag] = request.params as [
+      //   string,
+      //   string | undefined,
+      // ];
 
       try {
         const wallet = await getWallet();

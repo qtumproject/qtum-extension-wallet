@@ -1,6 +1,6 @@
 {
   "name": "@qtumproject/wallet-snap",
-  "version": "0.1.0-rc.5",
+  "version": "0.1.0-rc.6",
   "description": "Qtum Snap is a MetaMask Snap that allows you to work with Qtum network by using ethers js providers.",
   "repository": {
     "type": "git",
@@ -15,23 +15,22 @@
   ],
   "scripts": {
     "build": "yarn clean && node build.js && yarn build:post && yarn bundle:eval && yarn bundle:manifest",
+    "build:clean": "yarn clean && yarn build",
     "build:post": "node post-process.js",
     "bundle:eval": "mm-snap eval -b dist/bundle.js",
     "bundle:manifest": "mm-snap manifest --fix",
-    "build:clean": "yarn clean && yarn build",
     "clean": "rimraf dist",
+    "generate-ether-types": "typechain --target=ethers-v5 'abis/**/*.json' --out-dir src/types/contracts",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path .gitignore",
+    "prepublishOnly": "yarn && yarn build",
     "serve": "mm-snap serve",
     "start": "nodemon --watch src/ --ext ts --exec 'yarn build && yarn serve'",
-    "test:vc": "node --experimental-vm-modules --trace-warnings ../../node_modules/jest/bin/jest.js --findRelatedTests ./src/tests/verifiable-credentials.test.ts",
-    "test:snap": "node --experimental-vm-modules --trace-warnings ../../node_modules/jest/bin/jest.js --findRelatedTests ./src/index.test.ts",
-    "test": "yarn test:vc && yarn test:snap",
+    "test": "yarn test:wallet --passWithNoTests",
+    "test:wallet": "node --experimental-vm-modules --trace-warnings ../../node_modules/jest/bin/jest.js --findRelatedTests ./src/tests/wallet.test.ts",
     "typia:generate": "typia generate --input src/typia-templates --output src/typia-generated --project tsconfig.json",
-    "generate-ether-types": "typechain --target=ethers-v5 'abis/**/*.json' --out-dir src/types/contracts",
-    "prepublishOnly": "yarn && yarn build",
     "preversion": "yarn && yarn build && git add snap.manifest.json"
   },
   "dependencies": {

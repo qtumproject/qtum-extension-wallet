@@ -63,16 +63,7 @@ export const readAddressAsContract = async (
   return { contractCode, isContractAddress };
 };
 
-/**
- * Compare 2 given strings and return boolean
- * eg: "foo" and "FOO" => true
- * eg: "foo" and "bar" => false
- * eg: "foo" and 123 => false
- *
- * @param value1 - first string to compare
- * @param value2 - first string to compare
- * @returns true if 2 strings are identical when they are lowercase
- */
+// eslint-disable-next-line
 export function isEqualCaseInsensitive(
   value1: string,
   value2: string,
@@ -83,17 +74,7 @@ export function isEqualCaseInsensitive(
   return value1.toLowerCase() === value2.toLowerCase();
 }
 
-/**
- * Determines the type of the transaction by analyzing the txParams.
- * This method will return one of the types defined in {@link TransactionType}
- * It will never return TRANSACTION_TYPE_CANCEL or TRANSACTION_TYPE_RETRY as these
- * represent specific events that we control from the extension and are added manually
- * at transaction creation.
- *
- * @param txParams - Parameters for the transaction
- * @param query - EthQuery instance
- * @returns InferTransactionTypeResult
- */
+// eslint-disable-next-line
 export async function determineTransactionType(
   txParams: TransactionParams,
 ): Promise<InferTransactionTypeResult> {

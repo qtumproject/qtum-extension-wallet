@@ -73,7 +73,9 @@ export const buildTxUi = async (
       });
 
     case TransactionType.tokenMethodTransfer:
+      // eslint-disable-next-line no-case-declarations
       const [to, amount] = parseErc20Transfer(tx.data as string);
+      // eslint-disable-next-line no-case-declarations
       const [name, symbol, decimals] = await getErc20TokenDetails(
         tx.to as string,
       );

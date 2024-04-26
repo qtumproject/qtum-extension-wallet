@@ -31,6 +31,7 @@ yarn apply-version 0.1.0
 Run `yarn test` to run the tests once.
 
 Run `yarn lint` to run the linter, or run `yarn lint:fix` to run the linter and fix any automatically fixable issues.
+
 ## Notes
 
 - Babel is used for transpiling TypeScript to JavaScript, so when building with the CLI,
