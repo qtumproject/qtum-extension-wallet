@@ -4,6 +4,7 @@ export enum RPCMethods {
   WalletFromPrivateKey = 'wallet_fromPrivateKey',
   WalletExportPrivateKey = 'wallet_exportPrivateKey',
   WalletGetAddress = 'wallet_getAddress',
+  WalletGetAllSupportedChains = 'wallet_getAllSupportedChains',
 
   EthSubscribe = 'eth_subscribe',
   EthUnsubscribe = 'eth_unsubscribe',

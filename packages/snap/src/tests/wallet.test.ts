@@ -7,11 +7,31 @@ const provider = new QtumProvider(
   'https://testnet.qnode.qtum.info/v1/7ot2Ig0j1O7ecwMBz4Y4rYsOM1sQh4Nnl7rMr',
 );
 
+const mainnetProvider = new QtumProvider(
+  'https://mainnet.qnode.qtum.info/v1/7ot2Ig0j1O7ecwMBz4Y4rYsOM1sQh4Nnl7rMr',
+)
+
 describe('qtum wallet', () => {
   const wallet = new QtumWallet(
     QtumWallet.fromPrivateKey(PK).privateKey,
     provider,
   );
+
+  it('should get testnet network', async () => {
+    const network = await provider.getNetwork();
+
+    console.log('network', network)
+
+    expect(network.chainId).not.toBeNull();
+  })
+
+  it('should get mainnet network', async () => {
+    const network = await mainnetProvider.getNetwork();
+
+    console.log('network', network)
+
+    expect(network.chainId).not.toBeNull();
+  })
 
   it('should show wallet private key', () => {
     console.log('wallet.privateKey: ', wallet.privateKey);

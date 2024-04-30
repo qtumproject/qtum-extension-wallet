@@ -47,7 +47,7 @@ export type Contract = {
 export const readAddressAsContract = async (
   address: string,
 ): Promise<Contract> => {
-  const provider = getProvider();
+  const provider = await getProvider();
   let contractCode: string | null = null;
   try {
     contractCode = await provider.getCode(address);

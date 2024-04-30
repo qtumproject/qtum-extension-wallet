@@ -1,12 +1,22 @@
+import { sleep } from '@qtumproject/wallet-snap-connector';
 import { QtumProvider, QtumWallet } from 'qtum-ethers-wrapper';
 
 import { StorageKeys } from '@/enums';
+import { networks } from '@/helpers';
 import { snapStorage } from '@/rpc';
 
-export const getProvider = () => {
-  return new QtumProvider(
-    'https://testnet.qnode.qtum.info/v1/7ot2Ig0j1O7ecwMBz4Y4rYsOM1sQh4Nnl7rMr',
-  );
+export const config = {};
+
+export const getProvider = async () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _ = await networks.get();
+
+  // small "hack" to wait for snap storage update
+  await sleep(1000);
+
+  const { current } = await networks.get();
+
+  return new QtumProvider(current.rpcUrls[0]);
 };
 
 export const getWallet = async () => {
@@ -16,7 +26,5 @@ export const getWallet = async () => {
     throw new Error('Wallet not created');
   }
 
-  return new QtumWallet(identityStorage.privateKey, getProvider());
+  return new QtumWallet(identityStorage.privateKey, await getProvider());
 };
-
-export const config = {};

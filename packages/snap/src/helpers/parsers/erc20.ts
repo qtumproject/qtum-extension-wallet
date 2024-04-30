@@ -9,7 +9,7 @@ export const parseErc20Transfer = (data: string) => {
 };
 
 export const getErc20TokenDetails = async (address: string) => {
-  const provider = getProvider();
+  const provider = await getProvider();
 
   // eslint-disable-next-line camelcase
   const contract = Erc20__factory.connect(address, provider);

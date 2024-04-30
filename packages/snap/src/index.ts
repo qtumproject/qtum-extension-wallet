@@ -31,6 +31,7 @@ import {
   genPkHexFromEntropy,
   showWalletCreatedSnapDialog,
   readAddressAsContract,
+  networks,
 } from '@/helpers';
 import { getQtumAddress } from '@/helpers/format';
 import { snapStorage } from '@/rpc';
@@ -42,6 +43,9 @@ export const onRpcRequest = async ({
   request: JsonRpcRequest;
   origin: string;
 }) => {
+  console.log('onRpcRequest');
+  console.log('request', JSON.stringify(request));
+
   switch (request.method) {
     case RPCMethods.WalletCreateRandom: {
       console.log('RPCMethods.WalletCreateRandom');
@@ -167,16 +171,52 @@ export const onRpcRequest = async ({
       return origin;
     }
 
+    case RPCMethods.WalletGetAllSupportedChains: {
+      console.log('RPCMethods.WalletGetAllSupportedChains');
+      console.log('request.params', JSON.stringify(request.params));
+      const { list } = await networks.get();
+
+      return list;
+    }
+
     case RPCMethods.WalletAddEthereumChain: {
       console.log('RPCMethods.WalletAddEthereumChain');
       console.log('request.params', JSON.stringify(request.params));
-      return origin;
+      const [newChain] =
+        request.params as SnapRequestParams[RPCMethods.WalletAddEthereumChain];
+
+      const storedNetworks = await networks.get();
+
+      const chainId = ethers.utils.isHexString(newChain.chainId)
+        ? ethers.BigNumber.from(newChain.chainId).toString()
+        : newChain.chainId;
+
+      if (storedNetworks.list.find((el) => el.chainId === chainId)) {
+        return null;
+      }
+
+      await networks.add(newChain);
+
+      return null;
     }
 
     case RPCMethods.WalletSwitchEthereumChain: {
       console.log('RPCMethods.WalletSwitchEthereumChain');
       console.log('request.params', JSON.stringify(request.params));
-      return origin;
+      const params =
+        request.params as SnapRequestParams[RPCMethods.WalletSwitchEthereumChain];
+
+      const chainId = ethers.utils.isHexString(params[0])
+        ? ethers.BigNumber.from(params[0]).toString()
+        : params[0];
+
+      try {
+        await networks.setCurrent(chainId);
+      } catch (error) {
+        console.error(error);
+      }
+
+      return null;
     }
 
     case RPCMethods.WalletRequestPermissions: {
@@ -401,7 +441,7 @@ export const onRpcRequest = async ({
       console.log('RPCMethods.EthBlockNumber');
       console.log('request.params', JSON.stringify(request.params));
 
-      const provider = getProvider();
+      const provider = await getProvider();
 
       return provider.getBlockNumber();
     }
@@ -421,7 +461,7 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthChainId: {
-      const provider = getProvider();
+      const provider = await getProvider();
 
       const { chainId } = await provider.getNetwork();
 
@@ -441,7 +481,7 @@ export const onRpcRequest = async ({
       const [transaction] =
         request.params as SnapRequestParams[RPCMethods.EthEstimateGas];
 
-      const provider = getProvider();
+      const provider = await getProvider();
 
       const estimatedGas = await provider.estimateGas(transaction);
 
@@ -455,7 +495,7 @@ export const onRpcRequest = async ({
       const [...rest] =
         request.params as SnapRequestParams[RPCMethods.EthFeeHistory];
 
-      const provider = getProvider();
+      const provider = await getProvider();
 
       return provider.send('eth_feeHistory', [...rest]);
     }
@@ -547,7 +587,7 @@ export const onRpcRequest = async ({
       const [filter] =
         request.params as unknown as SnapRequestParams[RPCMethods.EthGetLogs];
 
-      const provider = getProvider();
+      const provider = await getProvider();
 
       const logs = await provider.getLogs(filter);
 
@@ -587,7 +627,7 @@ export const onRpcRequest = async ({
         const [txHash] =
           request.params as SnapRequestParams[RPCMethods.EthGetTransactionByHash];
 
-        const provider = getProvider();
+        const provider = await getProvider();
 
         const tx = await provider.getTransaction(txHash);
 
@@ -628,7 +668,7 @@ export const onRpcRequest = async ({
         const [txHash] =
           request.params as SnapRequestParams[RPCMethods.EthGetTransactionReceipt];
 
-        const provider = getProvider();
+        const provider = await getProvider();
 
         const txReceipt = await provider.getTransactionReceipt(txHash);
 

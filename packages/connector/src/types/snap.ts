@@ -7,6 +7,19 @@ import type { TransactionRequest } from '@ethersproject/providers';
 
 import type { RPCMethods } from '@/enums';
 
+export type Chain = {
+  chainId: string;
+  chainName: string;
+  rpcUrls: string[];
+  iconUrls: string[];
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  blockExplorerUrls: string[];
+};
+
 export type GetSnapsResponse = {
   [k: string]: {
     permissionName?: string;
@@ -24,8 +37,9 @@ export type SnapRequestParams = {
   [RPCMethods.WalletGetAddress]: [];
   [RPCMethods.EthSubscribe]: [];
   [RPCMethods.EthUnsubscribe]: [];
-  [RPCMethods.WalletAddEthereumChain]: [];
-  [RPCMethods.WalletSwitchEthereumChain]: [];
+  [RPCMethods.WalletGetAllSupportedChains]: [];
+  [RPCMethods.WalletAddEthereumChain]: [Chain];
+  [RPCMethods.WalletSwitchEthereumChain]: [string];
   [RPCMethods.WalletRequestPermissions]: [];
   [RPCMethods.WalletRevokePermissions]: [];
   [RPCMethods.WalletGetPermissions]: [];
@@ -95,6 +109,7 @@ export type SnapRequestsResponses = {
   [RPCMethods.WalletGetAddress]: string;
   [RPCMethods.EthSubscribe]: [];
   [RPCMethods.EthUnsubscribe]: [];
+  [RPCMethods.WalletGetAllSupportedChains]: Chain[];
   [RPCMethods.WalletAddEthereumChain]: [];
   [RPCMethods.WalletSwitchEthereumChain]: [];
   [RPCMethods.WalletRequestPermissions]: [];
