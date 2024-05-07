@@ -16,8 +16,6 @@ export const getProvider = async () => {
 
   const { current } = await networks.get();
 
-  console.log('current', current.chainId);
-
   return new QtumProvider(current.rpcUrls[0]);
 };
 

@@ -1,4 +1,4 @@
-import { DialogType, divider, heading, row, text } from '@metamask/snaps-sdk';
+import { DialogType, divider, heading, text } from '@metamask/snaps-sdk';
 import type { Chain } from '@qtumproject/wallet-snap-connector';
 import { sleep } from '@qtumproject/wallet-snap-connector';
 
@@ -64,7 +64,6 @@ export const setCurrentNetwork = async (chainId: string) => {
     current: nextNetwork,
   });
 
-  console.log('Network switched');
   await getSnapDialog(DialogType.Alert, [heading('Network switched')]);
 
   await sleep(300);
