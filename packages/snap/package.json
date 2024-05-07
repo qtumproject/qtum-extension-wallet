@@ -1,6 +1,6 @@
 {
   "name": "@qtumproject/wallet-snap",
-  "version": "0.1.0-rc.6",
+  "version": "1.0.0-rc.7",
   "description": "Qtum Snap is a MetaMask Snap that allows you to work with Qtum network by using ethers js providers.",
   "repository": {
     "type": "git",
