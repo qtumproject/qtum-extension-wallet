@@ -15,11 +15,12 @@ import {
   divider,
   heading,
   panel,
+  row,
   text,
 } from '@metamask/snaps-sdk';
 import type { JsonRpcRequest } from '@metamask/utils';
 import type { SnapRequestParams } from '@qtumproject/wallet-snap-connector';
-import { RPCMethods } from '@qtumproject/wallet-snap-connector';
+import { sleep, RPCMethods } from '@qtumproject/wallet-snap-connector';
 import { BigNumber, ethers } from 'ethers';
 import { QtumWallet } from 'qtum-ethers-wrapper';
 
@@ -27,11 +28,11 @@ import { getProvider, getWallet } from '@/config';
 import { StorageKeys } from '@/enums';
 import {
   buildTxUi,
-  getSnapDialog,
   genPkHexFromEntropy,
-  showWalletCreatedSnapDialog,
-  readAddressAsContract,
+  getSnapDialog,
   networks,
+  readAddressAsContract,
+  showWalletCreatedSnapDialog,
 } from '@/helpers';
 import { getQtumAddress } from '@/helpers/format';
 import { snapStorage } from '@/rpc';
@@ -191,11 +192,48 @@ export const onRpcRequest = async ({
         ? ethers.BigNumber.from(newChain.chainId).toString()
         : newChain.chainId;
 
-      if (storedNetworks.list.find((el) => el.chainId === chainId)) {
+      const isNetworkExists = storedNetworks.list.find(
+        (el) => el.chainId === chainId,
+      );
+
+      if (isNetworkExists) {
+        return await getSnapDialog(DialogType.Alert, [
+          heading('Network already exists'),
+          divider(),
+
+          text('Network with this chainId already exists'),
+        ]);
+      }
+
+      if (
+        !(await getSnapDialog(DialogType.Confirmation, [
+          heading('Add Network'),
+          divider(),
+
+          text(storedNetworks.current.chainName),
+          row('Chain ID:', text(newChain.chainId)),
+          row('Chain Name:', text(newChain.chainName)),
+          row('RPC URLs:', text(newChain.rpcUrls.join(', '))),
+          row('Native Currency:', text(newChain.nativeCurrency.symbol)),
+          row(
+            'Block Explorer URLs:',
+            text(newChain.blockExplorerUrls.join(', ')),
+          ),
+
+          text('Do you want to add this network?'),
+        ]))
+      ) {
         return null;
       }
 
       await networks.add(newChain);
+
+      await getSnapDialog(DialogType.Alert, [
+        heading('Network Added'),
+        row(newChain.chainName),
+      ]);
+
+      await sleep(300);
 
       return null;
     }
