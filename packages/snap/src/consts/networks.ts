@@ -5,7 +5,7 @@ export const DEFAULT_NETWORKS_RPC_URLS: Chain[] = [
     chainId: '8889',
     chainName: 'Qtum Testnet',
     rpcUrls: [
-      'https://testnet.qnode.qtum.info/v1/7ot2Ig0j1O7ecwMBz4Y4rYsOM1sQh4Nnl7rMr',
+      'https://testnet.qnode.qtum.info/v1/aPaVeuBrYtFZ6oyKQZlNqSUSjrHjCy5v26IYX',
     ],
     iconUrls: [''],
     nativeCurrency: {
@@ -19,7 +19,7 @@ export const DEFAULT_NETWORKS_RPC_URLS: Chain[] = [
     chainId: '81',
     chainName: 'Qtum Mainnet',
     rpcUrls: [
-      'https://mainnet.qnode.qtum.info/v1/7ot2Ig0j1O7ecwMBz4Y4rYsOM1sQh4Nnl7rMr',
+      'https://mainnet.qnode.qtum.info/v1/aPaVeuBrYtFZ6oyKQZlNqSUSjrHjCy5v26IYX',
     ],
     iconUrls: [''],
     nativeCurrency: {

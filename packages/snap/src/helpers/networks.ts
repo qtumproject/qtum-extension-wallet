@@ -1,7 +1,10 @@
+import { DialogType, divider, heading, text } from '@metamask/snaps-sdk';
 import type { Chain } from '@qtumproject/wallet-snap-connector';
+import { sleep } from '@qtumproject/wallet-snap-connector';
 
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
 import { StorageKeys } from '@/enums';
+import { getSnapDialog } from '@/helpers/ui';
 import { snapStorage } from '@/rpc';
 import type { StorageMap } from '@/types/storage-types';
 
@@ -29,10 +32,9 @@ export const getNetworks = async (): Promise<
 export const setCurrentNetwork = async (chainId: string) => {
   const storedNetworks = await getNetworks();
 
-  console.log('storedNetworks', storedNetworks);
-  console.log('chainId', chainId);
-
-  const nextNetwork = storedNetworks.list?.find((el) => el.chainId === chainId);
+  const nextNetwork = storedNetworks.list?.find(
+    (el) => String(el.chainId) === String(chainId),
+  );
 
   if (!nextNetwork) {
     throw new TypeError('Network not found');
@@ -42,10 +44,29 @@ export const setCurrentNetwork = async (chainId: string) => {
     throw new TypeError('Chain already selected');
   }
 
+  const res = await getSnapDialog(DialogType.Confirmation, [
+    heading('Switch Network'),
+    divider(),
+
+    text('From:'),
+    text(storedNetworks.current.chainName),
+
+    text('To:'),
+    text(nextNetwork.chainName),
+  ]);
+
+  if (!res) {
+    return;
+  }
+
   await snapStorage.setItem(StorageKeys.Networks, {
     ...storedNetworks,
     current: nextNetwork,
   });
+
+  await getSnapDialog(DialogType.Alert, [heading('Network switched')]);
+
+  await sleep(300);
 };
 
 export const addNetwork = async (newChain: Chain) => {
