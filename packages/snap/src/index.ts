@@ -25,6 +25,7 @@ import { BigNumber, ethers } from 'ethers';
 import { QtumWallet } from 'qtum-ethers-wrapper';
 
 import { getProvider, getWallet } from '@/config';
+import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
 import { StorageKeys } from '@/enums';
 import {
   buildTxUi,
@@ -44,14 +45,14 @@ export const onRpcRequest = async ({
   request: JsonRpcRequest;
   origin: string;
 }) => {
-  console.log('onRpcRequest');
+  console.log('\n\n');
+  console.log('\n\n');
   console.log('request', JSON.stringify(request));
+  console.log('\n\n');
+  console.log('\n\n');
 
   switch (request.method) {
     case RPCMethods.WalletCreateRandom: {
-      console.log('RPCMethods.WalletCreateRandom');
-      console.log('request.params', JSON.stringify(request.params));
-
       const res = await getSnapDialog(DialogType.Confirmation, [
         heading('Create Wallet'),
         divider(),
@@ -77,9 +78,6 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.WalletFromPrivateKey: {
-      console.log('RPCMethods.WalletFromPrivateKey');
-      console.log('request.params', JSON.stringify(request.params));
-
       const [privateKey] =
         request.params as SnapRequestParams[RPCMethods.WalletFromPrivateKey];
 
@@ -112,9 +110,6 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.WalletFromMnemonic: {
-      console.log('RPCMethods.WalletFromMnemonic');
-      console.log('request.params', JSON.stringify(request.params));
-
       const res = await getSnapDialog(DialogType.Confirmation, [
         heading('Create Wallet'),
         divider(),
@@ -150,7 +145,10 @@ export const onRpcRequest = async ({
             heading('Wallet private key'),
             divider(),
             text('Сopy:'),
-            copyable(wallet.privateKey),
+            copyable({
+              value: wallet.privateKey,
+              sensitive: true,
+            }),
           ]),
         },
       });
@@ -161,28 +159,80 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthSubscribe: {
-      console.log('RPCMethods.EthSubscribe');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthUnsubscribe: {
-      console.log('RPCMethods.EthUnsubscribe');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.WalletGetAllSupportedChains: {
-      console.log('RPCMethods.WalletGetAllSupportedChains');
-      console.log('request.params', JSON.stringify(request.params));
       const { list } = await networks.get();
 
       return list;
     }
 
+    case RPCMethods.WalletRemoveChain: {
+      const [chainId] =
+        request.params as SnapRequestParams[RPCMethods.WalletRemoveChain];
+
+      const storedNetworks = await networks.get();
+
+      const chainIdToRemove = ethers.utils.isHexString(chainId)
+        ? ethers.BigNumber.from(chainId).toString()
+        : chainId;
+
+      const isNetworkExists = storedNetworks.list.find(
+        (el) => el.chainId === chainIdToRemove,
+      );
+
+      const isNetworkFromDefaults = DEFAULT_NETWORKS_RPC_URLS.find(
+        (el) => el.chainId === chainIdToRemove,
+      );
+
+      if (!isNetworkExists) {
+        return await getSnapDialog(DialogType.Alert, [
+          heading('Network not found'),
+          divider(),
+
+          text('Network with this chainId not found'),
+        ]);
+      }
+
+      if (isNetworkFromDefaults) {
+        return await getSnapDialog(DialogType.Alert, [
+          heading('Network cannot be removed'),
+          divider(),
+
+          text('Network with this chainId cannot be removed'),
+        ]);
+      }
+
+      const res = await getSnapDialog(DialogType.Confirmation, [
+        heading('Remove Network'),
+        divider(),
+
+        row('Network:', text(isNetworkExists.chainName)),
+        row('Chain ID:', text(isNetworkExists.chainId)),
+
+        text('Do you want to remove this network?'),
+      ]);
+
+      if (!res) {
+        return null;
+      }
+
+      await networks.remove(chainIdToRemove);
+
+      return await getSnapDialog(DialogType.Alert, [
+        heading('Network Removed'),
+        row(isNetworkExists.chainName),
+      ]);
+    }
+
     case RPCMethods.WalletAddEthereumChain: {
-      console.log('RPCMethods.WalletAddEthereumChain');
-      console.log('request.params', JSON.stringify(request.params));
       const [newChain] =
         request.params as SnapRequestParams[RPCMethods.WalletAddEthereumChain];
 
@@ -239,8 +289,6 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.WalletSwitchEthereumChain: {
-      console.log('RPCMethods.WalletSwitchEthereumChain');
-      console.log('request.params', JSON.stringify(request.params));
       const params =
         request.params as SnapRequestParams[RPCMethods.WalletSwitchEthereumChain];
 
@@ -258,74 +306,62 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.WalletRequestPermissions: {
-      console.log('RPCMethods.WalletRequestPermissions');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.WalletRevokePermissions: {
-      console.log('RPCMethods.WalletRevokePermissions');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.WalletGetPermissions: {
-      console.log('RPCMethods.WalletGetPermissions');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.WalletRegisterOnboarding: {
-      console.log('RPCMethods.WalletRegisterOnboarding');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.WalletWatchAsset: {
-      console.log('RPCMethods.WalletWatchAsset');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.WalletScanQrCode: {
-      console.log('RPCMethods.WalletScanQrCode');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.WalletGetSnaps: {
-      console.log('RPCMethods.WalletGetSnaps');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.WalletRequestSnaps: {
-      console.log('RPCMethods.WalletRequestSnaps');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.WalletSnap: {
-      console.log('RPCMethods.WalletSnap');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.WalletInvokeSnap: {
-      console.log('RPCMethods.WalletInvokeSnap');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthDecrypt: {
-      console.log('RPCMethods.EthDecrypt');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetEncryptionPublicKey: {
-      console.log('RPCMethods.EthGetEncryptionPublicKey');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
@@ -336,16 +372,12 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthAccounts: {
-      console.log('RPCMethods.EthAccounts');
-      console.log('request.params', JSON.stringify(request.params));
       const wallet = await getWallet();
 
       return [wallet.address];
     }
 
     case RPCMethods.EthSignTypedDataV4: {
-      console.log('RPCMethods.EthSignTypedDataV4');
-      console.log('request.params', JSON.stringify(request.params));
       const wallet = await getWallet();
 
       const res = await snap.request({
@@ -382,8 +414,6 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.PersonalSign: {
-      console.log('RPCMethods.PersonalSign');
-      console.log('request.params', JSON.stringify(request.params));
       const { params } = request;
 
       if (!params || !Array.isArray(params)) {
@@ -420,8 +450,6 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthSendTransaction: {
-      console.log('RPCMethods.EthSendTransaction');
-      console.log('request.params', JSON.stringify(request.params));
       try {
         const [transaction] =
           request.params as unknown as SnapRequestParams[RPCMethods.EthSendTransaction];
@@ -470,23 +498,17 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.Web3ClientVersion: {
-      console.log('RPCMethods.Web3ClientVersion');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthBlockNumber: {
-      console.log('RPCMethods.EthBlockNumber');
-      console.log('request.params', JSON.stringify(request.params));
-
       const provider = await getProvider();
 
       return provider.getBlockNumber();
     }
 
     case RPCMethods.EthCall: {
-      console.log('RPCMethods.EthCall');
-      console.log('request.params', JSON.stringify(request.params));
       const { params } = request;
 
       if (!params || !Array.isArray(params)) {
@@ -507,15 +529,11 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthCoinbase: {
-      console.log('RPCMethods.EthCoinbase');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthEstimateGas: {
-      console.log('RPCMethods.EthEstimateGas');
-      console.log('request.params', JSON.stringify(request.params));
-
       const [transaction] =
         request.params as SnapRequestParams[RPCMethods.EthEstimateGas];
 
@@ -527,9 +545,6 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthFeeHistory: {
-      console.log('RPCMethods.EthFeeHistory');
-      console.log('request.params', JSON.stringify(request.params));
-
       const [...rest] =
         request.params as SnapRequestParams[RPCMethods.EthFeeHistory];
 
@@ -539,14 +554,11 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGasPrice: {
-      console.log('RPCMethods.EthGasPrice');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetBalance: {
-      console.log('RPCMethods.EthGetBalance');
-      console.log('request.params', JSON.stringify(request.params));
       // const [address, blockTag] = request.params as [
       //   string,
       //   string | undefined,
@@ -566,38 +578,31 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetBlockByHash: {
-      console.log('RPCMethods.EthGetBlockByHash');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetBlockByNumber: {
-      console.log('RPCMethods.EthGetBlockByNumber');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetBlockReceipts: {
-      console.log('RPCMethods.EthGetBlockReceipts');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetBlockTransactionCountByHash: {
-      console.log('RPCMethods.EthGetBlockTransactionCountByHash');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetBlockTransactionCountByNumber: {
-      console.log('RPCMethods.EthGetBlockTransactionCountByNumber');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetCode: {
-      console.log('RPCMethods.EthGetCode');
-      console.log('request.params', JSON.stringify(request.params));
       const [address] =
         request.params as SnapRequestParams[RPCMethods.EthGetCode];
 
@@ -607,21 +612,16 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetFilterChanges: {
-      console.log('RPCMethods.EthGetFilterChanges');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetFilterLogs: {
-      console.log('RPCMethods.EthGetFilterLogs');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetLogs: {
-      console.log('RPCMethods.EthGetLogs');
-      console.log('request.params', JSON.stringify(request.params));
-
       const [filter] =
         request.params as unknown as SnapRequestParams[RPCMethods.EthGetLogs];
 
@@ -635,33 +635,27 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetProof: {
-      console.log('RPCMethods.EthGetProof');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetStorageAt: {
-      console.log('RPCMethods.EthGetStorageAt');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetTransactionByBlockHashAndIndex: {
-      console.log('RPCMethods.EthGetTransactionByBlockHashAndIndex');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetTransactionByBlockNumberAndIndex: {
-      console.log('RPCMethods.EthGetTransactionByBlockNumberAndIndex');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetTransactionByHash: {
       try {
-        console.log('RPCMethods.EthGetTransactionByHash');
-        console.log('request.params', JSON.stringify(request.params));
         const [txHash] =
           request.params as SnapRequestParams[RPCMethods.EthGetTransactionByHash];
 
@@ -694,15 +688,12 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetTransactionCount: {
-      console.log('RPCMethods.EthGetTransactionCount');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetTransactionReceipt: {
       try {
-        console.log('RPCMethods.EthGetTransactionReceipt');
-        console.log('request.params', JSON.stringify(request.params));
         const [txHash] =
           request.params as SnapRequestParams[RPCMethods.EthGetTransactionReceipt];
 
@@ -733,56 +724,47 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetUncleCountByBlockHash: {
-      console.log('RPCMethods.EthGetUncleCountByBlockHash');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthGetUncleCountByBlockNumber: {
-      console.log('RPCMethods.EthGetUncleCountByBlockNumber');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthMaxPriorityFeePerGas: {
-      console.log('RPCMethods.EthMaxPriorityFeePerGas');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthNewBlockFilter: {
-      console.log('RPCMethods.EthNewBlockFilter');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthNewFilter: {
-      console.log('RPCMethods.EthNewFilter');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthNewPendingTransactionFilter: {
-      console.log('RPCMethods.EthNewPendingTransactionFilter');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthSendRawTransaction: {
-      console.log('RPCMethods.EthSendRawTransaction');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthSyncing: {
-      console.log('RPCMethods.EthSyncing');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 
     case RPCMethods.EthUninstallFilter: {
-      console.log('RPCMethods.EthUninstallFilter');
-      console.log('request.params', JSON.stringify(request.params));
+      // TODO: implement once necessary
       return origin;
     }
 

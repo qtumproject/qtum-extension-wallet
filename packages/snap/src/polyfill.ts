@@ -4,7 +4,6 @@ import intl from 'intl/lib/core';
 // import 'setImmediate';
 // eslint-disable-next-line import/no-unassigned-import
 
-// TODO: try
 if (!window.setImmediate) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

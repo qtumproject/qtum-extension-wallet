@@ -1,6 +1,6 @@
 {
   "name": "@qtumproject/wallet-snap-connector",
-  "version": "0.1.0-rc.7",
+  "version": "0.1.0-rc.8",
   "description": "A Provider to be used in ethers.js to interact with Qtum's Snap",
   "repository": {
     "type": "git",

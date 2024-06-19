@@ -38,6 +38,7 @@ export type SnapRequestParams = {
   [RPCMethods.EthSubscribe]: [];
   [RPCMethods.EthUnsubscribe]: [];
   [RPCMethods.WalletGetAllSupportedChains]: [];
+  [RPCMethods.WalletRemoveChain]: [string];
   [RPCMethods.WalletAddEthereumChain]: [Chain];
   [RPCMethods.WalletSwitchEthereumChain]: [string];
   [RPCMethods.WalletRequestPermissions]: [];
@@ -110,6 +111,7 @@ export type SnapRequestsResponses = {
   [RPCMethods.EthSubscribe]: [];
   [RPCMethods.EthUnsubscribe]: [];
   [RPCMethods.WalletGetAllSupportedChains]: Chain[];
+  [RPCMethods.WalletRemoveChain]: [];
   [RPCMethods.WalletAddEthereumChain]: [];
   [RPCMethods.WalletSwitchEthereumChain]: [];
   [RPCMethods.WalletRequestPermissions]: [];

@@ -5,9 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0-rc.8] - 2024-06-17
+### Added
+- Expose `remove network` method for snap
+
 ## [0.1.0-rc.6] - 2024-04-26
 ### Added
 - Initial release of the snap.
 
-[Unreleased]: https://github.com/qtumproject/metamasksnap
+[Unreleased]: https://github.com/qtumproject/metamasksnap/compare/0.1.0-rc.8...HEAD
+[0.1.0-rc.8]: https://github.com/qtumproject/metamasksnap/compare/0.1.0-rc.6...0.1.0-rc.8
+[0.1.0-rc.6]: https://github.com/qtumproject/metamasksnap/releases/tag/0.1.0-rc.6
+
 
