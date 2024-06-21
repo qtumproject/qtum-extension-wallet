@@ -1,6 +1,6 @@
 # QTum Wallet
 
-The QTum Wallet plays the role of an RPC proxy that accepts requests from MetaMask and forwards them to the QTum network using the QTum ethers adapter.
+The QTum Wallet acts as an RPC proxy that accepts requests from DApps to MetaMask, for example, by using ethers.js or web3.js, and forwards them to the QTum network using the QTum ethers adapter.
 
 ## QTum Wallet FAQ
 
@@ -14,7 +14,7 @@ The QTum Wallet plays the role of an RPC proxy that accepts requests from MetaMa
 
 - **Q: How do I use the QTum Wallet's features?**
 
-  **A:** It is mainly used for interaction with the QTum blockchain. You can send any transaction with the snap to the QTum blockchain.
+  **A:** It is mainly used for interaction with the QTum blockchain. You can send any EVM transaction with the snap to the QTum network.
 
 - **Q: How do I reach out for snap support?**
 
@@ -26,17 +26,17 @@ The QTum Wallet plays the role of an RPC proxy that accepts requests from MetaMa
 
 - **Q: What applications can I use QTum Wallet Snap on?**
 
-  **A:** Currently, you can use the QTum bridge to transfer supported assets from the Ethereum Mainnet.
+  **A:** Currently, you can use the QTum bridge to transfer supported assets from the Ethereum Mainnet. Also you can visit [wallet.bridge.qtum.net](https://wallet.bridge.qtum.net) to change networks, send ERC-20 and native tokens, and view balances.
 
 ## QTum Wallet Knowledge Doc
 
 - **Q: What happens if I lose the keys for my account?**
 
-  **A:** Please be extremely careful with your keys - there is no way to recover them if they are lost. QTum Wallet does not have access to users’ keys and cannot help you recover them.
+  **A:** Please be extremely careful with your keys - there is no way to recover them if they are lost. QTum Wallet does not have access to users’ keys and cannot help you recover them. However, the QTum private key is generated from the MetaMask mnemonic entropy, so it can be recovered if you still have your MetaMask mnemonic (for the first account).
 
 - **Q: Is QTum Wallet secure?**
 
-  **A:** Snap is extremely safe. To ensure the user's complete safety, Snap does not have access to users’ private keys. In addition, a security audit has been conducted by [Sayfer](link).
+  **A:** Snap is extremely safe. To ensure the user's complete safety, Snap does not have access to users’ private keys. In addition, a security audit has been conducted by [Sayfer](...).
 
 ## Contributing
 
