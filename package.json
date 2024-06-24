@@ -2,16 +2,16 @@
   "name": "qtum-snap-monorepo",
   "private": true,
   "description": "",
-  "homepage": "https://github.com/qtumproject/metamasksnap#readme",
+  "homepage": "https://github.com/qtumproject/qtum-extension-wallet",
   "bugs": {
-    "url": "https://github.com/qtumproject/metamasksnap/issues"
+    "url": "https://github.com/qtumproject/qtum-extension-wallet/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qtumproject/metamasksnap.git"
+    "url": "git+https://github.com/qtumproject/qtum-extension-wallet.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
-  "author": "Distributed Lab",
+  "author": "QTum project",
   "workspaces": [
     "packages/*"
   ],

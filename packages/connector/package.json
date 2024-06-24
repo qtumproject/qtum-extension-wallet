@@ -1,10 +1,10 @@
 {
-  "name": "@qtumproject/wallet-snap-connector",
-  "version": "0.1.0-rc.8",
-  "description": "A Provider to be used in ethers.js to interact with Qtum's Snap",
+  "name": "@qtumproject/qtum-wallet-connector",
+  "version": "0.1.0",
+  "description": "A Provider to be used in ethers.js to interact with Qtum's wallet",
   "repository": {
     "type": "git",
-    "url": "https://github.com/qtumproject/metamasksnap"
+    "url": "https://github.com/qtumproject/qtum-extension-wallet.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
   "sideEffects": false,

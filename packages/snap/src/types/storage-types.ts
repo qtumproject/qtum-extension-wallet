@@ -1,4 +1,4 @@
-import type { Chain } from '@qtumproject/wallet-snap-connector';
+import type { Chain } from '@qtumproject/qtum-wallet-connector';
 
 import type { StorageKeys } from '@/enums';
 

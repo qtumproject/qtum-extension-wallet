@@ -3672,9 +3672,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@qtumproject/wallet-snap-connector@workspace:^, @qtumproject/wallet-snap-connector@workspace:packages/connector":
+"@qtumproject/qtum-wallet-connector@workspace:^, @qtumproject/qtum-wallet-connector@workspace:packages/connector":
   version: 0.0.0-use.local
-  resolution: "@qtumproject/wallet-snap-connector@workspace:packages/connector"
+  resolution: "@qtumproject/qtum-wallet-connector@workspace:packages/connector"
   dependencies:
     "@ethersproject/abstract-provider": "npm:5.7.0"
     "@ethersproject/properties": "npm:^5.7.0"
@@ -3692,9 +3692,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@qtumproject/wallet-snap@workspace:packages/snap":
+"@qtumproject/qtum-wallet@workspace:packages/snap":
   version: 0.0.0-use.local
-  resolution: "@qtumproject/wallet-snap@workspace:packages/snap"
+  resolution: "@qtumproject/qtum-wallet@workspace:packages/snap"
   dependencies:
     "@ethersproject/abstract-provider": "npm:^5.7.0"
     "@ethersproject/abstract-signer": "npm:^5.7.0"
@@ -3708,7 +3708,7 @@ __metadata:
     "@metamask/snaps-sdk": "npm:^3.0.1"
     "@metamask/snaps-utils": "npm:^7.0.3"
     "@metamask/transaction-controller": "npm:^27.0.1"
-    "@qtumproject/wallet-snap-connector": "workspace:^"
+    "@qtumproject/qtum-wallet-connector": "workspace:^"
     "@types/intl": "npm:1.2.0"
     "@types/lodash": "npm:^4.14.202"
     "@types/uuid": "npm:9.0.2"

@@ -1,10 +1,10 @@
 {
-  "name": "@qtumproject/wallet-snap",
-  "version": "0.1.0-rc.8",
-  "description": "Qtum Snap is a MetaMask Snap that allows you to work with Qtum network by using ethers js providers.",
+  "name": "@qtumproject/qtum-wallet",
+  "version": "0.1.0",
+  "description": "Qtum Snap is a MetaMask Snap that plays the role of the RPC proxy that accepts requests to the MetaMask and forwards them to the Qtum network with the Qtum ethers adapter.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/qtumproject/metamasksnap.git"
+    "url": "https://github.com/qtumproject/qtum-extension-wallet.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
   "files": [
@@ -42,7 +42,7 @@
     "@metamask/snaps-sdk": "^3.0.1",
     "@metamask/snaps-utils": "^7.0.3",
     "@metamask/transaction-controller": "^27.0.1",
-    "@qtumproject/wallet-snap-connector": "workspace:^",
+    "@qtumproject/qtum-wallet-connector": "workspace:^",
     "buffer": "6.0.3",
     "ethers": "5.7.2",
     "intl": "1.2.5",

@@ -1,5 +1,5 @@
 // eslint-disable-next-line camelcase
-import { Erc20__factory } from '@qtumproject/wallet-snap-connector';
+import { Erc20__factory } from '@qtumproject/qtum-wallet-connector';
 
 import { getProvider } from '@/config';
 import { erc20Interface } from '@/helpers';

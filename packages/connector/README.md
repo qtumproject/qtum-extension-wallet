@@ -17,7 +17,7 @@ yarn add @qtumproject/wallet-snap-connector
 ### Define raw provider (object which is similar to window.ethereum)
 
 ```typescript
-import { QtumWallet } from '@qtumproject/wallet-snap-connector';
+import { QtumWallet } from '@qtumproject/qtum-wallet-connector';
 
 export const qtumSnap = new QtumWallet();
 ```
@@ -35,7 +35,7 @@ const init = async () => {
 ### check if snap or metamask is installed
 
 ```typescript
-import { isMetamaskInstalled } from '@qtumproject/wallet-snap-connector';
+import { isMetamaskInstalled } from '@qtumproject/qtum-wallet-connector';
 
 import { qtumSnap } from '@/path/to/qtumSnap';
 
