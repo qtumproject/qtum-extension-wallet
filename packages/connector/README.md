@@ -7,11 +7,11 @@ QtumSnap connector is used to install snap and exposes methods for calling snap 
 ### Installation
 
 ```bash
-npm install @qtumproject/wallet-snap-connector
+npm install @qtumproject/qtum-wallet-connector
 ```
 
 ```bash
-yarn add @qtumproject/wallet-snap-connector
+yarn add @qtumproject/qtum-wallet-connector
 ```
 
 ### Define raw provider (object which is similar to window.ethereum)
