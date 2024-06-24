@@ -68,7 +68,9 @@ import { qtumWallet } from '@/path/to/qtumWallet';
 export const useProvider = () => {
   const provider = useMemo(() => {
     try {
-      return new providers.Web3Provider(qtumWallet as providers.ExternalProvider);
+      return new providers.Web3Provider(
+        qtumWallet as providers.ExternalProvider,
+      );
     } catch (error) {
       return undefined;
     }
