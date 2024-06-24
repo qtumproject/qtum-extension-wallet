@@ -1,40 +1,40 @@
-# QTum Wallet
+# Qtum Wallet
 
-The QTum Wallet acts as an RPC proxy that accepts requests from DApps to MetaMask, for example, by using ethers.js or web3.js, and forwards them to the QTum network using the QTum ethers adapter.
+The Qtum Wallet acts as an RPC proxy that accepts requests from DApps to MetaMask, for example, by using ethers.js or web3.js, and forwards them to the Qtum network using the Qtum ethers adapter.
 
-## QTum Wallet FAQ
+## Qtum Wallet FAQ
 
-- **Q: What does the QTum Wallet do?**
+- **Q: What does the Qtum Wallet do?**
 
-  **A:** It acts as a proxy between the QTum blockchain and MetaMask.
+  **A:** It acts as a proxy between the Qtum blockchain and MetaMask.
 
 - **Q: What does the snap NOT do?**
 
-  **A:** QTum Wallet does not have access to users’ private keys or crypto assets.
+  **A:** Qtum Wallet does not have access to users’ private keys or crypto assets.
 
-- **Q: How do I use the QTum Wallet's features?**
+- **Q: How do I use the Qtum Wallet's features?**
 
-  **A:** It is mainly used for interaction with the QTum blockchain. You can send any EVM transaction with the snap to the QTum network.
+  **A:** It is mainly used for interaction with the Qtum blockchain. You can send any EVM transaction with the snap to the Qtum network.
 
 - **Q: How do I reach out for snap support?**
 
-  **A:** Visit the ... Discord support channel or send an email to [support email].
+  **A:** Visit the Qtum Discord support channel or send an email to support@qtum.info.
 
-- **Q: How do I interact with the QTum Blockchain via QTum Wallet?**
+- **Q: How do I interact with the Qtum Blockchain via Qtum Wallet?**
 
-  **A:** Any DApps integrated with the QTum snap will relay requests to interact with contracts on the QTum blockchain via MetaMask itself (the snap should be installed).
+  **A:** Any DApps integrated with the Qtum snap will relay requests to interact with contracts on the Qtum blockchain via MetaMask itself (the snap should be installed).
 
-- **Q: What applications can I use QTum Wallet Snap on?**
+- **Q: What applications can I use Qtum Wallet Snap on?**
 
-  **A:** Currently, you can use the QTum bridge to transfer supported assets from the Ethereum Mainnet. Also you can visit [wallet.bridge.qtum.net](https://wallet.bridge.qtum.net) to change networks, send ERC-20 and native tokens, and view balances.
+  **A:** Currently, you can use the Qtum bridge to transfer supported assets from the Ethereum Mainnet. Also you can visit [wallet.bridge.qtum.net](https://wallet.bridge.qtum.net) to change networks, send ERC-20 and native tokens, and view balances.
 
-## QTum Wallet Knowledge Doc
+## Qtum Wallet Knowledge Doc
 
 - **Q: What happens if I lose the keys for my account?**
 
-  **A:** Please be extremely careful with your keys - there is no way to recover them if they are lost. QTum Wallet does not have access to users’ keys and cannot help you recover them. However, the QTum private key is generated from the MetaMask mnemonic entropy, so it can be recovered if you still have your MetaMask mnemonic (for the first account).
+  **A:** Please be extremely careful with your keys - there is no way to recover them if they are lost. Qtum Wallet does not have access to users’ keys and cannot help you recover them. However, the Qtum private key is generated from the MetaMask mnemonic entropy, so it can be recovered if you still have your MetaMask mnemonic (for the first account).
 
-- **Q: Is QTum Wallet secure?**
+- **Q: Is Qtum Wallet secure?**
 
   **A:** Snap is extremely safe. To ensure the user's complete safety, Snap does not have access to users’ private keys. In addition, a security audit has been conducted by [Sayfer](...).
 
