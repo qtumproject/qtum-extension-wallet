@@ -1,6 +1,6 @@
 import { DialogType, divider, heading, text } from '@metamask/snaps-sdk';
-import type { Chain } from '@qtumproject/wallet-snap-connector';
-import { sleep } from '@qtumproject/wallet-snap-connector';
+import type { Chain } from '@qtumproject/qtum-wallet-connector';
+import { sleep } from '@qtumproject/qtum-wallet-connector';
 
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
 import { StorageKeys } from '@/enums';

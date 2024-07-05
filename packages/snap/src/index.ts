@@ -19,8 +19,8 @@ import {
   text,
 } from '@metamask/snaps-sdk';
 import type { JsonRpcRequest } from '@metamask/utils';
-import type { SnapRequestParams } from '@qtumproject/wallet-snap-connector';
-import { sleep, RPCMethods } from '@qtumproject/wallet-snap-connector';
+import type { SnapRequestParams } from '@qtumproject/qtum-wallet-connector';
+import { sleep, RPCMethods } from '@qtumproject/qtum-wallet-connector';
 import { BigNumber, ethers } from 'ethers';
 import { QtumWallet } from 'qtum-ethers-wrapper';
 

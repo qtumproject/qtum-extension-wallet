@@ -1,4 +1,4 @@
-import { sleep } from '@qtumproject/wallet-snap-connector';
+import { sleep } from '@qtumproject/qtum-wallet-connector';
 import { QtumProvider, QtumWallet } from 'qtum-ethers-wrapper';
 
 import { StorageKeys } from '@/enums';

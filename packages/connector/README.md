@@ -1,48 +1,48 @@
-# QtumSnap Connector
+# Qtum Wallet Connector
 
-QtumSnap connector is used to install snap and exposes methods for calling snap on dApps and other applications.
+Qtum Wallet connector is used to install snap and exposes methods for calling snap on dApps and other applications.
 
 ## Usage
 
 ### Installation
 
 ```bash
-npm install @qtumproject/wallet-snap-connector
+npm install @qtumproject/qtum-wallet-connector
 ```
 
 ```bash
-yarn add @qtumproject/wallet-snap-connector
+yarn add @qtumproject/qtum-wallet-connector
 ```
 
 ### Define raw provider (object which is similar to window.ethereum)
 
 ```typescript
-import { QtumWallet } from '@qtumproject/wallet-snap-connector';
+import { QtumWallet } from '@qtumproject/qtum-wallet-connector';
 
-export const qtumSnap = new QtumWallet();
+export const qtumWallet = new QtumWallet();
 ```
 
 ### Establish connection
 
 ```typescript
-import { qtumSnap } from '@/path/to/qtumSnap';
+import { qtumWallet } from '@/path/to/qtumWallet';
 
 const init = async () => {
-  await qtumSnap.enable();
+  await qtumWallet.enable();
 };
 ```
 
-### check if snap or metamask is installed
+### Check if snap or metamask is installed
 
 ```typescript
-import { isMetamaskInstalled } from '@qtumproject/wallet-snap-connector';
+import { isMetamaskInstalled } from '@qtumproject/qtum-wallet-connector';
 
-import { qtumSnap } from '@/path/to/qtumSnap';
+import { qtumWallet } from '@/path/to/qtumWallet';
 
 const checkSnapStatus = async () => {
   return {
     isMetamaskInstalled: await isMetamaskInstalled(),
-    isSnapInstalled: await qtumSnap.isInstalled(),
+    isSnapInstalled: await qtumWallet.isInstalled(),
   };
 };
 ```
@@ -63,12 +63,14 @@ const provider = new ethers.providers.Web3Provider(connector);
 import { providers } from 'ethers';
 import { useMemo } from 'react';
 
-import { qtumSnap } from '@/path/to/qtumSnap';
+import { qtumWallet } from '@/path/to/qtumWallet';
 
 export const useProvider = () => {
   const provider = useMemo(() => {
     try {
-      return new providers.Web3Provider(qtumSnap as providers.ExternalProvider);
+      return new providers.Web3Provider(
+        qtumWallet as providers.ExternalProvider,
+      );
     } catch (error) {
       return undefined;
     }

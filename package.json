@@ -1,24 +1,24 @@
 {
-  "name": "qtum-snap-monorepo",
+  "name": "qtum-wallet-monorepo",
   "private": true,
   "description": "",
-  "homepage": "https://github.com/qtumproject/metamasksnap#readme",
+  "homepage": "https://github.com/qtumproject/qtum-extension-wallet",
   "bugs": {
-    "url": "https://github.com/qtumproject/metamasksnap/issues"
+    "url": "https://github.com/qtumproject/qtum-extension-wallet/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qtumproject/metamasksnap.git"
+    "url": "git+https://github.com/qtumproject/qtum-extension-wallet.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
-  "author": "Distributed Lab",
+  "author": "Qtum project",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "apply-version": "node scripts/versions.js $0 && yarn build:connector && yarn workspace @qtumproject/wallet-snap preversion",
+    "apply-version": "node scripts/versions.js $0 && yarn build:connector && yarn workspace @qtumproject/qtum-wallet preversion",
     "build": "yarn workspaces foreach -pv --topological-dev --verbose --all run build",
-    "build:connector": "yarn workspace @qtumproject/wallet-snap-connector build",
+    "build:connector": "yarn workspace @qtumproject/qtum-wallet-connector build",
     "postinstall": "patch-package",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:eslint": "eslint . --cache --ext js,ts",

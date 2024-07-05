@@ -1,6 +1,6 @@
-# Qtum Snap
+# QTum Wallet
 
-Qtum snap is a snap, that allows to interact with Qtum blockchain by implementing metamsk RPC requests handlers https://docs.metamask.io/wallet/reference/json-rpc-api/.
+QTum wallet is a snap, that allows to interact with QTum blockchain by implementing metamask RPC requests handlers https://docs.metamask.io/wallet/reference/json-rpc-api/.
 
 ## Methods
 
