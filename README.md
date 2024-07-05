@@ -36,7 +36,7 @@ Qtum Snap does not have access to users’ private keys.
 
 Currently, you can use the Qtum bridge to transfer supported assets, like Circle Bridged USDC from the Ethereum Mainnet. For more information on the Circle set of contracts, please see here: [Introducing Bridged USDC Standard](https://www.circle.com/blog/bridged-usdc-standard)
 
-###  Does the Qtum MetaMask Snap support Qtum NFTs?
+### Does the Qtum MetaMask Snap support Qtum NFTs?
 
 Not currently. The purpose of the Qtum MetaMask Snap was to provide access to the Qtum-Ethereum bridge in order to facilitate DeFi applications. Qtum NFT’s are supported on other Qtum wallets, but not currently the Qtum MetaMask Snap.
 
