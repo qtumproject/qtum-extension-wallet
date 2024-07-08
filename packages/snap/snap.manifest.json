@@ -7,7 +7,7 @@
     "url": "https://github.com/qtumproject/qtum-extension-wallet.git"
   },
   "source": {
-    "shasum": "SDeLvf6e8mGaI69+Pcy2Nskj307MyNY21XLSIbNo1eU=",
+    "shasum": "GCvOxV52DlGWa+wGp9FEkLAV8STusflG65XGtujPtEc=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
