@@ -16,3 +16,16 @@ export function fromBase58Check(qtumAddress: string) {
   const buffer = Buffer.from(payload);
   return `0x${buffer.toString('hex').slice(2)}`;
 }
+
+// eslint-disable-next-line jsdoc/require-jsdoc
+export function isAddressMatchNetwork(qtumAddress: string, chainId: number) {
+  const payload = bs58check.decode(qtumAddress);
+
+  const version = {
+    8889: 120,
+    81: 58,
+  }[chainId];
+
+  // Check if the version matches
+  return payload[0] === version;
+}
