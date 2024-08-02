@@ -483,13 +483,6 @@ export const onRpcRequest = async ({
           ),
         );
 
-        console.log('tx.hash', tx.hash);
-
-        // TODO: remove due to metamask time-out restriction;
-        await tx.wait();
-
-        console.log('tx', JSON.stringify(tx));
-
         return tx.hash;
       } catch (error) {
         console.error(error);

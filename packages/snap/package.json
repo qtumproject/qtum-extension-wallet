@@ -1,6 +1,6 @@
 {
   "name": "@qtumproject/qtum-wallet",
-  "version": "0.1.0",
+  "version": "0.2.0-rc.0",
   "description": "Qtum Wallet is a MetaMask Snap that plays the role of the RPC proxy that accepts requests to the MetaMask and forwards them to the Qtum network with the Qtum ethers adapter.",
   "repository": {
     "type": "git",
@@ -44,6 +44,7 @@
     "@metamask/transaction-controller": "^27.0.1",
     "@qtumproject/qtum-wallet-connector": "workspace:^",
     "buffer": "6.0.3",
+    "eth-block-tracker": "^8.1.0",
     "ethers": "5.7.2",
     "intl": "1.2.5",
     "key-did-provider-ed25519": "3.0.2",
