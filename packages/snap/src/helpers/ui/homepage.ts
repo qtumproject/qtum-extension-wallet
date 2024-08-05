@@ -31,12 +31,12 @@ export const onHomePage: OnHomePageHandler = async () => {
         ? [
             divider(),
 
-            text('Your qtum address:'),
+            text('Your Qtum address:'),
             copyable({
               value: (await getQtumAddress()) || 'Not created yet',
             }),
 
-            text('Your hex representation of Qtum address:'),
+            text('Your Qtum address in hexadecimal format:'),
             copyable({
               value: wallet.address,
             }),
