@@ -29,7 +29,7 @@
     "serve": "mm-snap serve",
     "start": "nodemon --watch src/ --ext ts --exec 'yarn build && yarn serve'",
     "test": "yarn test:wallet --passWithNoTests",
-    "test:wallet": "node --experimental-vm-modules --trace-warnings ../../node_modules/jest/bin/jest.js --findRelatedTests ./src/tests/wallet.test.ts",
+    "test:wallet": "jest --findRelatedTests ./src/tests/wallet.test.ts",
     "typia:generate": "typia generate --input src/typia-templates --output src/typia-generated --project tsconfig.json",
     "preversion": "yarn && yarn build && git add snap.manifest.json"
   },

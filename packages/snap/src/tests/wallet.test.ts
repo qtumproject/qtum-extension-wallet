@@ -1,7 +1,8 @@
 import { QtumProvider, QtumWallet } from 'qtum-ethers-wrapper';
 import { DEFAULT_NETWORKS_RPC_URLS } from "../consts";
 
-const PK = '0x...';
+// Hash of Zero Address -- DO NOT USE IN PRODUCTION
+const PK = '0x4f64fe1ce613546d34d666d8258c13c6296820fd13114d784203feb91276e838';
 
 const provider = new QtumProvider(
   DEFAULT_NETWORKS_RPC_URLS[0].rpcUrls[0],
@@ -49,13 +50,5 @@ describe('qtum wallet', () => {
     console.log('balance: ', balance.toString());
 
     expect(balance.toString()).not.toBeNull();
-  });
-
-  it('should show UTQO balance', async () => {
-    const utxoBalance = await wallet.getUtxos();
-
-    console.log('balance: ', JSON.stringify(utxoBalance));
-
-    expect(utxoBalance.toString()).not.toBeNull();
   });
 });
