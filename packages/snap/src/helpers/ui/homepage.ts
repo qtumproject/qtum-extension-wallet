@@ -31,14 +31,14 @@ export const onHomePage: OnHomePageHandler = async () => {
         ? [
             divider(),
 
-            text('Your eth address:'),
-            copyable({
-              value: wallet.address,
-            }),
-
-            text('Your qtum address:'),
+            text('Your Qtum address:'),
             copyable({
               value: (await getQtumAddress()) || 'Not created yet',
+            }),
+
+            text('Your Qtum address in hexadecimal format:'),
+            copyable({
+              value: wallet.address,
             }),
           ]
         : []),

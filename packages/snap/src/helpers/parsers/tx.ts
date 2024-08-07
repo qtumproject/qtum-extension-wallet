@@ -52,7 +52,6 @@ export const readAddressAsContract = async (
   try {
     contractCode = await provider.getCode(address);
   } catch (err) {
-    // TODO(@dbrans): Dangerous to swallow errors here.
     contractCode = null;
   }
 
