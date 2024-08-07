@@ -1,4 +1,5 @@
 import bs58check from 'bs58check';
+// eslint-disable-next-line
 import { Buffer } from 'buffer';
 
 // eslint-disable-next-line jsdoc/require-jsdoc

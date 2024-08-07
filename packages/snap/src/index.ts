@@ -40,16 +40,11 @@ import { snapStorage } from '@/rpc';
 
 export const onRpcRequest = async ({
   request,
-  origin,
 }: {
   request: JsonRpcRequest;
   origin: string;
 }) => {
-  console.log('\n\n');
-  console.log('\n\n');
   console.log('request', JSON.stringify(request));
-  console.log('\n\n');
-  console.log('\n\n');
 
   switch (request.method) {
     case RPCMethods.WalletCreateRandom: {
@@ -159,13 +154,11 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthSubscribe: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthUnsubscribe: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.WalletGetAllSupportedChains: {
@@ -306,63 +299,51 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.WalletRequestPermissions: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.WalletRevokePermissions: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.WalletGetPermissions: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.WalletRegisterOnboarding: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.WalletWatchAsset: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.WalletScanQrCode: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.WalletGetSnaps: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.WalletRequestSnaps: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.WalletSnap: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.WalletInvokeSnap: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthDecrypt: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetEncryptionPublicKey: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthRequestAccounts: {
@@ -423,8 +404,6 @@ export const onRpcRequest = async ({
       const wallet = await getWallet();
 
       const message = params[0] as string;
-
-      console.log('message', message);
 
       const res = await snap.request({
         method: 'snap_dialog',
@@ -491,8 +470,7 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.Web3ClientVersion: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthBlockNumber: {
@@ -522,8 +500,7 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthCoinbase: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthEstimateGas: {
@@ -547,16 +524,10 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGasPrice: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetBalance: {
-      // const [address, blockTag] = request.params as [
-      //   string,
-      //   string | undefined,
-      // ];
-
       try {
         const wallet = await getWallet();
 
@@ -571,28 +542,23 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetBlockByHash: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetBlockByNumber: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetBlockReceipts: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetBlockTransactionCountByHash: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetBlockTransactionCountByNumber: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetCode: {
@@ -605,13 +571,11 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetFilterChanges: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetFilterLogs: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetLogs: {
@@ -622,29 +586,23 @@ export const onRpcRequest = async ({
 
       const logs = await provider.getLogs(filter);
 
-      console.log('logs', JSON.stringify(logs));
-
       return logs;
     }
 
     case RPCMethods.EthGetProof: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetStorageAt: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetTransactionByBlockHashAndIndex: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetTransactionByBlockNumberAndIndex: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetTransactionByHash: {
@@ -655,8 +613,6 @@ export const onRpcRequest = async ({
         const provider = await getProvider();
 
         const tx = await provider.getTransaction(txHash);
-
-        console.log('tx', tx);
 
         return Object.entries(tx).reduce<TransactionResponse>(
           (acc, [key, value]) => {
@@ -681,8 +637,7 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetTransactionCount: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetTransactionReceipt: {
@@ -717,48 +672,39 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetUncleCountByBlockHash: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthGetUncleCountByBlockNumber: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthMaxPriorityFeePerGas: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthNewBlockFilter: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthNewFilter: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthNewPendingTransactionFilter: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthSendRawTransaction: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthSyncing: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     case RPCMethods.EthUninstallFilter: {
-      // TODO: implement once necessary
-      return origin;
+      return 'Not implemented';
     }
 
     default: {
