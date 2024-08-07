@@ -17,14 +17,14 @@ export async function showWalletCreatedSnapDialog(
     heading('Your Wallet'),
     divider(),
 
-    text('Your eth address:'),
-    copyable({
-      value: ethAddr,
-    }),
-
-    text('Your qtum address:'),
+    text('Your Qtum address:'),
     copyable({
       value: qtumAddr,
+    }),
+
+    text('Your Qtum address in hexadecimal format:'),
+    copyable({
+      value: ethAddr,
     }),
   ]);
 }

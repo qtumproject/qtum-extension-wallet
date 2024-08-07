@@ -1,6 +1,6 @@
 {
   "name": "@qtumproject/qtum-wallet-connector",
-  "version": "0.2.0-rc.4",
+  "version": "0.2.0-rc.5",
   "description": "A Provider to be used in ethers.js to interact with Qtum's wallet",
   "repository": {
     "type": "git",
