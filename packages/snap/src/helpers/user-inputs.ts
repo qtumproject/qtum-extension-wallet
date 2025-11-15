@@ -1,9 +1,8 @@
 import { OnUserInputHandler } from "@metamask/snaps-sdk";
 
-import { createWallet, renderImportPrivateKey } from "@/helpers";
 import { clearWallet } from "@/config";
-import { renderHome } from "@/helpers/ui/home";
-import { importPrivateKey } from "@/helpers/wallet";
+import { renderHome, renderDashboard, renderImportPrivateKey } from "@/helpers/ui";
+import { createWallet, importPrivateKey } from "@/helpers/wallet";
 
 
 export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
@@ -25,7 +24,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     const { qtumAddress, hexAddress } = await createWallet();
     await snap.request({
       method: 'snap_updateInterface',
-      params: { id, ui: renderHome({ hasWallet: true, qtumAddress, hexAddress }) },
+      params: { id, ui: renderDashboard({ qtumAddress, hexAddress }) },
     });
     return;
   }
@@ -55,7 +54,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
       const { qtumAddress, hexAddress } = await importPrivateKey(privateKey);
       await snap.request({
         method: 'snap_updateInterface',
-        params: { id, ui: renderHome({ hasWallet: true, qtumAddress, hexAddress }) },
+        params: { id, ui: renderDashboard({ qtumAddress, hexAddress }) },
       });
     } catch (e: any) {
       await snap.request({
@@ -69,7 +68,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
   if (event?.name === 'cancel-import') {
     await snap.request({
       method: 'snap_updateInterface',
-      params: { id, ui: renderHome({ hasWallet: false }) },
+      params: { id, ui: renderHome() },
     });
     return;
   }
@@ -78,7 +77,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     await clearWallet();
     await snap.request({
       method: 'snap_updateInterface',
-      params: { id, ui: renderHome({ hasWallet: false }) },
+      params: { id, ui: renderHome() },
     });
     return;
   }

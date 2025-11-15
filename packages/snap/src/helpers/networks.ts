@@ -4,7 +4,7 @@ import { sleep } from '@qtumproject/qtum-wallet-connector';
 
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
 import { StorageKeys } from '@/enums';
-import { getSnapDialog } from '@/helpers/ui';
+import { getSnapDialog } from '@/helpers';
 import { snapStorage } from '@/rpc';
 import type { StorageMap } from '@/types/storage-types';
 
