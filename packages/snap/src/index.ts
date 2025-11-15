@@ -713,4 +713,4 @@ export const onRpcRequest = async ({
   }
 };
 
-export { onHomePage } from '@/helpers/ui';
+export { onHomePage, onUserInput } from '@/helpers';

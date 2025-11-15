@@ -1,9 +1,20 @@
-import { OnUserInputHandler } from "@metamask/snaps-sdk";
+import { OnUserInputHandler } from '@metamask/snaps-sdk';
 
-import { clearWallet } from "@/config";
-import { renderHome, renderDashboard, renderImportPrivateKey } from "@/helpers/ui";
-import { createWallet, importPrivateKey } from "@/helpers/wallet";
-
+import { clearWallet } from '@/config';
+import {
+  renderHome,
+  renderDashboard,
+  renderDriveInternalMnemonic,
+  renderDriveExternalMnemonic,
+  renderImportPrivateKey,
+  errorSnapDialog
+} from '@/helpers/ui';
+import {
+  createWallet,
+  deriveFromExternalMnemonic,
+  deriveFromInternalMnemonic,
+  importPrivateKey
+} from '@/helpers/wallet';
 
 export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
 
@@ -11,6 +22,31 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     method: 'snap_getInterfaceState',
     params: { id },
   });
+
+  if (event?.name === 'create-wallet') {
+    const { qtumAddress, hexAddress } = await createWallet();
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id, ui: renderDashboard({ qtumAddress, hexAddress }) },
+    });
+    return;
+  }
+
+  if (event?.name === 'drive-internal-mnemonic') {
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id, ui: renderDriveInternalMnemonic() },
+    });
+    return;
+  }
+
+  if (event?.name === 'drive-external-mnemonic') {
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id, ui: renderDriveExternalMnemonic() },
+    });
+    return;
+  }
 
   if (event?.name === 'import-private-key') {
     await snap.request({
@@ -20,12 +56,63 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     return;
   }
 
-  if (event?.name === 'create-wallet') {
-    const { qtumAddress, hexAddress } = await createWallet();
-    await snap.request({
-      method: 'snap_updateInterface',
-      params: { id, ui: renderDashboard({ qtumAddress, hexAddress }) },
-    });
+  if (event?.name === 'submit-drive-internal-mnemonic') {
+
+    const derivationPath = state?.['drive-internal-mnemonic-form']?.['derivation-path'];
+
+    if (!derivationPath) {
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: { id, ui: renderDriveInternalMnemonic('Derivation path is required') },
+      });
+      return;
+    }
+
+    try {
+      const { qtumAddress, hexAddress } = await deriveFromInternalMnemonic({
+        derivationPath,
+      });
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: { id, ui: renderDashboard({ qtumAddress, hexAddress }) },
+      });
+    } catch (_) {
+      await errorSnapDialog({ message: 'Something is wrong' });
+    }
+    return;
+  }
+
+  if (event?.name === 'submit-drive-external-mnemonic') {
+
+    const mnemonic = state?.['drive-external-mnemonic-form']?.['mnemonic'];
+    const passphrase = state?.['drive-external-mnemonic-form']?.['passphrase'];
+    const derivationPath = state?.['drive-external-mnemonic-form']?.['derivation-path'];
+
+    if (!mnemonic) {
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: { id, ui: renderDriveExternalMnemonic('Mnemonic is required', undefined) },
+      });
+      return;
+    } else if (!derivationPath) {
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: { id, ui: renderDriveExternalMnemonic(undefined, 'Derivation path is required') },
+      });
+      return;
+    }
+
+    try {
+      const { qtumAddress, hexAddress } = await deriveFromExternalMnemonic({
+        mnemonic, passphrase, derivationPath
+      });
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: { id, ui: renderDashboard({ qtumAddress, hexAddress }) },
+      });
+    } catch (_) {
+      await errorSnapDialog({ message: 'Something is wrong' });
+    }
     return;
   }
 
@@ -56,16 +143,13 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
         method: 'snap_updateInterface',
         params: { id, ui: renderDashboard({ qtumAddress, hexAddress }) },
       });
-    } catch (e: any) {
-      await snap.request({
-        method: 'snap_updateInterface',
-        params: { id, ui: renderImportPrivateKey('Something is wrong') },
-      });
+    } catch (_) {
+      await errorSnapDialog({ message: 'Something is wrong' });
     }
     return;
   }
 
-  if (event?.name === 'cancel-import') {
+  if (event?.name === 'cancel-wallet') {
     await snap.request({
       method: 'snap_updateInterface',
       params: { id, ui: renderHome() },

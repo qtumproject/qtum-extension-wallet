@@ -5,6 +5,7 @@ import { getWallet } from "@/config";
 import { renderDashboard, renderHome } from "@/helpers";
 import { getQtumAddress } from "@/helpers/format";
 
+export * from './basic';
 export * from './dashboard';
 export * from './home';
 export * from './tx';

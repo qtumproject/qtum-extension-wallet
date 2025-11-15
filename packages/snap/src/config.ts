@@ -1,11 +1,11 @@
 import { sleep } from '@qtumproject/qtum-wallet-connector';
 import { QtumProvider, QtumWallet } from 'qtum-ethers-wrapper';
+import { Json } from "@metamask/snaps-sdk";
 
 import { StorageKeys } from '@/enums';
 import { networks } from '@/helpers';
 import { snapStorage } from '@/rpc';
 
-export const config = {};
 
 export const getProvider = async () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,4 +27,32 @@ export const getWallet = async () => {
   }
 
   return new QtumWallet(identityStorage.privateKey, await getProvider());
+};
+
+export const clearWallet = async (): Promise<void> => {
+
+  const maybeRemove = (snapStorage as any).removeItem as
+    | ((key: string) => Promise<void>)
+    | undefined;
+
+  if (typeof maybeRemove === 'function') {
+    await maybeRemove(StorageKeys.identity);
+  } else {
+    // @ts-ignore
+    await snapStorage.setItem(StorageKeys.identity, null);
+    try {
+      const state = (await snap.request({
+        method: 'snap_manageState',
+        params: { operation: 'get' },
+      })) as Record<string, Json> | null;
+
+      if (state && StorageKeys.identity in state) {
+        delete state[StorageKeys.identity];
+        await snap.request({
+          method: 'snap_manageState',
+          params: { operation: 'update', newState: state },
+        });
+      }
+    } catch { }
+  }
 };
