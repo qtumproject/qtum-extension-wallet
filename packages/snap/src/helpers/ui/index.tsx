@@ -2,7 +2,7 @@ import { Component, DialogType, OnHomePageHandler, panel } from "@metamask/snaps
 import { QtumWallet } from "qtum-ethers-wrapper";
 
 import { getWallet } from "@/config";
-import { renderDashboard, renderHome } from "@/helpers";
+import {getNetworks, renderDashboard, renderHome} from "@/helpers";
 import { getQtumAddress } from "@/helpers/format";
 
 export * from './basic';
@@ -32,10 +32,15 @@ export const onHomePage: OnHomePageHandler = async () => {
     qtumAddress = await getQtumAddress();
   } catch (_) { }
 
+  let { list, current } = await getNetworks();
+  list = [
+    current, ...list.filter((network) => String(network.chainId) !== String(current.chainId)),
+  ];
+
   const id = await snap.request({
     method: 'snap_createInterface',
     params: {
-      ui: hexAddress ? renderDashboard({ qtumAddress, hexAddress }) : renderHome(),
+      ui: hexAddress ? renderDashboard({ list, current }, { qtumAddress, hexAddress }) : renderHome(),
     },
   });
   return { id };

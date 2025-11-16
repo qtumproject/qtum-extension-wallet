@@ -1,6 +1,16 @@
 import {
-  Box, Text, Container, Divider, Button, Form, Field, Input,
-  Tooltip, Icon, Image, Section
+  Box,
+  Text,
+  Container,
+  Divider,
+  Button,
+  Form,
+  Field,
+  Input,
+  Tooltip,
+  Icon,
+  Image,
+  Section,
 } from '@metamask/snaps-sdk/jsx';
 
 import { qtumIcon } from "@/helpers/utils";

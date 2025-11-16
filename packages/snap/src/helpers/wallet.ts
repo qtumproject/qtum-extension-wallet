@@ -8,15 +8,17 @@ import { StorageKeys } from '@/enums';
 import { genPkHexFromEntropy } from '@/helpers/entropy';
 import { relativePathToDeriveSegments } from '@/helpers/utils';
 import { getQtumAddress } from '@/helpers/format';
+import { getNetworks } from "@/helpers/networks";
 import { snapStorage } from '@/rpc';
 
 export const importPrivateKey = async (privateKey: string): Promise<{ qtumAddress: string; hexAddress: string }> => {
 
+  let { list, current } = await getNetworks();
   const wallet: QtumWallet = QtumWallet.fromPrivateKey(privateKey);
-  const qtumAddress: string = await getQtumAddress(wallet.address);
   await snapStorage.setItem(StorageKeys.identity, {
     privateKey: wallet.privateKey,
   });
+  const qtumAddress: string = await getQtumAddress(wallet.address, current);
   return {
     qtumAddress: qtumAddress,
     hexAddress: wallet.address,

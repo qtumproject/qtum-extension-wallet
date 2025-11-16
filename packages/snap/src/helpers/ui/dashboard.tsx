@@ -1,12 +1,20 @@
 import {
-  Box, Text, Container, Divider, Copyable, Button, Image
+  Box, Text, Container, Divider, Copyable, Button, Dropdown, Option, Section
 } from '@metamask/snaps-sdk/jsx';
+import { Chain } from "@qtumproject/qtum-wallet-connector";
 
-
-export const renderDashboard = (params: { qtumAddress?: string; hexAddress?: string }) => (
+export const renderDashboard = (
+  networks: { list: Chain[], current: Chain }, params: { qtumAddress?: string; hexAddress?: string }) => (
   <Container>
     <Box>
-      <Text fontWeight="bold">Dashboard</Text>
+      <Box direction="horizontal" crossAlignment="center" alignment="space-between">
+        <Text>100009 QTUM</Text>
+        <Dropdown name="networks">
+          {networks.list.map((network) => (
+            <Option key={String(network.chainId)} value={String(network.chainId)}>{network.chainName}</Option>
+          ))}
+        </Dropdown>
+      </Box>
       <Divider/>
       <Box>
         <Text>Your Qtum address:</Text>
@@ -15,7 +23,11 @@ export const renderDashboard = (params: { qtumAddress?: string; hexAddress?: str
         <Copyable value={params.hexAddress ?? ''}/>
       </Box>
       <Divider/>
-      <Button name="logout" variant="destructive">Logout</Button>
+      <Section>
+        <Button name="logout">Export Private Key</Button>
+        <Divider/>
+        <Button name="logout" variant="destructive">Logout</Button>
+      </Section>
     </Box>
   </Container>
 );

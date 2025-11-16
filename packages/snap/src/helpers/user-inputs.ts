@@ -1,14 +1,18 @@
-import { OnUserInputHandler } from '@metamask/snaps-sdk';
+import { OnUserInputHandler, UserInputEventType } from '@metamask/snaps-sdk';
+import { sleep } from "@qtumproject/qtum-wallet-connector";
 
-import { clearWallet } from '@/config';
+import { clearWallet, getWallet } from '@/config';
 import {
   renderHome,
   renderDashboard,
   renderDriveInternalMnemonic,
   renderDriveExternalMnemonic,
   renderImportPrivateKey,
-  errorSnapDialog
+  errorSnapDialog,
+  renderSwitchingNetwork
 } from '@/helpers/ui';
+import { getQtumAddress } from "@/helpers/format";
+import { getNetworks, setCurrentNetwork } from "@/helpers/networks";
 import {
   createWallet,
   deriveFromExternalMnemonic,
@@ -23,16 +27,49 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     params: { id },
   });
 
-  if (event?.name === 'create-wallet') {
-    const { qtumAddress, hexAddress } = await createWallet();
+  let { list, current } = await getNetworks();
+  list = [
+    current, ...list.filter((network) => String(network.chainId) !== String(current.chainId)),
+  ];
+
+  if (event.type === UserInputEventType.InputChangeEvent && event.name === 'networks') {
+    const chainId = event.value as string;
+    const networks = await getNetworks();
+    const selectedNetwork = networks.list.find(
+      (network) => String(network.chainId) === chainId,
+    );
     await snap.request({
       method: 'snap_updateInterface',
-      params: { id, ui: renderDashboard({ qtumAddress, hexAddress }) },
+      params: {
+        id, ui: renderSwitchingNetwork(selectedNetwork?.chainName ?? 'Unknown'),
+      },
+    });
+    await setCurrentNetwork(chainId, false);
+    await sleep(1000);
+    const wallet = await getWallet();
+    const hexAddress = wallet.address;
+    const qtumAddress = await getQtumAddress();
+    let { list, current } = await getNetworks();
+    list = [
+      current, ...list.filter((network) => String(network.chainId) !== String(current.chainId)),
+    ];
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress }) },
     });
     return;
   }
 
-  if (event?.name === 'drive-internal-mnemonic') {
+  if (event.name === 'create-wallet') {
+    const { qtumAddress, hexAddress } = await createWallet();
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress }) },
+    });
+    return;
+  }
+
+  if (event.name === 'drive-internal-mnemonic') {
     await snap.request({
       method: 'snap_updateInterface',
       params: { id, ui: renderDriveInternalMnemonic() },
@@ -40,7 +77,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     return;
   }
 
-  if (event?.name === 'drive-external-mnemonic') {
+  if (event.name === 'drive-external-mnemonic') {
     await snap.request({
       method: 'snap_updateInterface',
       params: { id, ui: renderDriveExternalMnemonic() },
@@ -48,7 +85,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     return;
   }
 
-  if (event?.name === 'import-private-key') {
+  if (event.name === 'import-private-key') {
     await snap.request({
       method: 'snap_updateInterface',
       params: { id, ui: renderImportPrivateKey() },
@@ -56,7 +93,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     return;
   }
 
-  if (event?.name === 'submit-drive-internal-mnemonic') {
+  if (event.name === 'submit-drive-internal-mnemonic') {
 
     const derivationPath = state?.['drive-internal-mnemonic-form']?.['derivation-path'];
 
@@ -74,15 +111,15 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
       });
       await snap.request({
         method: 'snap_updateInterface',
-        params: { id, ui: renderDashboard({ qtumAddress, hexAddress }) },
+        params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress }) },
       });
     } catch (_) {
-      await errorSnapDialog({ message: 'Something is wrong' });
+      await errorSnapDialog({ message: 'Something went wrong' });
     }
     return;
   }
 
-  if (event?.name === 'submit-drive-external-mnemonic') {
+  if (event.name === 'submit-drive-external-mnemonic') {
 
     const mnemonic = state?.['drive-external-mnemonic-form']?.['mnemonic'];
     const passphrase = state?.['drive-external-mnemonic-form']?.['passphrase'];
@@ -108,15 +145,15 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
       });
       await snap.request({
         method: 'snap_updateInterface',
-        params: { id, ui: renderDashboard({ qtumAddress, hexAddress }) },
+        params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress }) },
       });
     } catch (_) {
-      await errorSnapDialog({ message: 'Something is wrong' });
+      await errorSnapDialog({ message: 'Something went wrong' });
     }
     return;
   }
 
-  if (event?.name === 'submit-import-private-key') {
+  if (event.name === 'submit-import-private-key') {
 
     const isHex64 = (s: string) => /^(0x)?[0-9a-fA-F]{64}$/.test(s.trim());
     const strip0x = (s: string) => (s.startsWith('0x') ? s.slice(2) : s);
@@ -141,15 +178,15 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
       const { qtumAddress, hexAddress } = await importPrivateKey(privateKey);
       await snap.request({
         method: 'snap_updateInterface',
-        params: { id, ui: renderDashboard({ qtumAddress, hexAddress }) },
+        params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress }) },
       });
     } catch (_) {
-      await errorSnapDialog({ message: 'Something is wrong' });
+      await errorSnapDialog({ message: 'Something went wrong' });
     }
     return;
   }
 
-  if (event?.name === 'cancel-wallet') {
+  if (event.name === 'cancel-wallet') {
     await snap.request({
       method: 'snap_updateInterface',
       params: { id, ui: renderHome() },
@@ -157,7 +194,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     return;
   }
 
-  if (event?.name === 'logout') {
+  if (event.name === 'logout') {
     await clearWallet();
     await snap.request({
       method: 'snap_updateInterface',

@@ -1,4 +1,4 @@
-import { toBase58Check } from '@qtumproject/qtum-wallet-connector';
+import { Chain, toBase58Check } from '@qtumproject/qtum-wallet-connector';
 import type { BigNumberish } from 'ethers';
 import { ethers } from 'ethers';
 
@@ -17,29 +17,23 @@ export function formatUnits(
 }
 
 // eslint-disable-next-line
-export async function getQtumAddress(walletEthAddress?: string) {
-  let addr = walletEthAddress;
-  let chainId = Number(DEFAULT_NETWORKS_RPC_URLS[0].chainId);
+export async function getQtumAddress(hexAddress?: string, chain?: Chain) {
+  let address = hexAddress;
+  let chainId = Number(
+    chain?.chainId ?? DEFAULT_NETWORKS_RPC_URLS[0].chainId
+  );
 
-  if (!addr) {
+  if (!address) {
     const wallet = await getWallet();
-    addr = wallet.address;
-
+    address = wallet.address;
     const provider = await getProvider();
-
     const network = await provider.getNetwork();
-
     chainId = network.chainId;
   }
 
-  const version = {
-    8889: 120,
-    81: 58,
-  }[chainId];
-
+  const version = { 8889: 120, 81: 58 }[chainId];
   if (!version) {
     throw new Error('Unsupported chainId');
   }
-
-  return toBase58Check(addr, version);
+  return toBase58Check(address, version);
 }
