@@ -1,5 +1,4 @@
 import { OnUserInputHandler, UserInputEventType } from '@metamask/snaps-sdk';
-import { sleep } from "@qtumproject/qtum-wallet-connector";
 import QRCode from 'qrcode';
 
 import { clearWallet, getWallet } from '@/config';
@@ -12,18 +11,18 @@ import {
   errorSnapDialog,
   renderSwitchingNetwork, renderReceive, getCurrentWallet, getCurrentNetworks
 } from '@/helpers/ui';
-import { getQtumAddress } from "@/helpers/format";
-import { getNetworks, setCurrentNetwork } from "@/helpers/networks";
+import { getQtumAddress } from '@/helpers/format';
+import { getNetworks, setCurrentNetwork } from '@/helpers/networks';
 import {
   createWallet,
   deriveFromExternalMnemonic,
   deriveFromInternalMnemonic,
   importPrivateKey
 } from '@/helpers/wallet';
-import {snapStorage} from "@/rpc";
-import {StorageKeys} from "@/enums";
+import { snapStorage } from '@/rpc';
+import { StorageKeys } from '@/enums';
 
-export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
+export const onUserInput: OnUserInputHandler = async ({ id, event, context }) => {
 
   const state: any = await snap.request({
     method: 'snap_getInterfaceState',
@@ -97,11 +96,42 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
 
   if (event.name === 'receive') {
     const { qtumAddress, hexAddress } = (await snapStorage.getItem(StorageKeys.Addresses)) ?? { qtumAddress: '', hexAddress: '' };
-    const qtumAddressSVG = await QRCode.toString(qtumAddress, { type: 'svg', margin: 1, width: 160, color: { dark: '#FFFFFFFF', light: '#00000000' } });
-    const hexAddressSVG = await QRCode.toString(hexAddress, { type: 'svg', margin: 1, width: 160, color: { dark: '#FFFFFFFF', light: '#00000000' } });
+    const qtumAddressSVG = await QRCode.toString(qtumAddress, { type: 'svg', margin: 1, width: 150 });
+    const hexAddressSVG = await QRCode.toString(hexAddress, { type: 'svg', margin: 1, width: 150 });
     await snap.request({
       method: 'snap_updateInterface',
-      params: { id, ui: renderReceive({ qtumAddress, qtumAddressSVG, hexAddress, hexAddressSVG }) },
+      params: {
+        id, ui: renderReceive({
+          qtumAddress,
+          qtumAddressSVG,
+          hexAddress,
+          hexAddressSVG,
+          selected: 'qtum',
+        }), context: {
+          qtumAddress,
+          qtumAddressSVG,
+          hexAddress,
+          hexAddressSVG,
+          selected: 'qtum',
+        },
+      },
+    });
+    return;
+  }
+
+  if (event.type === UserInputEventType.InputChangeEvent && event.name === 'receive-type') {
+
+    const selected = event.value as 'qtum' | 'hex';
+    const data = context as {
+      qtumAddress: string;
+      qtumAddressSVG: string;
+      hexAddress: string;
+      hexAddressSVG: string;
+      selected: 'qtum' | 'hex';
+    };
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id, ui: renderReceive({ ...data, selected }), context: { ...data, selected } },
     });
     return;
   }

@@ -25,7 +25,7 @@ export const renderSwitchingNetwork = (network: string) => (
       <Image src={qtumIcon} alt="Qtum"/>
       <Text> </Text>
     </Box>
-    <Text alignment="center">Switching network to <Bold>{network}</Bold></Text>
+    <Text alignment="center">Switching network to {network}</Text>
     <Box direction="horizontal" alignment="space-between">
       <Text> </Text>
       <Spinner />
