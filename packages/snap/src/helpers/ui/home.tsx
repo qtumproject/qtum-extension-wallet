@@ -29,7 +29,7 @@ export const renderHome = () => (
       <Box>
         <Button name="create-wallet" variant="primary">Create a Wallet</Button>
         <Divider/>
-        <Button name="drive-internal-mnemonic">Drive from Internal Mnemonic</Button>
+        <Button name="drive-internal-mnemonic" disabled={true}>Drive from Internal Mnemonic</Button>
         <Divider/>
         <Button name="drive-external-mnemonic">Drive from External Mnemonic</Button>
         <Divider/>
@@ -48,7 +48,7 @@ export const renderDriveInternalMnemonic = (errorDerivationPath?: string) => (
         <Text>Derivation Path</Text>
         <Tooltip content={<Text size="sm">
           Specifies which key to derive under the m/44'/88' path.
-        </Text>}><Icon name="info" /></Tooltip>
+        </Text>}><Icon name="info"/></Tooltip>
       </Box>
       <Field error={errorDerivationPath}>
         <Input name="derivation-path" placeholder="/0'/0/0" value="0'/0/0"/>

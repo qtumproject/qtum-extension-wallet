@@ -4,6 +4,7 @@ import {
 } from '@metamask/key-tree';
 import { SLIP10Node } from '@metamask/key-tree';
 
+import { getProvider } from "@/config";
 import { StorageKeys } from '@/enums';
 import { genPkHexFromEntropy } from '@/helpers/entropy';
 import { relativePathToDeriveSegments } from '@/helpers/utils';
@@ -11,19 +12,32 @@ import { getQtumAddress } from '@/helpers/format';
 import { getNetworks } from "@/helpers/networks";
 import { snapStorage } from '@/rpc';
 
-export const importPrivateKey = async (privateKey: string): Promise<{ qtumAddress: string; hexAddress: string }> => {
+export const importPrivateKey = async (privateKey: string) => {
 
   let { list, current } = await getNetworks();
-  const wallet: QtumWallet = QtumWallet.fromPrivateKey(privateKey);
+  const wallet: QtumWallet = new QtumWallet(privateKey, await getProvider());
   await snapStorage.setItem(StorageKeys.identity, {
     privateKey: wallet.privateKey,
   });
-  const qtumAddress: string = await getQtumAddress(wallet.address, current);
+  const qtumAddress = await getQtumAddress(wallet.address, current);
+  await snapStorage.setItem(StorageKeys.Addresses, {
+    qtumAddress: qtumAddress,
+    hexAddress: wallet.address,
+  });
+  const balance = String(await wallet.getBalance());
   return {
     qtumAddress: qtumAddress,
     hexAddress: wallet.address,
+    balance: balance
   };
 };
+
+    // "snap_getBip32Entropy": [
+    //   {
+    //     "path": ["m", "44'", "88'"],
+    //     "curve": "secp256k1"
+    //   }
+    // ],
 
 export async function deriveFromInternalMnemonic(options: { derivationPath: string; }) {
   const { derivationPath } = options;
@@ -61,6 +75,6 @@ export async function deriveFromExternalMnemonic(options: {
   return await importPrivateKey(derivedNode.privateKey);
 }
 
-export const createWallet = async (): Promise<{ qtumAddress: string; hexAddress: string }> => {
+export const createWallet = async () => {
   return await importPrivateKey(await genPkHexFromEntropy());
 };

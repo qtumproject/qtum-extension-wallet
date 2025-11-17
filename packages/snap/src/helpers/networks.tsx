@@ -4,7 +4,7 @@ import { DialogType} from '@metamask/snaps-sdk';
 
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
 import { StorageKeys } from '@/enums';
-import { qtumIcon, snapDialog } from '@/helpers';
+import {getCurrentWallet, qtumIcon, snapDialog} from '@/helpers';
 import { snapStorage } from '@/rpc';
 import type { StorageMap } from '@/types/storage-types';
 
@@ -74,6 +74,10 @@ export const setCurrentNetwork = async (chainId: string, showDialog: boolean = t
   await snapStorage.setItem(StorageKeys.Networks, {
     ...storedNetworks,
     current: nextNetwork,
+  });
+  const { qtumAddress, hexAddress } = await getCurrentWallet(false);
+  await snapStorage.setItem(StorageKeys.Addresses, {
+    qtumAddress: qtumAddress ?? '', hexAddress: hexAddress ?? ''
   });
 
   if (showDialog) {

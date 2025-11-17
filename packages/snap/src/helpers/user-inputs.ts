@@ -1,5 +1,6 @@
 import { OnUserInputHandler, UserInputEventType } from '@metamask/snaps-sdk';
 import { sleep } from "@qtumproject/qtum-wallet-connector";
+import QRCode from 'qrcode';
 
 import { clearWallet, getWallet } from '@/config';
 import {
@@ -9,7 +10,7 @@ import {
   renderDriveExternalMnemonic,
   renderImportPrivateKey,
   errorSnapDialog,
-  renderSwitchingNetwork
+  renderSwitchingNetwork, renderReceive, getCurrentWallet, getCurrentNetworks
 } from '@/helpers/ui';
 import { getQtumAddress } from "@/helpers/format";
 import { getNetworks, setCurrentNetwork } from "@/helpers/networks";
@@ -19,6 +20,8 @@ import {
   deriveFromInternalMnemonic,
   importPrivateKey
 } from '@/helpers/wallet';
+import {snapStorage} from "@/rpc";
+import {StorageKeys} from "@/enums";
 
 export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
 
@@ -45,26 +48,25 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
       },
     });
     await setCurrentNetwork(chainId, false);
-    await sleep(1000);
     const wallet = await getWallet();
     const hexAddress = wallet.address;
     const qtumAddress = await getQtumAddress();
+    const balance = String(await wallet.getBalance());
     let { list, current } = await getNetworks();
     list = [
       current, ...list.filter((network) => String(network.chainId) !== String(current.chainId)),
     ];
     await snap.request({
       method: 'snap_updateInterface',
-      params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress }) },
+      params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress, balance }) },
     });
     return;
   }
 
   if (event.name === 'create-wallet') {
-    const { qtumAddress, hexAddress } = await createWallet();
     await snap.request({
       method: 'snap_updateInterface',
-      params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress }) },
+      params: { id, ui: renderDashboard({ list, current }, await createWallet()) },
     });
     return;
   }
@@ -93,6 +95,25 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     return;
   }
 
+  if (event.name === 'receive') {
+    const { qtumAddress, hexAddress } = (await snapStorage.getItem(StorageKeys.Addresses)) ?? { qtumAddress: '', hexAddress: '' };
+    const qtumAddressSVG = await QRCode.toString(qtumAddress, { type: 'svg', margin: 1, width: 160, color: { dark: '#FFFFFFFF', light: '#00000000' } });
+    const hexAddressSVG = await QRCode.toString(hexAddress, { type: 'svg', margin: 1, width: 160, color: { dark: '#FFFFFFFF', light: '#00000000' } });
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id, ui: renderReceive({ qtumAddress, qtumAddressSVG, hexAddress, hexAddressSVG }) },
+    });
+    return;
+  }
+
+  if (event.name === 'back-to-dashboard') {
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id, ui: renderDashboard(await getCurrentNetworks(), await getCurrentWallet()) },
+    });
+    return;
+  }
+
   if (event.name === 'submit-drive-internal-mnemonic') {
 
     const derivationPath = state?.['drive-internal-mnemonic-form']?.['derivation-path'];
@@ -106,12 +127,9 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     }
 
     try {
-      const { qtumAddress, hexAddress } = await deriveFromInternalMnemonic({
-        derivationPath,
-      });
       await snap.request({
         method: 'snap_updateInterface',
-        params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress }) },
+        params: { id, ui: renderDashboard({ list, current }, await deriveFromInternalMnemonic({derivationPath})) },
       });
     } catch (_) {
       await errorSnapDialog({ message: 'Something went wrong' });
@@ -140,12 +158,13 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     }
 
     try {
-      const { qtumAddress, hexAddress } = await deriveFromExternalMnemonic({
-        mnemonic, passphrase, derivationPath
-      });
       await snap.request({
         method: 'snap_updateInterface',
-        params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress }) },
+        params: { id, ui: renderDashboard(
+          { list, current }, await deriveFromExternalMnemonic({
+            mnemonic, passphrase, derivationPath
+          }))
+        },
       });
     } catch (_) {
       await errorSnapDialog({ message: 'Something went wrong' });
@@ -175,10 +194,9 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
     }
 
     try {
-      const { qtumAddress, hexAddress } = await importPrivateKey(privateKey);
       await snap.request({
         method: 'snap_updateInterface',
-        params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress }) },
+        params: { id, ui: renderDashboard({ list, current }, await importPrivateKey(privateKey)) },
       });
     } catch (_) {
       await errorSnapDialog({ message: 'Something went wrong' });
