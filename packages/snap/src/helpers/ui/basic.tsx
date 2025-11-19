@@ -1,6 +1,7 @@
-import { Bold, Box, Divider, Heading, Image, JSXElement, Spinner, Text } from "@metamask/snaps-sdk/jsx";
-import { DialogType } from "@metamask/snaps-sdk";
-import {qtumIcon} from "@/helpers";
+import { Box, Heading, Image, JSXElement, Spinner, Text } from '@metamask/snaps-sdk/jsx';
+import { DialogType } from '@metamask/snaps-sdk';
+
+import { qtumIcon } from '@/helpers';
 
 export const snapDialog = async (type: DialogType, content: JSXElement) => {
   return snap.request({ method: 'snap_dialog', params: { type, content } });
@@ -28,7 +29,7 @@ export const renderSwitchingNetwork = (network: string) => (
     <Text alignment="center">Switching network to {network}</Text>
     <Box direction="horizontal" alignment="space-between">
       <Text> </Text>
-      <Spinner />
+      <Spinner/>
       <Text> </Text>
     </Box>
   </Box>

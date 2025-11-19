@@ -1,5 +1,9 @@
-import { OnUserInputHandler, UserInputEventType } from '@metamask/snaps-sdk';
+import {BN} from "@distributedlab/tools";
+import {DialogType, OnUserInputHandler, UserInputEventType} from '@metamask/snaps-sdk';
 import QRCode from 'qrcode';
+import { Box, Heading, Text } from "@metamask/snaps-sdk/jsx";
+import {ethers} from "ethers";
+import {fromBase58Check} from "@qtumproject/qtum-wallet-connector";
 
 import { clearWallet, getWallet } from '@/config';
 import {
@@ -9,9 +13,9 @@ import {
   renderDriveExternalMnemonic,
   renderImportPrivateKey,
   errorSnapDialog,
-  renderSwitchingNetwork, renderReceive, getCurrentWallet, getCurrentNetworks
+  renderSwitchingNetwork, renderReceive, getCurrentWallet, getCurrentNetworks, renderSend, SendParams, snapDialog
 } from '@/helpers/ui';
-import { getQtumAddress } from '@/helpers/format';
+import {formatBalance, getQtumAddress} from '@/helpers/format';
 import { getNetworks, setCurrentNetwork } from '@/helpers/networks';
 import {
   createWallet,
@@ -92,6 +96,85 @@ export const onUserInput: OnUserInputHandler = async ({ id, event, context }) =>
       params: { id, ui: renderImportPrivateKey() },
     });
     return;
+  }
+
+  if (event.name === 'send-native' || event.name?.startsWith('send-qrc20')) {
+    let params: SendParams;
+    if (event.name === 'send-native') {
+      const wallet = await getWallet();
+      const balance = String(await wallet.getBalance());
+      params = { symbol: 'QTUM', balance: formatBalance(balance, 18), isQRC20: false };
+    } else {
+      const token = event.name.replace('send-qrc20-', '');
+      params = { symbol: 'QTUM', balance: '12.001', isQRC20: true };
+    }
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id, ui: renderSend(params), context: params },
+    });
+    return;
+  }
+
+  if (event.type === UserInputEventType.InputChangeEvent && event.name === 'isQRC20') {
+    const sendContext = context as SendParams;
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: {
+        id,
+        ui: renderSend({ symbol: sendContext.symbol, isQRC20: Boolean(event.value), balance: sendContext.balance }),
+        context: { ...sendContext, isQRC20: Boolean(event.value) }
+      },
+    });
+    return;
+  }
+
+  if (event.name === 'send') {
+
+    const token = state?.['send-form']?.['token'];
+    let recipient = state?.['send-form']?.['recipient'];
+    const amount = state?.['send-form']?.['amount'];
+    const sendContext = context as SendParams;
+
+    if (!recipient) {
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: {
+          id, ui: renderSend(sendContext, { recipient: 'Recipient is required' }), context: sendContext
+        },
+      });
+      return;
+    } else if (!amount) {
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: {
+          id, ui: renderSend(sendContext, { amount: 'Amount is required' }), context: sendContext
+        },
+      });
+      return;
+    }
+
+    if (sendContext.isQRC20) {
+      return;
+    } else {
+      if (!ethers.utils.isAddress(recipient)) {
+        recipient = fromBase58Check(recipient);
+      }
+      const amountBN = BN.fromRaw(amount, Number(8));
+      const wallet = await getWallet();
+      const result = await wallet.sendTransaction({
+        to: recipient,
+        value: ethers.BigNumber.from(amountBN.value).toHexString(),
+      });
+      return await snapDialog(DialogType.Alert, (
+        <Box>
+          <Heading>{ result ? 'Success' : 'Error' }</Heading>
+          <Text>Transaction is { result ? 'done' : 'failed' }</Text>
+          {result && (
+            <Text>Hash: {result.hash}</Text>
+          )}
+        </Box>
+      ));
+    }
   }
 
   if (event.name === 'receive') {
