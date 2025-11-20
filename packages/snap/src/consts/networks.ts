@@ -3,7 +3,7 @@ import type { Chain } from '@qtumproject/qtum-wallet-connector';
 export const DEFAULT_NETWORKS_RPC_URLS: Chain[] = [
   {
     chainId: '8889',
-    chainName: 'Qtum Testnet',
+    chainName: 'Testnet',
     rpcUrls: [
       'https://testnet.qnode.qtum.info/v1/aPaVeuBrYtFZ6oyKQZlNqSUSjrHjCy5v26IYX',
     ],
@@ -13,11 +13,11 @@ export const DEFAULT_NETWORKS_RPC_URLS: Chain[] = [
       symbol: 'TQtum',
       decimals: 8,
     },
-    blockExplorerUrls: ['http://testnet.qtum.info/'],
+    blockExplorerUrls: ['https://testnet.qtum.info/'],
   },
   {
     chainId: '81',
-    chainName: 'Qtum Mainnet',
+    chainName: 'Mainnet',
     rpcUrls: [
       'https://mainnet.qnode.qtum.info/v1/aPaVeuBrYtFZ6oyKQZlNqSUSjrHjCy5v26IYX',
     ],
