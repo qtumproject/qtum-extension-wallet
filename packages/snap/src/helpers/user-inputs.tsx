@@ -1,9 +1,8 @@
-import {BN} from "@distributedlab/tools";
-import {DialogType, OnUserInputHandler, UserInputEventType} from '@metamask/snaps-sdk';
+import { DialogType, OnUserInputHandler, UserInputEventType } from '@metamask/snaps-sdk';
+import { Box, Heading, Text } from '@metamask/snaps-sdk/jsx';
+import { fromBase58Check } from '@qtumproject/qtum-wallet-connector';
+import { ethers } from 'ethers';
 import QRCode from 'qrcode';
-import { Box, Heading, Text } from "@metamask/snaps-sdk/jsx";
-import {ethers} from "ethers";
-import {fromBase58Check} from "@qtumproject/qtum-wallet-connector";
 
 import { clearWallet, getWallet } from '@/config';
 import {
@@ -13,10 +12,18 @@ import {
   renderDriveExternalMnemonic,
   renderImportPrivateKey,
   errorSnapDialog,
-  renderSwitchingNetwork, renderReceive, getCurrentWallet, getCurrentNetworks, renderSend, SendParams, snapDialog
+  renderSwitchingNetwork,
+  renderReceive,
+  getCurrentWallet,
+  getCurrentNetworks,
+  renderSend,
+  SendParams,
+  snapDialog,
+  renderSendTransaction
 } from '@/helpers/ui';
 import {formatBalance, getQtumAddress} from '@/helpers/format';
 import { getNetworks, setCurrentNetwork } from '@/helpers/networks';
+import { sendNative, sendQRC20, SendResponse } from "@/helpers/send";
 import {
   createWallet,
   deriveFromExternalMnemonic,
@@ -130,6 +137,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event, context }) =>
 
   if (event.name === 'send') {
 
+    const wallet = await getWallet();
     const token = state?.['send-form']?.['token'];
     let recipient = state?.['send-form']?.['recipient'];
     const amount = state?.['send-form']?.['amount'];
@@ -155,25 +163,38 @@ export const onUserInput: OnUserInputHandler = async ({ id, event, context }) =>
 
     if (sendContext.isQRC20) {
       return;
+      // const result = await sendQRC20(
+      //   token, recipient, amount, 6, wallet, current
+      // );
+      // return await snapDialog(DialogType.Alert, (
+      //   <Box>
+      //     <Heading>{ result ? 'Success' : 'Error' }</Heading>
+      //     <Text>Transaction is { result ? 'done' : 'failed' }</Text>
+      //     {result && (
+      //       <Text>Hash: {result.hash}</Text>
+      //     )}
+      //   </Box>
+      // ));
     } else {
-      if (!ethers.utils.isAddress(recipient)) {
-        recipient = fromBase58Check(recipient);
-      }
-      const amountBN = BN.fromRaw(amount, Number(8));
-      const wallet = await getWallet();
-      const result = await wallet.sendTransaction({
-        to: recipient,
-        value: ethers.BigNumber.from(amountBN.value).toHexString(),
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: {
+          id, ui: renderSendTransaction('Qtum', 'QTUM', recipient, amount)
+        },
       });
-      return await snapDialog(DialogType.Alert, (
-        <Box>
-          <Heading>{ result ? 'Success' : 'Error' }</Heading>
-          <Text>Transaction is { result ? 'done' : 'failed' }</Text>
-          {result && (
-            <Text>Hash: {result.hash}</Text>
-          )}
-        </Box>
-      ));
+      const to: string = ethers.utils.isAddress(recipient) ? recipient : fromBase58Check(recipient);
+      const response: SendResponse = await sendNative(
+        to, amount, 8, wallet, current
+      );
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: {
+          id, ui: renderSendTransaction(
+            'Qtum', 'QTUM', recipient, amount, response
+          )
+        },
+      });
+      return ;
     }
   }
 

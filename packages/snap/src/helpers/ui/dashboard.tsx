@@ -53,7 +53,7 @@ export const renderSend = (params: SendParams, errors?: SendErrors) => (
               </Text>}><Icon name="info" /></Tooltip>
             </Box>
             <Field>
-              <Input name="token-address"/>
+              <Input name="token"/>
             </Field>
           </Box>
         )}
