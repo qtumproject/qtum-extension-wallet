@@ -19,11 +19,12 @@ import {
   renderSend,
   SendParams,
   snapDialog,
-  renderSendTransaction
+  renderSendTransaction,
+  renderAddQRC20, AddQRC20
 } from '@/helpers/ui';
 import {formatBalance, getQtumAddress} from '@/helpers/format';
 import { getNetworks, setCurrentNetwork } from '@/helpers/networks';
-import { sendNative, sendQRC20, SendResponse } from "@/helpers/send";
+import {getQRC20, sendNative, sendQRC20, SendResponse} from "@/helpers/send";
 import {
   createWallet,
   deriveFromExternalMnemonic,
@@ -32,6 +33,7 @@ import {
 } from '@/helpers/wallet';
 import { snapStorage } from '@/rpc';
 import { StorageKeys } from '@/enums';
+import {addQrc20Token, getQRC20Tokens} from "@/storage/qrc20";
 
 export const onUserInput: OnUserInputHandler = async ({ id, event, context }) => {
 
@@ -68,7 +70,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event, context }) =>
     ];
     await snap.request({
       method: 'snap_updateInterface',
-      params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress, balance }) },
+      params: { id, ui: renderDashboard({ list, current }, { qtumAddress, hexAddress, balance }, await getQRC20Tokens()) },
     });
     return;
   }
@@ -76,7 +78,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event, context }) =>
   if (event.name === 'create-wallet') {
     await snap.request({
       method: 'snap_updateInterface',
-      params: { id, ui: renderDashboard({ list, current }, await createWallet()) },
+      params: { id, ui: renderDashboard({ list, current }, await createWallet(), await getQRC20Tokens()) },
     });
     return;
   }
@@ -240,10 +242,60 @@ export const onUserInput: OnUserInputHandler = async ({ id, event, context }) =>
     return;
   }
 
+  if (event.name === 'qrc20') {
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id, ui: renderAddQRC20() },
+    });
+    return;
+  }
+
+  if (event.name === 'search-qrc20') {
+
+    const wallet = await getWallet();
+    const token = state?.['qrc20-form']?.['contract-address'];
+
+    if (!token) {
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: {
+          id, ui: renderAddQRC20(undefined, 'Contract address is required')
+        },
+      });
+      return;
+    }
+    const qrc20 = await getQRC20(token, wallet);
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: {
+        id,
+        ui: renderAddQRC20(qrc20, qrc20 ? undefined : 'This is not a valid QRC20 contract address'),
+        context: { contractAddress: token }
+      },
+    });
+    return;
+  }
+
+  if (event.name === 'add-qrc20') {
+    const contractAddress = context?.contractAddress as string;
+    await addQrc20Token({
+      contractAddress, chainId: current.chainId
+    });
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id, ui: renderDashboard(
+        await getCurrentNetworks(), await getCurrentWallet(), await getQRC20Tokens()
+        ) },
+    });
+    return;
+  }
+
   if (event.name === 'back-to-dashboard') {
     await snap.request({
       method: 'snap_updateInterface',
-      params: { id, ui: renderDashboard(await getCurrentNetworks(), await getCurrentWallet()) },
+      params: { id, ui: renderDashboard(
+        await getCurrentNetworks(), await getCurrentWallet(), await getQRC20Tokens()
+        ) },
     });
     return;
   }
@@ -263,7 +315,9 @@ export const onUserInput: OnUserInputHandler = async ({ id, event, context }) =>
     try {
       await snap.request({
         method: 'snap_updateInterface',
-        params: { id, ui: renderDashboard({ list, current }, await deriveFromInternalMnemonic({derivationPath})) },
+        params: { id, ui: renderDashboard(
+          { list, current }, await deriveFromInternalMnemonic({derivationPath}), await getQRC20Tokens()
+          ) },
       });
     } catch (_) {
       await errorSnapDialog({ message: 'Something went wrong' });
@@ -297,7 +351,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event, context }) =>
         params: { id, ui: renderDashboard(
           { list, current }, await deriveFromExternalMnemonic({
             mnemonic, passphrase, derivationPath
-          }))
+          }), await getQRC20Tokens())
         },
       });
     } catch (_) {
@@ -330,7 +384,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event, context }) =>
     try {
       await snap.request({
         method: 'snap_updateInterface',
-        params: { id, ui: renderDashboard({ list, current }, await importPrivateKey(privateKey)) },
+        params: { id, ui: renderDashboard({ list, current }, await importPrivateKey(privateKey), await getQRC20Tokens()) },
       });
     } catch (_) {
       await errorSnapDialog({ message: 'Something went wrong' });

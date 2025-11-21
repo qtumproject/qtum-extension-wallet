@@ -20,7 +20,8 @@ import {
 import { Chain } from '@qtumproject/qtum-wallet-connector';
 
 import { formatBalance } from '@/helpers/format';
-import { qtumIcon, minusIcon, plusIcon } from "@/helpers";
+import { minusIcon, plusIcon, Gap } from "@/helpers";
+import {Qrc20Token} from "@/types/storage-types";
 
 export type SendParams = {
   symbol: string;
@@ -32,6 +33,61 @@ type SendErrors = {
   recipient?: string;
   amount?: string;
 }
+
+export type AddQRC20 = {
+  name: string;
+  symbol: string;
+  decimals: number;
+}
+
+export type QRC20Tokens = {
+  contractAddress?: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  balance: string;
+  chainId: number;
+}
+
+export const renderAddQRC20 = (params?: AddQRC20, errorContractAddress?: string) => (
+  <Container>
+    <Box>
+      <Heading>Add QRC20</Heading>
+      <Divider/>
+      <Form name="qrc20-form">
+        <Box direction="horizontal">
+          <Text>Contract Address</Text>
+          <Tooltip content={<Text size="sm">
+            Make sure QRC20 contract address
+          </Text>}><Icon name="info" /></Tooltip>
+        </Box>
+        <Field error={errorContractAddress}>
+          <Input name="contract-address" disabled={!!params}/>
+        </Field>
+      </Form>
+      {!!params && (
+        <Box>
+          <Divider/>
+          <Text>Name</Text>
+          <Section><Text color="muted">{params?.name}</Text></Section>
+          <Text>Symbol</Text>
+          <Section><Text color="muted">{params?.symbol}</Text></Section>
+          <Text>Decimals</Text>
+          <Section><Text color="muted">{String(params?.decimals)}</Text></Section>
+        </Box>
+      )}
+      <Divider/>
+      <Section>
+        <Button name={!!params ? 'add-qrc20' : 'search-qrc20'} type="submit" form="qrc20-form">
+          {!!params ? 'Add' : 'Search'}
+        </Button>
+        <Divider/>
+        <Button name="back-to-dashboard" variant="destructive">Back</Button>
+      </Section>
+      <Text size="sm" alignment="center" color="muted">Powered by qtum.org</Text>
+    </Box>
+  </Container>
+);
 
 export const renderSend = (params: SendParams, errors?: SendErrors) => (
   <Container>
@@ -91,13 +147,12 @@ export const renderSend = (params: SendParams, errors?: SendErrors) => (
 );
 
 export const renderReceive = (params: {
-    qtumAddress: string;
-    qtumAddressSVG: string;
-    hexAddress: string;
-    hexAddressSVG: string;
-    selected: 'qtum' | 'hex';
-  },
-) => (
+  qtumAddress: string;
+  qtumAddressSVG: string;
+  hexAddress: string;
+  hexAddressSVG: string;
+  selected: 'qtum' | 'hex';
+}) => (
   <Container>
     <Box>
       <Box direction="horizontal" crossAlignment="center" alignment="space-between">
@@ -146,6 +201,7 @@ export const renderReceive = (params: {
 export const renderDashboard = (
   networks: { list: Chain[]; current: Chain },
   params: { qtumAddress?: string; hexAddress?: string; balance?: string },
+  tokens: QRC20Tokens[] = []
 ) => (
   <Container>
     <Box>
@@ -172,23 +228,29 @@ export const renderDashboard = (
       <Section>
         <Box direction="horizontal" alignment="space-between">
           <Heading>QRC20</Heading>
-          <Button variant="primary" children={<Image src={plusIcon}/>}></Button>
+          <Button name="qrc20" variant="primary" children={<Image src={plusIcon}/>}></Button>
         </Box>
       </Section>
-      <Section>
-        <Box direction="horizontal" crossAlignment="center" alignment="space-between">
-          <Text>4.1 USDT</Text>
-          <Box direction="horizontal" crossAlignment="center" alignment="space-between">
-            <Button name="delete-qrc20-000" children={<Image src={minusIcon}/>}></Button>
-          </Box>
-        </Box>
-        <Box direction="horizontal" crossAlignment="center" alignment="space-between">
-          <Text>567.89 USDC</Text>
-          <Box direction="horizontal" crossAlignment="center" alignment="space-between">
-            <Button name="delete-qrc20-001" children={<Image src={minusIcon}/>}></Button>
-          </Box>
-        </Box>
-      </Section>
+      <Box>
+        {tokens.length === 0 ? (
+          <Text alignment="center" color="muted" size="sm">No QRC20 tokens</Text>
+        ) : (
+          tokens.map((token) => (
+            <Box direction="horizontal" crossAlignment="center" alignment="space-between">
+              <Box direction="horizontal">
+                <Gap space={2}/>
+                <Text>{formatBalance(token.balance, token.decimals)} {token.symbol}</Text>
+              </Box>
+              <Box direction="horizontal">
+                <Box direction="horizontal" crossAlignment="center" alignment="space-between">
+                  <Button name={`delete-qrc20-${token.contractAddress}`} children={<Image src={minusIcon}/>}></Button>
+                </Box>
+                <Gap space={2}/>
+              </Box>
+            </Box>
+          ))
+        )}
+      </Box>
       <Divider/>
       <Section>
         <Button name="export-private-key">Export Private Key</Button>

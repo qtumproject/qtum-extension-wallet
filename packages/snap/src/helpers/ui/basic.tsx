@@ -3,10 +3,8 @@ import {
 } from '@metamask/snaps-sdk/jsx';
 import { DialogType } from '@metamask/snaps-sdk';
 
-import { qtumIcon } from '@/helpers';
+import { Gap, qtumIcon } from '@/helpers';
 import { SendResponse } from "@/helpers/send";
-
-export const Gap = (): JSXElement => <Text>{' '}</Text>;
 
 export const snapDialog = async (type: DialogType, content: JSXElement) => {
   return snap.request({ method: 'snap_dialog', params: { type, content } });
@@ -29,7 +27,9 @@ export const renderSwitchingNetwork = (network: string) => (
     <Box direction="horizontal" alignment="space-between">
       <Gap/><Image src={qtumIcon} alt="Qtum"/><Gap/>
     </Box>
-    <Text alignment="center">Switching network to {network}</Text>
+    <Gap/>
+    <Text alignment="center">Switching network <Icon name="arrow-2-right"/> {network}</Text>
+    <Gap/>
     <Box direction="horizontal" alignment="space-between">
       <Gap/><Spinner/><Gap/>
     </Box>

@@ -1,10 +1,10 @@
-import { Box, Divider, Text, Image } from '@metamask/snaps-sdk/jsx';
+import { Box, Divider, Text, Image, Icon } from '@metamask/snaps-sdk/jsx';
 import type { Chain } from '@qtumproject/qtum-wallet-connector';
 import { DialogType} from '@metamask/snaps-sdk';
 
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
 import { StorageKeys } from '@/enums';
-import {getCurrentWallet, qtumIcon, snapDialog} from '@/helpers';
+import { getCurrentWallet, qtumIcon, snapDialog } from '@/helpers';
 import { snapStorage } from '@/rpc';
 import type { StorageMap } from '@/types/storage-types';
 
@@ -61,7 +61,7 @@ export const setCurrentNetwork = async (chainId: string, showDialog: boolean = t
         <Divider />
         <Box>
           <Text alignment="center">{storedNetworks.current.chainName}</Text>
-          <Text alignment="center" fontWeight="bold">{' ↓ '}</Text>
+          <Text alignment="center" color={<Icon name="arrow-2-down"/>}></Text>
           <Text alignment="center">{nextNetwork.chainName}</Text>
         </Box>
       </Box>
@@ -97,6 +97,11 @@ export const setCurrentNetwork = async (chainId: string, showDialog: boolean = t
       </Box>
     ));
   }
+};
+
+export const getCurrentChainId = async (): Promise<string> => {
+  const { current } = await getNetworks();
+  return String(current.chainId);
 };
 
 export const addNetwork = async (newChain: Chain) => {

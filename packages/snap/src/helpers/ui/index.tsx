@@ -4,12 +4,16 @@ import { QtumWallet } from "qtum-ethers-wrapper";
 import { getWallet } from "@/config";
 import {getNetworks, renderDashboard, renderHome} from "@/helpers";
 import { getQtumAddress } from "@/helpers/format";
+import {JSXElement, Text} from "@metamask/snaps-sdk/jsx";
+import {getQRC20Tokens} from "@/storage/qrc20";
 
 export * from './basic';
 export * from './dashboard';
 export * from './home';
 export * from './tx';
 export * from './wallet-creation';
+
+export const Gap = (space: number = 1): JSXElement => <Text>{'\u00A0'.repeat(space)}</Text>;
 
 export const getSnapDialog = async (type: DialogType, content: Component[]) => {
   return snap.request({
@@ -52,7 +56,11 @@ export const onHomePage: OnHomePageHandler = async () => {
   const id = await snap.request({
     method: 'snap_createInterface',
     params: {
-      ui: hexAddress ? renderDashboard(await getCurrentNetworks(), { qtumAddress, hexAddress, balance }) : renderHome(),
+      ui: hexAddress ? renderDashboard(
+        await getCurrentNetworks(),
+        { qtumAddress, hexAddress, balance },
+        await getQRC20Tokens()
+      ) : renderHome(),
     },
   });
   return { id };

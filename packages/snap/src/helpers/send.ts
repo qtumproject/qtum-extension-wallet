@@ -65,6 +65,35 @@ export const sendNative = async (
   }
 }
 
+export const getQRC20 = async (token: string, wallet: QtumWallet) => {
+  try {
+    const { contractInstance } = createErc20(token, wallet);
+    const [name, symbol, decimals] = await Promise.all([
+      contractInstance.name(),
+      contractInstance.symbol(),
+      contractInstance.decimals(),
+    ]);
+    return { name, symbol, decimals };
+  } catch (_) {
+    return undefined;
+  }
+}
+
+export const getQRC20WithBalance = async (token: string, address: string, wallet: QtumWallet) => {
+  try {
+    const { contractInstance } = createErc20(token, wallet);
+    const [balance, symbol, name, decimals] = await Promise.all([
+      contractInstance.balanceOf(address),
+      contractInstance.symbol(),
+      contractInstance.name(),
+      contractInstance.decimals(),
+    ])
+    return { balance, name, symbol, decimals };
+  } catch (_) {
+    return undefined;
+  }
+}
+
 export const sendQRC20 = async (
   token: string, recipient: string, amount: any, decimals: number, wallet: QtumWallet, network: Chain
 ) => {
