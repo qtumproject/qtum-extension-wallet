@@ -6,10 +6,6 @@ export type StorageMap = {
   [StorageKeys.identity]: {
     privateKey: string;
   };
-  [StorageKeys.Addresses]: {
-    qtumAddress: string;
-    hexAddress: string;
-  };
   [StorageKeys.Networks]: {
     current: Chain;
     list: Chain[];
