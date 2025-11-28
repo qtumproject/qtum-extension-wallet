@@ -1,5 +1,5 @@
 import { BN, BnConfigLike, BnFormatConfig, BnLike, time, TimeDate } from '@distributedlab/tools';
-import { Chain, toBase58Check } from '@qtumproject/qtum-wallet-connector';
+import { toBase58Check } from '@qtumproject/qtum-wallet-connector';
 import type { BigNumberish } from 'ethers';
 import { ethers } from 'ethers';
 
@@ -16,11 +16,9 @@ export function formatUnits(
     .toString();
 }
 
-export async function getQtumAddress(hexAddress?: string, chain?: Chain) {
-  let address = hexAddress;
-  let chainId = Number(
-    chain?.chainId ?? DEFAULT_NETWORKS_RPC_URLS[0].chainId
-  );
+export async function getQtumAddress(hexadecimalAddress?: string, chainId?: number | string) {
+  let address = hexadecimalAddress;
+  chainId = Number(chainId ?? DEFAULT_NETWORKS_RPC_URLS[0].chainId);
 
   if (!address) {
     const wallet = await getWallet();
