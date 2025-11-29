@@ -2,18 +2,24 @@ import { Component, DialogType, OnHomePageHandler, panel } from "@metamask/snaps
 import { QtumWallet } from "qtum-ethers-wrapper";
 
 import { getWallet } from "@/config";
-import {getNetworks, renderDashboard, renderHome} from "@/helpers";
+import {getNetworks, NATIVE_TOKEN, renderDashboard, renderHome} from "@/helpers";
 import { getQtumAddress } from "@/helpers/format";
 import {JSXElement, Text} from "@metamask/snaps-sdk/jsx";
-import {getQRC20Tokens} from "@/storage/qrc20";
+import {DashboardType} from "@/types";
+import {getTokensWithBalance} from "@/helpers/qrc20";
+import {getTokens} from "@/storage";
 
 export * from './basic';
 export * from './dashboard';
 export * from './home';
+export * from './network';
+export * from './qrc20';
+export * from './receive';
+export * from './send';
 export * from './tx';
 export * from './wallet-creation';
 
-export const Gap = (space: number = 1): JSXElement => <Text>{'\u00A0'.repeat(space)}</Text>;
+export const Gap = (space: number = 1): JSXElement => <Text>{' '.repeat(space)}</Text>;
 
 export const getSnapDialog = async (type: DialogType, content: Component[]) => {
   return snap.request({
@@ -26,21 +32,11 @@ export const getSnapDialog = async (type: DialogType, content: Component[]) => {
 };
 
 export const getCurrentWallet = async (withBalance: boolean = true) => {
-  let wallet: QtumWallet;
-  let hexAddress: string | undefined;
-  let qtumAddress: string | undefined;
-  let balance: string | undefined;
-
-  try {
-    wallet = await getWallet();
-    hexAddress = wallet.address;
-    qtumAddress = await getQtumAddress();
-    if (withBalance) {
-      balance = String(await wallet.getBalance());
-    }
-  } catch (_) { }
-
-  return { qtumAddress, hexAddress, balance };
+  const wallet = await getWallet();
+  const hexAddress = wallet.address;
+  const qtumAddress = await getQtumAddress();
+  const balance = String(await wallet.getBalance());
+  return { qtumAddress, hexAddress, balance, wallet };
 };
 
 export const getCurrentNetworks = async () => {
@@ -52,16 +48,43 @@ export const getCurrentNetworks = async () => {
 };
 
 export const onHomePage: OnHomePageHandler = async () => {
-  const { qtumAddress, hexAddress, balance } = await getCurrentWallet();
-  const id = await snap.request({
-    method: 'snap_createInterface',
-    params: {
-      ui: hexAddress ? renderDashboard(
-        await getCurrentNetworks(),
-        { qtumAddress, hexAddress, balance },
-        await getQRC20Tokens()
-      ) : renderHome(),
-    },
-  });
-  return { id };
+
+  try {
+    const networks = await getCurrentNetworks();
+    let tokens = await getTokens(networks.current.chainId);
+    const wallet = await getWallet();
+    const hexadecimalAddress = wallet.address;
+    const qtumAddress = await getQtumAddress(
+      hexadecimalAddress, networks.current.chainId
+    ) ;
+    const balance = String(await wallet.getBalance());
+    tokens = await getTokensWithBalance(tokens, wallet);
+    const data: DashboardType = {
+      networks: networks,
+      address: {
+        qtum: qtumAddress,
+        hexadecimal: hexadecimalAddress
+      },
+      native: {
+        ...NATIVE_TOKEN,
+        balance,
+        chainId: networks.current.chainId
+      },
+      tokens,
+      tokensPage: 1
+    };
+    const id = await snap.request({
+      method: 'snap_createInterface',
+      params: { ui: renderDashboard(data, tokens), context: data },
+    });
+    return { id };
+  } catch (_) {
+    const id = await snap.request({
+      method: 'snap_createInterface',
+      params: {
+        ui: renderHome(),
+      },
+    });
+    return { id };
+  }
 };

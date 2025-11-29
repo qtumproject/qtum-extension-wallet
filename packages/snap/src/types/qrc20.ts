@@ -1,8 +1,6 @@
 import type { Provider } from '@ethersproject/providers';
 import { Signer } from 'ethers';
 
-import { DashboardType } from '@/types/dashboard';
-
 export type AbstractFactoryClassType = {
   connect: (address: string, signerOrProvider: Signer | Provider) => unknown;
   createInterface: () => unknown;
@@ -13,30 +11,16 @@ export type AbstractFactoryClassReturnType<F extends AbstractFactoryClassType> =
   contractInterface: ReturnType<F['createInterface']>;
 }
 
-export type QRC20StorageType = {
-  contractAddress: string;
-  chainId: string;
-};
-
-export type AddQRC20TokenType = {
-  contractAddress: string;
-  dashboardData: DashboardType;
-}
-
-export type SearchQRC20TokenType = {
+export type NativeType = {
   name: string;
   symbol: string;
   decimals: number;
-}
-
-export type NativeTokenType = {
-  name: string;
-  symbol: string;
-  decimals: number;
-  balance: string;
+  balance: string | null;
   chainId: string;
 }
 
-export type QRC20TokenType = NativeTokenType & {
+export type TokenType = NativeType & {
   contractAddress: string;
 };
+
+export type QRC20Type = Record<string, TokenType[]>;

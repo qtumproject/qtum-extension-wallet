@@ -1,45 +1,43 @@
-import { StorageKeys } from '@/enums';
-import { getCurrentChainId } from '@/helpers';
+import { sleep } from '@qtumproject/qtum-wallet-connector';
+
+import { StorageEnum } from '@/enums';
 import { snapStorage } from '@/rpc';
-import type { QRC20StorageType } from '@/types';
+import type { QRC20Type, TokenType } from '@/types';
 
-export const getQRC20TokensForCurrentNetwork = async (): Promise<QRC20StorageType[]> => {
-  const chainId = await getCurrentChainId();
-  const state = (await snapStorage.getItem(StorageKeys.qrc20Tokens)) as Record<string, QRC20StorageType[]> | null;
-  return state ? (state[chainId] ?? []) : [];
-};
-
-const saveQRC20TokensForCurrentNetwork = async (tokens: QRC20StorageType[]): Promise<void> => {
-  const chainId = await getCurrentChainId();
-  const state = ((await snapStorage.getItem(StorageKeys.qrc20Tokens)) as Record<string, QRC20StorageType[]> | null) ?? { };
-  state[chainId] = tokens;
-  await snapStorage.setItem(StorageKeys.qrc20Tokens, state);
-};
-
-export const addQRC20Token = async (token: QRC20StorageType): Promise<QRC20StorageType[]> => {
-  const tokens = await getQRC20TokensForCurrentNetwork();
-  const withoutDup = tokens.filter((t) => t.contractAddress !== token.contractAddress);
-  const updated = [...tokens, token];
-  await saveQRC20TokensForCurrentNetwork(updated);
-  return updated;
-};
-
-export const getQRC20Token = async (contractAddress: string,): Promise<QRC20StorageType> => {
-  const tokens = await getQRC20TokensForCurrentNetwork();
-  const token = tokens.find(
-    (token) => token.contractAddress.toLowerCase() === contractAddress.toLowerCase()
+export const addToken = async (chainId: string, token: TokenType): Promise<TokenType[]> => {
+  const tokens = await getTokens(chainId);
+  const withoutDuplication = tokens.filter(
+    (qrc20: TokenType): boolean => qrc20.contractAddress !== token.contractAddress
   );
+  const updatedTokens = [...withoutDuplication, token];
+  await saveTokens(updatedTokens, chainId);
+  return updatedTokens;
+};
+
+export const getTokens = async (chainId: string): Promise<TokenType[]> => {
+  const qrc20 = (await snapStorage.getItem(StorageEnum.QRC20)) as QRC20Type | null;
+  return qrc20 ? (qrc20[chainId] ?? []) : [];
+};
+
+export const getToken = async (contractAddress: string, chainId: string): Promise<TokenType> => {
+  const tokens = await getTokens(chainId);
+  const token = tokens.find((qrc20) => qrc20.contractAddress === contractAddress);
   if (!token) {
     throw new Error('Token not found');
   }
   return token;
 };
 
-export const deleteQRC20Token = async (contractAddress: string): Promise<QRC20StorageType[]> => {
-  const tokens = await getQRC20TokensForCurrentNetwork();
-  const updated = tokens.filter(
-    (token) => token.contractAddress.toLowerCase() !== contractAddress.toLowerCase()
-  );
-  await saveQRC20TokensForCurrentNetwork(updated);
+export const saveTokens = async (tokens: TokenType[], chainId: string): Promise<void> => {
+  const qrc20 = ((await snapStorage.getItem(StorageEnum.QRC20)) as QRC20Type | null) ?? { };
+  qrc20[chainId] = tokens;
+  await snapStorage.setItem(StorageEnum.QRC20, qrc20);
+  await sleep(500);
+};
+
+export const deleteToken = async (contractAddress: string, chainId: string): Promise<TokenType[]> => {
+  const tokens = await getTokens(chainId);
+  const updated = tokens.filter((token) => token.contractAddress !== contractAddress);
+  await saveTokens(updated, chainId);
   return updated;
 };
