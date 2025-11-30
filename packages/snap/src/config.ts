@@ -1,7 +1,7 @@
 import { QtumProvider, QtumWallet } from 'qtum-ethers-wrapper';
 import { Json } from "@metamask/snaps-sdk";
 
-import { StorageKeys } from '@/enums';
+import { StorageEnum } from '@/enums';
 import { networks } from '@/helpers';
 import { snapStorage } from '@/rpc';
 
@@ -11,7 +11,7 @@ export const getProvider = async () => {
 };
 
 export const getWallet = async () => {
-  const identityStorage = await snapStorage.getItem(StorageKeys.identity);
+  const identityStorage = await snapStorage.getItem(StorageEnum.Identity);
 
   if (!identityStorage?.privateKey) {
     throw new Error('Wallet not created');
@@ -25,18 +25,18 @@ export const clearWallet = async (): Promise<void> => {
     | undefined;
 
   if (typeof maybeRemove === 'function') {
-    await maybeRemove(StorageKeys.identity);
+    await maybeRemove(StorageEnum.Identity);
   } else {
     // @ts-ignore
-    await snapStorage.setItem(StorageKeys.identity, null);
+    await snapStorage.setItem(StorageEnum.Identity, null);
     try {
       const state = (await snap.request({
         method: 'snap_manageState',
         params: { operation: 'get' },
       })) as Record<string, Json> | null;
 
-      if (state && StorageKeys.identity in state) {
-        delete state[StorageKeys.identity];
+      if (state && StorageEnum.Identity in state) {
+        delete state[StorageEnum.Identity];
         await snap.request({
           method: 'snap_manageState',
           params: { operation: 'update', newState: state },

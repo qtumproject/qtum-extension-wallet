@@ -26,7 +26,7 @@ import { QtumWallet } from 'qtum-ethers-wrapper';
 
 import { getProvider, getWallet } from '@/config';
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
-import { StorageKeys } from '@/enums';
+import { StorageEnum } from '@/enums';
 import {
   buildTxUi,
   genPkHexFromEntropy,
@@ -65,7 +65,7 @@ export const onRpcRequest = async ({
 
       await showWalletCreatedSnapDialog(wallet.address, qtumAddress);
 
-      await snapStorage.setItem(StorageKeys.identity, {
+      await snapStorage.setItem(StorageEnum.Identity, {
         privateKey: wallet.privateKey,
       });
 
@@ -97,7 +97,7 @@ export const onRpcRequest = async ({
 
       await showWalletCreatedSnapDialog(wallet.address, qtumAddress);
 
-      await snapStorage.setItem(StorageKeys.identity, {
+      await snapStorage.setItem(StorageEnum.Identity, {
         privateKey: wallet.privateKey,
       });
 
@@ -122,7 +122,7 @@ export const onRpcRequest = async ({
 
       await showWalletCreatedSnapDialog(wallet.address, qtumAddress);
 
-      await snapStorage.setItem(StorageKeys.identity, {
+      await snapStorage.setItem(StorageEnum.Identity, {
         privateKey: wallet.privateKey,
       });
 
