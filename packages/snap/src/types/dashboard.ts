@@ -1,10 +1,9 @@
-import { Chain } from '@qtumproject/qtum-wallet-connector';
+import { AddressType } from '@/types/address';
+import { NativeType, TokenType } from '@/types';
 
-import { QRC20Tokens } from '@/helpers';
-
-export type DashboardContext = {
-  networks: { list: Chain[], current: Chain },
-  wallet: { qtumAddress: string, hexAddress: string, balance: string },
-  tokens: QRC20Tokens[],
-  page: number
+export type DashboardType = {
+  address: AddressType | null;
+  native: NativeType | null;
+  tokens: TokenType[] | null;
+  tokensPage?: number;
 }

@@ -1,13 +1,8 @@
-export type ReceiveAddressType = 'qtum' | 'hex';
+import { AddressType } from '@/types/address';
+import { QRCodeAddressType } from '@/types';
 
-export type ReceiveContext = {
-  addressType: ReceiveAddressType,
-  addresses: {
-    qtum: string,
-    hex: string
-  },
-  qrCodes: {
-    qtum: string,
-    hex: string
-  }
+export type ReceiveType = {
+  type: 'qtum' | 'hexadecimal',
+  address: AddressType,
+  qrCodes: QRCodeAddressType;
 }
