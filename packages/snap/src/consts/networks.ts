@@ -23,8 +23,8 @@ export const DEFAULT_NETWORKS_RPC_URLS: Chain[] = [
     ],
     iconUrls: [''],
     nativeCurrency: {
-      name: 'TQtum',
-      symbol: 'TQTUM',
+      name: 'Qtum',
+      symbol: 'QTUM',
       decimals: 8,
     },
     blockExplorerUrls: ['https://testnet.qtum.info/'],
