@@ -12,9 +12,9 @@ import {
 } from '@metamask/snaps-sdk/jsx';
 
 import { Gap } from '@/helpers';
-import { ReceiveContext } from '@/types/contexts';
+import { ReceiveType } from '@/types';
 
-export const renderReceive = (receiveContext: ReceiveContext) => (
+export const renderReceive = (receive: ReceiveType) => (
   <Box>
     <Box direction="horizontal" crossAlignment="center" alignment="space-between">
       <Heading>Receive</Heading>
@@ -24,29 +24,29 @@ export const renderReceive = (receiveContext: ReceiveContext) => (
       </Dropdown>
     </Box>
     <Divider/>
-    {receiveContext.type === 'qtum' && (
+    {receive.type === 'qtum' && (
       <Box>
         <Box direction="horizontal" alignment="space-between">
           <Gap/>
-          <Image src={receiveContext.qrCodes.qtum} alt="Qtum Address"/>
+          <Image src={receive.qrCodes.qtum} alt="Qtum Address"/>
           <Gap/>
         </Box>
         <Box>
           <Text alignment="center" size="sm" color="muted">Your Qtum address</Text>
-          <Copyable value={receiveContext.address.qtum}/>
+          <Copyable value={receive.address.qtum}/>
         </Box>
       </Box>
     )}
-    {receiveContext.type === 'hexadecimal' && (
+    {receive.type === 'hexadecimal' && (
       <Box>
         <Box direction="horizontal" alignment="space-between">
           <Gap/>
-          <Image src={receiveContext.qrCodes.hexadecimal} alt="Qtum Address in Hexadecimal"/>
+          <Image src={receive.qrCodes.hexadecimal} alt="Qtum Address in Hexadecimal"/>
           <Gap/>
         </Box>
         <Box>
           <Text alignment="center" size="sm" color="muted">Your Qtum address in Hexadecimal format</Text>
-          <Copyable value={receiveContext.address.hexadecimal}/>
+          <Copyable value={receive.address.hexadecimal}/>
         </Box>
       </Box>
     )}

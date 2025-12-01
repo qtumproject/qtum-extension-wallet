@@ -20,8 +20,9 @@ import {
   Tooltip
 } from '@metamask/snaps-sdk/jsx';
 
+import { qtumIcon } from '@/consts';
 import { SendEnum } from '@/enums';
-import { PaddedBox, Gap, makeSpacerSVG, qtumIcon } from '@/helpers';
+import { PaddedBox, Gap } from '@/helpers';
 import { formatBalance } from '@/helpers/format';
 import type { SendErrorsType, SendResponseType, SendType, TokenType } from '@/types';
 
@@ -55,7 +56,7 @@ export const renderSendTransaction = (
     </Box>
     {!isConfirm && !loading && (
       <Box>
-        <Banner title="Warning" severity="warning">
+        <Banner title="" severity="warning">
           <Text>Are you sure you want to proceed with this transaction?</Text>
         </Banner>
         <Gap/><Divider/><Gap/>
@@ -90,7 +91,7 @@ export const renderSendTransaction = (
         )}
         <Gap/><Divider/><Gap/>
         <Section>
-          <Button name="back-to-dashboard" variant="destructive">Close</Button>
+          <Button name="refresh" variant="destructive">Close</Button>
         </Section>
       </Box>
     )}
@@ -150,10 +151,10 @@ export const renderSend = (
             </Text>}><Icon name="info" /></Tooltip>
           </Box>
           {loading && (
-            <Skeleton height={22} width="30%" borderRadius="medium"/>
+            <Skeleton height={22} width="20%" borderRadius="medium"/>
           )}
           {!loading && send.type === SendEnum.Native && send.native && (
-            <Text color="muted" size="sm">{formatBalance(send.native.balance, send.native.decimals)} {send.native.symbol}</Text>
+            <Text color="muted" size="sm">{formatBalance(send.native.balance, 18)} {send.native.symbol}</Text>
           )}
           {!loading && send.type === SendEnum.Token && send.token && (
             <Text color="muted" size="sm">{formatBalance(send.token.balance, send.token.decimals)} {send.token.symbol}</Text>

@@ -13,7 +13,7 @@ import {
   Spinner
 } from '@metamask/snaps-sdk/jsx';
 
-import { Gap } from '@/helpers';
+import { PaddedBox } from '@/helpers';
 import { TokenType } from '@/types';
 
 export const renderAddQRC20 = (
@@ -21,7 +21,7 @@ export const renderAddQRC20 = (
 ) => {
   return (
     <Box>
-      <Heading>Add QRC20</Heading>
+      <Heading>{token ? 'Add' : 'Search'} QRC20</Heading>
       <Divider/>
       <Form name="qrc20-form">
         <Box direction="horizontal">
@@ -47,12 +47,10 @@ export const renderAddQRC20 = (
       )}
       <Divider/>
       {!token && isSearching && (
-        <Box>
-          <Gap/>
-          <Box direction="horizontal" alignment="space-between">
-            <Gap/><Spinner/><Gap/>
-          </Box>
-          <Gap/>
+        <Box alignment="center">
+          <PaddedBox size={75} direction="vertical" children={
+            <PaddedBox direction="horizontal" children={<Spinner/>}/>
+          }/>
         </Box>
       )}
       <Section>

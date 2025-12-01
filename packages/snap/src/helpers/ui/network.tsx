@@ -1,26 +1,8 @@
-import { Box, Divider, Icon, Image, Spinner, Text } from '@metamask/snaps-sdk/jsx';
+import { Box, Divider, Icon, Image, Text } from '@metamask/snaps-sdk/jsx';
 import { DialogResult, DialogType } from '@metamask/snaps-sdk';
 
-import { Gap, qtumIcon, snapDialog } from '@/helpers';
-
-export const renderSwitchingNetwork = (network?: string) => (
-  <Box alignment="center">
-    <Gap/>
-    <Box direction="horizontal" alignment="space-between">
-      <Gap/>
-      <Image src={qtumIcon} alt="Qtum"/>
-      <Gap/>
-    </Box>
-    <Gap/>
-    <Text alignment="center">Switching network <Icon name="arrow-2-right"/> {network ?? 'Unknown'}</Text>
-    <Gap/>
-    <Box direction="horizontal" alignment="space-between">
-      <Gap/>
-      <Spinner/>
-      <Gap/>
-    </Box>
-  </Box>
-);
+import { qtumIcon } from '@/consts';
+import { Gap, snapDialog } from '@/helpers';
 
 export async function renderSwitchingNetworkDialog (
   fromNetwork: string, toNetwork: string, dialogType: DialogType
