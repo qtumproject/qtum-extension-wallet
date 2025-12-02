@@ -7,7 +7,7 @@
     "url": "https://github.com/qtumproject/qtum-extension-wallet.git"
   },
   "source": {
-    "shasum": "SB/fFdS7jmrx1Fp/c98Gx2RQzo0+nbBOXeplPvYc6VU=",
+    "shasum": "K2zqVs2G8XrHWKpgNO69LH15Csy2fmsaRS2VNMPtYAU=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -23,15 +23,19 @@
       "dapps": true,
       "snaps": true
     },
-    "endowment:transaction-insight": {
-      "maxRequestTime": 180000
-    },
+    "snap_getBip32Entropy": [
+      {
+        "path": ["m", "44'", "88'"],
+        "curve": "secp256k1"
+      }
+    ],
     "snap_manageState": {},
     "endowment:network-access": {},
     "endowment:webassembly": {},
     "endowment:ethereum-provider": {},
-    "snap_getEntropy": {},
-    "endowment:page-home": {}
+    "endowment:page-home": {},
+    "snap_getEntropy": {}
   },
+  "platformVersion": "10.1.0",
   "manifestVersion": "0.1"
 }

@@ -30,7 +30,7 @@ export const renderHome = () => (
     <Section>
       <Button name="create-wallet" variant="primary">Create a Wallet</Button>
       <Divider/>
-      <Button name="drive-internal-mnemonic" disabled={true}>Drive from Internal Mnemonic</Button>
+      <Button name="drive-internal-mnemonic">Drive from Internal Mnemonic</Button>
       <Divider/>
       <Button name="drive-external-mnemonic">Drive from External Mnemonic</Button>
       <Divider/>

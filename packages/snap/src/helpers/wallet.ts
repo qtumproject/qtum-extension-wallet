@@ -1,43 +1,19 @@
 import { QtumWallet } from 'qtum-ethers-wrapper';
+import { sleep } from '@qtumproject/qtum-wallet-connector';
 import {
-  mnemonicToSeed, createBip39KeyFromSeed, BIP32Node, secp256k1
+  mnemonicToSeed, createBip39KeyFromSeed, BIP32Node, secp256k1, SLIP10Node
 } from '@metamask/key-tree';
-import { SLIP10Node } from '@metamask/key-tree';
 
-import { getProvider } from "@/config";
-import { StorageKeys } from '@/enums';
+import { getProvider } from '@/config';
+import { StorageEnum } from '@/enums';
 import { genPkHexFromEntropy } from '@/helpers/entropy';
 import { relativePathToDeriveSegments } from '@/helpers/utils';
-import { getQtumAddress } from '@/helpers/format';
-import { getNetworks } from "@/helpers/networks";
+import { getNetworks } from '@/storage/networks';
 import { snapStorage } from '@/rpc';
 
-export const importPrivateKey = async (privateKey: string) => {
-
-  let { list, current } = await getNetworks();
-  const wallet: QtumWallet = new QtumWallet(privateKey, await getProvider());
-  await snapStorage.setItem(StorageKeys.identity, {
-    privateKey: wallet.privateKey,
-  });
-  const qtumAddress = await getQtumAddress(wallet.address, current);
-  await snapStorage.setItem(StorageKeys.Addresses, {
-    qtumAddress: qtumAddress,
-    hexAddress: wallet.address,
-  });
-  const balance = String(await wallet.getBalance());
-  return {
-    qtumAddress: qtumAddress,
-    hexAddress: wallet.address,
-    balance: balance
-  };
+export const createWallet = async () => {
+  return await importPrivateKey(await genPkHexFromEntropy());
 };
-
-    // "snap_getBip32Entropy": [
-    //   {
-    //     "path": ["m", "44'", "88'"],
-    //     "curve": "secp256k1"
-    //   }
-    // ],
 
 export async function deriveFromInternalMnemonic(options: { derivationPath: string; }) {
   const { derivationPath } = options;
@@ -75,6 +51,13 @@ export async function deriveFromExternalMnemonic(options: {
   return await importPrivateKey(derivedNode.privateKey);
 }
 
-export const createWallet = async () => {
-  return await importPrivateKey(await genPkHexFromEntropy());
+export const importPrivateKey = async (privateKey: string) => {
+
+  let networks = await getNetworks();
+  const wallet: QtumWallet = new QtumWallet(privateKey, await getProvider());
+  await snapStorage.setItem(StorageEnum.Identity, {
+    privateKey: wallet.privateKey,
+  });
+  await sleep(500);
+  return { networks, wallet };
 };
