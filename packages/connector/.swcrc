@@ -14,7 +14,7 @@
       "topLevelAwait": false,
       "importMeta": false
     },
-    "baseUrl": ".",
+    "baseUrl": "./",
     "transform": null,
     "target": "es2016",
     "loose": false,

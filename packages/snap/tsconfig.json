@@ -6,7 +6,9 @@
     "types": ["@types/lodash", "node", "jest"],
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "@metamask/snaps-sdk"
   },
   "extends": "../../tsconfig.json",
   "include": ["src"]

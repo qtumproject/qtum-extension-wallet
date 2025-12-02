@@ -16,6 +16,7 @@ module.exports = {
       files: ['**/*.{ts,tsx}'],
       extends: ['@metamask/eslint-config-typescript'],
       rules: {
+        '@typescript-eslint/no-shadow': ['error', { 'allow': ['Text'] }],
         '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
         '@typescript-eslint/no-non-null-assertion': 0,
         'no-restricted-globals': 0,
