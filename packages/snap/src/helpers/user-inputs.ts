@@ -1,10 +1,12 @@
-import {ManageStateResult, OnUserInputHandler, UserInputEventType} from '@metamask/snaps-sdk';
+import { OnUserInputHandler, UserInputEventType } from '@metamask/snaps-sdk';
 import type { ComponentOrElement, InterfaceContext } from '@metamask/snaps-sdk';
-import {Chain, fromBase58Check, sleep} from '@qtumproject/qtum-wallet-connector';
+import { fromBase58Check } from '@qtumproject/qtum-wallet-connector';
+import { QtumWallet } from 'qtum-ethers-wrapper';
 import { ethers } from 'ethers';
 import QRCode from 'qrcode';
 
 import { clearWallet, getWallet } from '@/config';
+import { QRC20_PAGE_SIZE } from '@/consts';
 import {
   renderHome,
   renderDashboard,
@@ -12,37 +14,26 @@ import {
   renderDriveExternalMnemonic,
   renderImportPrivateKey,
   errorSnapDialog,
-  renderSwitchingNetwork,
   renderReceive,
-  getCurrentWallet,
-  getCurrentNetworks,
   renderSend,
-  snapDialog,
   renderSendTransaction,
   renderAddQRC20,
+  renderExportPrivateKey,
+  renderLogout,
 } from '@/helpers/ui';
-import {formatBalance, getQtumAddress} from '@/helpers/format';
-import {getNetwork, getNetworks, setAndGetNetworks, setCurrentNetwork} from '@/storage/networks';
-import {sendNative, sendQRC20,} from "@/helpers/send";
+import { getQtumAddress } from '@/helpers/format';
+import { getNetwork, setAndGetNetworks } from '@/storage/networks';
+import { sendNative, sendQRC20 } from "@/helpers/send";
 import {
   createWallet,
   deriveFromExternalMnemonic,
   deriveFromInternalMnemonic,
   importPrivateKey
 } from '@/helpers/wallet';
-import { snapStorage } from '@/rpc';
-import {SendEnum, StorageEnum} from '@/enums';
-import {
-  NetworksType,
-  SendType,
-  SendResponseType,
-  TokenType,
-  DashboardType, ContextType, ReceiveType,
-} from '@/types';
-import {NATIVE_TOKEN, QRC20_PAGE_SIZE} from "@/helpers/utils";
-import {addToken, deleteToken, getToken, getTokens, saveTokens} from "@/storage";
-import {getTokensWithBalance, getTokenWithBalance, searchQRC20} from '@/helpers/qrc20';
-import {QtumWallet} from "qtum-ethers-wrapper";
+import { SendEnum } from '@/enums';
+import { NetworksType, SendResponseType, ContextType } from '@/types';
+import { addToken, deleteToken, getToken, getTokens } from '@/storage';
+import { getTokensWithBalance, getTokenWithBalance, searchQRC20 } from '@/helpers/qrc20';
 
 export const onUserInput: OnUserInputHandler = async (inputs) => {
 
@@ -59,10 +50,10 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
   ) {
     context.dashboard.native = null;
     context.dashboard.tokens = null;
-    await updateInterface(renderDashboard(context.networks, context.dashboard), context);
     const network = await getNetwork(inputs.event.value as string);
-    const networks = await setAndGetNetworks(network, context.networks);
     const tokens = await getTokens(network.chainId);
+    await updateInterface(renderDashboard(context.networks, context.dashboard, tokens, network.chainId), context);
+    const networks = await setAndGetNetworks(network, context.networks);
     const wallet = await getWallet();
     context.networks = networks;
     context.dashboard.address = {
@@ -70,7 +61,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       hexadecimal: wallet.address
     };
     context.dashboard.native = {
-      ...NATIVE_TOKEN,
+      ...networks.current.nativeCurrency,
       balance: String(await wallet.getBalance()),
       chainId: networks.current.chainId
     };
@@ -96,6 +87,13 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     return;
   }
 
+  if (inputs.event.name === 'export-private-key') {
+    const wallet = await getWallet();
+    const privateKey = wallet.privateKey.startsWith('0x') ? wallet.privateKey.substring(2) : wallet.privateKey;
+    await updateInterface(renderExportPrivateKey(privateKey), context);
+    return;
+  }
+
   if (context.dashboard?.tokens && (
     inputs.event.name === 'send-native' ||
     inputs.event.name?.startsWith('send-qrc20')
@@ -105,7 +103,9 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       context.send = { type: SendEnum.Native, native: null, token: null, transaction: null };
       await updateInterface(renderSend(context.send, context.dashboard.tokens, true), context);
       const balance = String(await wallet.getBalance());
-      context.send.native = { ...NATIVE_TOKEN, balance, chainId: context.networks.current.chainId };
+      context.send.native = {
+        ...context.networks.current.nativeCurrency, balance, chainId: context.networks.current.chainId
+      };
       await updateInterface(renderSend(context.send, context.dashboard.tokens, false), context);
     } else {
       const contractAddress = inputs.event.name.replace('send-qrc20-', '');
@@ -134,7 +134,9 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       context.send.token = await getTokenWithBalance(token, wallet);
     } else {
       const balance = String(await wallet.getBalance());
-      context.send.native = { ...NATIVE_TOKEN, balance: balance, chainId: context.networks.current.chainId };
+      context.send.native = {
+        ...context.networks.current.nativeCurrency, balance: balance, chainId: context.networks.current.chainId
+      };
       context.send.token = null;
     }
     await updateInterface(renderSend(context.send, context.dashboard.tokens, false), context);
@@ -184,7 +186,10 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       ), context);
     } else {
       await updateInterface(renderSendTransaction(
-        NATIVE_TOKEN.name, NATIVE_TOKEN.symbol, context.send.transaction.recipient, context.send.transaction.amount
+        context.networks.current.nativeCurrency.name,
+        context.networks.current.nativeCurrency.symbol,
+        context.send.transaction.recipient,
+        context.send.transaction.amount
       ), context);
       return;
     }
@@ -213,7 +218,13 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       ), context);
     } else if (context.send.type === SendEnum.Native && context.send.native) {
       await updateInterface(renderSendTransaction(
-        NATIVE_TOKEN.name, NATIVE_TOKEN.symbol, context.send.transaction.recipient, context.send.transaction.amount, undefined, false, true
+        context.networks.current.nativeCurrency.name,
+        context.networks.current.nativeCurrency.symbol,
+        context.send.transaction.recipient,
+        context.send.transaction.amount,
+        undefined,
+        false,
+        true
       ), context);
       const response: SendResponseType = await sendNative(
         (
@@ -222,12 +233,17 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
             fromBase58Check(context.send.transaction.recipient)
         ),
         context.send.transaction.amount,
-        8,
+        context.send.native.decimals,
         wallet,
         context.networks.current
       );
       await updateInterface(renderSendTransaction(
-        NATIVE_TOKEN.name, NATIVE_TOKEN.symbol, context.send.transaction.recipient, context.send.transaction.amount, response, true
+        context.networks.current.nativeCurrency.name,
+        context.networks.current.nativeCurrency.symbol,
+        context.send.transaction.recipient,
+        context.send.transaction.amount,
+        response,
+        true
       ), context);
       return;
     }
@@ -334,20 +350,25 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     await updateInterface(renderDashboard(context.networks, context.dashboard), context);
   }
 
-  if (inputs.event.name === 'back-to-dashboard' && context.dashboard) {
+  if (inputs.event.name === 'refresh' && context.dashboard) {
     const tokens = await getTokens(context.networks.current.chainId);
     context.dashboard.native = null;
     context.dashboard.tokens = null;
     await updateInterface(renderDashboard(context.networks, context.dashboard, tokens), context);
     const wallet = await getWallet();
     context.dashboard.native = {
-      ...NATIVE_TOKEN,
+      ...context.networks.current.nativeCurrency,
       balance: String(await wallet.getBalance()),
       chainId: context.networks.current.chainId
     };
     await updateInterface(renderDashboard(context.networks, context.dashboard, tokens), context);
     context.dashboard.tokens = await getTokensWithBalance(tokens, wallet);
     context.dashboard.tokensPage = 1;
+    await updateInterface(renderDashboard(context.networks, context.dashboard), context);
+    return;
+  }
+
+  if (inputs.event.name === 'back-to-dashboard' && context.dashboard) {
     await updateInterface(renderDashboard(context.networks, context.dashboard), context);
     return;
   }
@@ -361,7 +382,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       hexadecimal: wallet.address
     };
     context.dashboard.native = {
-      ...NATIVE_TOKEN,
+      ...context.networks.current.nativeCurrency,
       balance: String(await wallet.getBalance()),
       chainId: networks.current.chainId
     };
@@ -386,10 +407,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     const derivationPath = state?.['drive-internal-mnemonic-form']?.['derivation-path'];
 
     if (!derivationPath) {
-      await snap.request({
-        method: 'snap_updateInterface',
-        params: { id: inputs.id, ui: renderDriveInternalMnemonic('Derivation path is required') },
-      });
+      await updateInterface(renderDriveInternalMnemonic('Derivation path is required'));
       return;
     }
 
@@ -410,16 +428,10 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     const derivationPath = state?.['drive-external-mnemonic-form']?.['derivation-path'];
 
     if (!mnemonic) {
-      await snap.request({
-        method: 'snap_updateInterface',
-        params: { id: inputs.id, ui: renderDriveExternalMnemonic('Mnemonic is required', undefined) },
-      });
+      await updateInterface(renderDriveExternalMnemonic('Mnemonic is required', undefined));
       return;
     } else if (!derivationPath) {
-      await snap.request({
-        method: 'snap_updateInterface',
-        params: { id: inputs.id, ui: renderDriveExternalMnemonic(undefined, 'Derivation path is required') },
-      });
+      await updateInterface(renderDriveExternalMnemonic(undefined, 'Derivation path is required'));
       return;
     }
 
@@ -442,15 +454,9 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     const privateKey = strip0x(state?.['import-private-key-form']?.['private-key']);
 
     if (!privateKey) {
-      await snap.request({
-        method: 'snap_updateInterface',
-        params: { id: inputs.id, ui: renderImportPrivateKey('Private key is required') },
-      });
+      await updateInterface(renderImportPrivateKey('Private key is required'));
     } else if (!isHex64(privateKey)) {
-      await snap.request({
-        method: 'snap_updateInterface',
-        params: { id: inputs.id, ui: renderImportPrivateKey('Invalid private key') },
-      });
+      await updateInterface(renderImportPrivateKey('Invalid private key'));
       return;
     }
 
@@ -464,19 +470,18 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
   }
 
   if (inputs.event.name === 'cancel-wallet') {
-    await snap.request({
-      method: 'snap_updateInterface',
-      params: { id: inputs.id, ui: renderHome() },
-    });
+    await updateInterface(renderHome());
     return;
   }
 
   if (inputs.event.name === 'logout') {
+    await updateInterface(renderLogout(), context);
+    return;
+  }
+
+  if (inputs.event.name === 'logout-confirm') {
     await clearWallet();
-    await snap.request({
-      method: 'snap_updateInterface',
-      params: { id: inputs.id, ui: renderHome() },
-    });
+    await updateInterface(renderHome());
     return;
   }
 };

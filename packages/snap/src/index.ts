@@ -31,12 +31,12 @@ import {
   buildTxUi,
   genPkHexFromEntropy,
   getSnapDialog,
-  networks,
   readAddressAsContract,
   showWalletCreatedSnapDialog,
 } from '@/helpers';
 import { getQtumAddress } from '@/helpers/format';
 import { snapStorage } from '@/rpc';
+import { networks } from '@/storage';
 
 export const onRpcRequest = async ({
   request,

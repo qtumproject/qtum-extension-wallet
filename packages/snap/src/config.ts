@@ -2,8 +2,8 @@ import { QtumProvider, QtumWallet } from 'qtum-ethers-wrapper';
 import { Json } from "@metamask/snaps-sdk";
 
 import { StorageEnum } from '@/enums';
-import { networks } from '@/helpers';
 import { snapStorage } from '@/rpc';
+import { networks } from '@/storage';
 
 export const getProvider = async () => {
   const { current } = await networks.get();

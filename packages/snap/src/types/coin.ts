@@ -2,7 +2,7 @@ export type NativeType = {
   name: string;
   symbol: string;
   decimals: number;
-  balance: string;
+  balance: string | null;
   chainId: string;
 }
 

@@ -37,7 +37,6 @@ export const setAndGetNetworks = async (network: Chain, networks?: NetworksType)
   let { list, current } = networks ? networks : await getNetworks();
 
   if (current !== network) {
-    list = [network, ...list.filter((chain) => String(chain.chainId) !== String(network.chainId))];
     await snapStorage.setItem(StorageEnum.Networks, {
       ...{ list }, current: network
     });
@@ -80,11 +79,6 @@ export const setCurrentNetwork = async (chainId: string) => {
     nextNetwork.chainName,
     DialogType.Alert
   );
-};
-
-export const getCurrentChainId = async (): Promise<string> => {
-  const { current } = await getNetworks();
-  return String(current.chainId);
 };
 
 export const addNetwork = async (newChain: Chain) => {

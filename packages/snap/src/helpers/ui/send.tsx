@@ -151,7 +151,7 @@ export const renderSend = (
             </Text>}><Icon name="info" /></Tooltip>
           </Box>
           {loading && (
-            <Skeleton height={22} width="20%" borderRadius="medium"/>
+            <Skeleton height={22} width="25%" borderRadius="medium"/>
           )}
           {!loading && send.type === SendEnum.Native && send.native && (
             <Text color="muted" size="sm">{formatBalance(send.native.balance, 18)} {send.native.symbol}</Text>
