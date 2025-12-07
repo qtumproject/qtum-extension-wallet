@@ -73,10 +73,10 @@ export const renderLogout = () => (
       <Image src={qtumIcon} alt="Qtum"/>
       <Gap/>
     </Box>
-    <Text alignment="center" fontWeight="medium">Confirm Logout</Text>
+    <Text alignment="center" fontWeight="medium">Confirm logout</Text>
     <Divider/>
     <Banner title="Warning" severity="warning">
-      <Text>Ensure you understand that logging out will permanently delete your private key.</Text>
+      <Text>Are you sure you want to logout? Ensure you have securely saved the private key, otherwise you will no longer be able to access this wallet.</Text>
     </Banner>
     <Divider/>
     <Section>

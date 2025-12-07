@@ -9,7 +9,8 @@ import {
   Skeleton,
   SelectorOption,
   Selector,
-  Card, Link
+  Card,
+  Link
 } from '@metamask/snaps-sdk/jsx';
 
 import { QRC20_PAGE_SIZE } from '@/consts';
