@@ -1,13 +1,11 @@
 import {
   Box,
   Button,
-  Copyable,
+  Card, Copyable,
   Divider,
-  Dropdown,
   Heading,
   Image,
-  Option,
-  Section,
+  Section, Selector, SelectorOption,
   Text
 } from '@metamask/snaps-sdk/jsx';
 
@@ -16,44 +14,63 @@ import { ReceiveType } from '@/types';
 
 export const renderReceive = (receive: ReceiveType) => (
   <Box>
-    <Box direction="horizontal" crossAlignment="center" alignment="space-between">
+    <Box
+      direction="horizontal"
+      crossAlignment="center"
+      alignment="space-between"
+    >
       <Heading>Receive</Heading>
-      <Dropdown name="receive-type">
-        <Option value="qtum">Qtum</Option>
-        <Option value="hexadecimal">Hexadecimal</Option>
-      </Dropdown>
+      <Selector name="receive-type" title="Select receive">
+        <SelectorOption key="qtum" value="qtum">
+          <Card title="Qtum" value="" />
+        </SelectorOption>
+        <SelectorOption key="hexadecimal" value="hexadecimal">
+          <Card title="Hexadecimal" value="" />
+        </SelectorOption>
+      </Selector>
     </Box>
-    <Divider/>
+    <Divider />
     {receive.type === 'qtum' && (
       <Box>
         <Box direction="horizontal" alignment="space-between">
-          <Gap/>
-          <Image src={receive.qrCodes.qtum} alt="Qtum Address"/>
-          <Gap/>
+          <Gap />
+          <Image src={receive.qrCodes.qtum} alt="Qtum Address" />
+          <Gap />
         </Box>
         <Box>
-          <Text alignment="center" size="sm" color="muted">Your Qtum address</Text>
-          <Copyable value={receive.address.qtum}/>
+          <Text alignment="center" size="sm" color="muted">
+            Your Qtum address
+          </Text>
+          <Copyable value={receive.address.qtum} />
         </Box>
       </Box>
     )}
     {receive.type === 'hexadecimal' && (
       <Box>
         <Box direction="horizontal" alignment="space-between">
-          <Gap/>
-          <Image src={receive.qrCodes.hexadecimal} alt="Qtum Address in Hexadecimal"/>
-          <Gap/>
+          <Gap />
+          <Image
+            src={receive.qrCodes.hexadecimal}
+            alt="Qtum Address in Hexadecimal"
+          />
+          <Gap />
         </Box>
         <Box>
-          <Text alignment="center" size="sm" color="muted">Your Qtum address in Hexadecimal format</Text>
-          <Copyable value={receive.address.hexadecimal}/>
+          <Text alignment="center" size="sm" color="muted">
+            Your Qtum address in Hexadecimal format
+          </Text>
+          <Copyable value={receive.address.hexadecimal} />
         </Box>
       </Box>
     )}
-    <Divider/>
+    <Divider />
     <Section>
-      <Button name="back-to-dashboard" variant="destructive">Back</Button>
+      <Button name="back-to-dashboard" variant="destructive">
+        Back
+      </Button>
     </Section>
-    <Text size="sm" alignment="center" color="muted">Powered by Qtum</Text>
+    <Text size="sm" alignment="center" color="muted">
+      Powered by Qtum
+    </Text>
   </Box>
 );
