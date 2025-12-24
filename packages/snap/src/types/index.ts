@@ -4,7 +4,9 @@ export * from './address';
 export * from './coin';
 export * from './context';
 export * from './dashboard';
+export * from './explorer';
 export * from './global-types';
+export * from './history';
 export * from './network';
 export * from './qrc20';
 export * from './receive';
@@ -12,7 +14,14 @@ export * from './send';
 export * from './storage';
 
 export type PaddedBoxType = {
-  size?: number,
-  direction: 'horizontal' | 'vertical',
-  children: SnapsChildren<GenericSnapElement>
-}
+  size?: number;
+  direction: 'horizontal' | 'vertical';
+  children: SnapsChildren<GenericSnapElement>;
+};
+
+export type EllipsisOptions = {
+  data: string;
+  head?: number;
+  tail?: number;
+  ellipsis?: string;
+};

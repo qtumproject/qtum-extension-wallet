@@ -1,4 +1,5 @@
 export * from './dashboard';
+export * from './history';
 export * from './home';
 export * from './main';
 export * from './network';
