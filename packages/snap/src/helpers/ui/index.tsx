@@ -5,5 +5,5 @@ export * from './network';
 export * from './qrc20';
 export * from './receive';
 export * from './send';
-export * from './tx';
+export * from './transaction';
 export * from './wallet-creation';
