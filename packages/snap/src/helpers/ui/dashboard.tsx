@@ -10,12 +10,14 @@ import {
   SelectorOption,
   Selector,
   Card,
-  Link
+  Link,
+  Tooltip,
+  Spinner,
 } from '@metamask/snaps-sdk/jsx';
 
 import { QRC20_PAGE_SIZE } from '@/consts';
-import { formatBalance } from '@/helpers/format';
-import { PaddedBox, makeSpacerSVG } from '@/helpers';
+import { formatBalance, formatDateTime } from '@/helpers/format';
+import { PaddedBox, makeSpacerSVG, toTitleCase } from '@/helpers';
 import type { DashboardType, NetworksType, TokenType } from '@/types';
 
 export const renderDashboard = (
@@ -24,7 +26,8 @@ export const renderDashboard = (
 
   const loadingNative = dashboard.native === null;
   const loadingTokens = dashboard.tokens === null;
-  const loadingAny = loadingNative || loadingTokens;
+  const loadingHistories = dashboard.histories === null;
+  const loadingAny = loadingNative || loadingTokens || loadingHistories;
 
   let start: number = 0;
   let visible: TokenType[] = [];
@@ -42,65 +45,126 @@ export const renderDashboard = (
 
   return (
     <Box>
-      <Box direction="horizontal" crossAlignment="center" alignment="space-between">
-        {(!loadingNative && dashboard.native) ? (
+      <Box
+        direction="horizontal"
+        crossAlignment="center"
+        alignment="space-between"
+      >
+        {!loadingNative && dashboard.native ? (
           <Box direction="horizontal" alignment="space-between">
             <Text>{formatBalance(String(dashboard.native.balance), 18)}</Text>
             <Text fontWeight="medium">{dashboard.native.symbol}</Text>
           </Box>
         ) : (
-          <Skeleton height={24} width="20%" borderRadius="medium"/>
+          <Skeleton height={24} width="20%" borderRadius="medium" />
         )}
         <Box direction="horizontal" crossAlignment="center">
-          <Button name="send-native" children={<Icon name="send" size="md"/>} disabled={loadingAny}></Button>
-          <Button name="receive-page" children={<Icon name="receive" size="md"/>} disabled={loadingAny}></Button>
-          <Button name="refresh" children={<Icon name="refresh" size="md"/>} disabled={loadingAny}></Button>
+          <Button
+            name="send-native"
+            children={<Icon name="send" size="md" />}
+            disabled={loadingAny}
+          ></Button>
+          <Button
+            name="receive-page"
+            children={<Icon name="receive" size="md" />}
+            disabled={loadingAny}
+          ></Button>
+          <Button
+            name="dashboard-refresh"
+            children={<Icon name="refresh" size="md" />}
+            disabled={loadingAny}
+          ></Button>
         </Box>
-        <Selector name="networks" title="Select network" value={chainId ?? networks.current.chainId} disabled={loadingAny}>
+        <Selector
+          name="networks"
+          title="Select network"
+          value={chainId ?? networks.current.chainId}
+          disabled={loadingAny}
+        >
           {networks.list.map((network) => (
-            <SelectorOption key={String(network.chainId)} value={String(network.chainId)}>
-              <Card title={network.chainName} value=""/>
+            <SelectorOption
+              key={String(network.chainId)}
+              value={String(network.chainId)}
+            >
+              <Card title={network.chainName} value="" />
             </SelectorOption>
           ))}
         </Selector>
       </Box>
-      <Divider/>
+      <Divider />
       <Section>
-        <Box direction="horizontal" crossAlignment="center" alignment="space-between">
-          <Text fontWeight="medium" color={loadingTokens ? 'muted' : 'default'}>Tokens</Text>
-          <Button name="qrc20" children={<Icon name="add" size="md"/>} disabled={loadingTokens}></Button>
+        <Box
+          direction="horizontal"
+          crossAlignment="center"
+          alignment="space-between"
+        >
+          <Text fontWeight="medium" color={loadingTokens ? 'muted' : 'default'}>
+            Tokens
+          </Text>
+          <Button
+            name="qrc20"
+            children={<Icon name="add" size="md" />}
+            disabled={loadingTokens}
+          ></Button>
         </Box>
       </Section>
-      {(!loadingTokens && dashboard.tokens) ? (
+      {!loadingTokens && dashboard.tokens ? (
         <Box>
           {dashboard.tokens.length === 0 ? (
-            <PaddedBox direction="vertical" children={
-              <Box direction="horizontal" alignment="center">
-                <Text alignment="center" color="muted" size="sm">No QRC20</Text>
-                <Text alignment="center" color="muted" size="sm">/</Text>
-                <Text size="sm" children={
-                  <Link href={`${networks.current.blockExplorerUrls?.[0]}qrc20`}>explore tokens here</Link>
-                }></Text>
-              </Box>
-            }/>
+            <PaddedBox
+              size={20}
+              direction="vertical"
+              children={
+                <Box direction="horizontal" alignment="center">
+                  <Text alignment="center" color="muted" size="sm">
+                    No QRC20
+                  </Text>
+                  <Text alignment="center" color="muted" size="sm">
+                    /
+                  </Text>
+                  <Text
+                    size="sm"
+                    children={
+                      <Link
+                        href={`${networks.current.blockExplorerUrls?.[0]}qrc20`}
+                      >
+                        explore tokens here
+                      </Link>
+                    }
+                  ></Text>
+                </Box>
+              }
+            />
           ) : (
             visible.map((token) => (
-              <Box direction="horizontal" crossAlignment="center" alignment="space-between">
+              <Box
+                direction="horizontal"
+                crossAlignment="center"
+                alignment="space-between"
+              >
                 <Box direction="horizontal" crossAlignment="center">
-                  <Image src={makeSpacerSVG(8)}/>
-                  {(!loadingNative && dashboard.native) ? (
+                  <Image src={makeSpacerSVG(8)} />
+                  {!loadingNative && dashboard.native ? (
                     <Box direction="horizontal" alignment="space-between">
-                      <Text>{formatBalance(token.balance, token.decimals)}</Text>
+                      <Text>
+                        {formatBalance(token.balance, token.decimals)}
+                      </Text>
                       <Text fontWeight="medium">{token.symbol}</Text>
                     </Box>
                   ) : (
-                    <Skeleton height={24} width="30%" borderRadius="medium"/>
+                    <Skeleton height={24} width="30%" borderRadius="medium" />
                   )}
                 </Box>
                 <Box direction="horizontal" crossAlignment="center">
-                  <Button name={`send-qrc20-${token.contractAddress}`} children={<Icon name="send"/>}></Button>
-                  <Button name={`delete-qrc20-${token.contractAddress}`} children={<Icon name="trash"/>}></Button>
-                  <Image src={makeSpacerSVG(8)}/>
+                  <Button
+                    name={`send-qrc20-${token.contractAddress}`}
+                    children={<Icon name="send" />}
+                  ></Button>
+                  <Button
+                    name={`delete-qrc20-${token.contractAddress}`}
+                    children={<Icon name="trash" />}
+                  ></Button>
+                  <Image src={makeSpacerSVG(8)} />
                 </Box>
               </Box>
             ))
@@ -108,43 +172,177 @@ export const renderDashboard = (
         </Box>
       ) : (
         <Box>
-          {tokens && tokens.length !== 0 ? (Array.from({ length: countedTokens }).map(() => (
-            <Skeleton height={24} width="100%" borderRadius="medium"/>
-          ))) : (
-            <PaddedBox direction="vertical" children={
-              <Box direction="horizontal" alignment="center">
-                <Text alignment="center" color="muted" size="sm">No QRC20</Text>
-                <Text alignment="center" color="muted" size="sm">/</Text>
-                <Text size="sm" children={
-                  <Link href={`${networks.current.blockExplorerUrls?.[0]}qrc20`}>explore tokens here</Link>
-                }></Text>
-              </Box>
-            }/>
+          {tokens && tokens.length !== 0 ? (
+            Array.from({ length: countedTokens }).map(() => (
+              <Skeleton height={24} width="100%" borderRadius="medium" />
+            ))
+          ) : (
+            <PaddedBox
+              size={20}
+              direction="vertical"
+              children={
+                <Box direction="horizontal" alignment="center">
+                  <Text alignment="center" color="muted" size="sm">
+                    No QRC20
+                  </Text>
+                  <Text alignment="center" color="muted" size="sm">
+                    /
+                  </Text>
+                  <Text
+                    size="sm"
+                    children={
+                      <Link
+                        href={`${networks.current.blockExplorerUrls?.[0]}qrc20`}
+                      >
+                        explore tokens here
+                      </Link>
+                    }
+                  ></Text>
+                </Box>
+              }
+            />
           )}
         </Box>
       )}
-      {(showPagination) && (
-        <Box direction="horizontal" alignment="space-between" crossAlignment="center">
+      {showPagination && (
+        <Box
+          direction="horizontal"
+          alignment="space-between"
+          crossAlignment="center"
+        >
           <Box direction="horizontal">
-            <Image src={makeSpacerSVG(8)}/>
-            <Button name="qrc20-previous" children={<Icon name="arrow-left"/>} disabled={!(currentPage > 1) || loadingTokens}/>
+            <Image src={makeSpacerSVG(8)} />
+            <Button
+              name="qrc20-previous"
+              children={<Icon name="arrow-left" />}
+              disabled={!(currentPage > 1) || loadingTokens}
+            />
           </Box>
           <Text size="sm" color="muted">
             {String(currentPage)} / {String(totalPages)}
           </Text>
           <Box direction="horizontal">
-            <Button name="qrc20-next" children={<Icon name="arrow-right"/>} disabled={!(currentPage < totalPages) || loadingTokens}/>
-            <Image src={makeSpacerSVG(8)}/>
+            <Button
+              name="qrc20-next"
+              children={<Icon name="arrow-right" />}
+              disabled={!(currentPage < totalPages) || loadingTokens}
+            />
+            <Image src={makeSpacerSVG(8)} />
           </Box>
         </Box>
       )}
-      <Divider/>
-      <Section>
-        <Button name="export-private-key" children="Export Private Key" disabled={loadingAny}></Button>
-        <Divider/>
-        <Button name="logout" variant="destructive" children="Logout" disabled={loadingAny}></Button>
+      <Divider />
+      <Section
+        direction="horizontal"
+        alignment="space-between"
+      >
+        <Box direction="horizontal" crossAlignment="center">
+          <Text
+            fontWeight="medium"
+            color={loadingHistories ? 'muted' : 'default'}
+          >
+            History
+          </Text>
+          <Tooltip
+            content={
+              <Text size="sm">Recent transaction history — latest 5</Text>
+            }
+          >
+            <Icon name="info" />
+          </Tooltip>
+        </Box>
+        <Button
+          name="open-history"
+          children="More"
+          disabled={loadingAny}
+        ></Button>
       </Section>
-      <Text size="sm" alignment="center" color="muted">Powered by Qtum</Text>
+      {!loadingHistories && dashboard.histories ? (
+        <Box>
+          {dashboard.histories.totalCount === 0 ? (
+            <PaddedBox
+              size={20}
+              direction="vertical"
+              children={
+              <PaddedBox direction="horizontal" children={
+                <Text alignment="center" color="muted" size="sm">
+                  No transactions yet
+                </Text>} />
+              }
+            />
+          ) : (
+            dashboard.histories.items.map((item) => (
+              <Box direction="vertical">
+                <Box
+                  direction="horizontal"
+                  crossAlignment="center"
+                  alignment="space-between"
+                >
+                  <Box direction="horizontal" crossAlignment="center">
+                    <Icon
+                      name={
+                        ['send', 'contract'].includes(item.direction)
+                          ? 'minus'
+                          : 'add'
+                      }
+                      size="md"
+                    />
+                    <Text size="sm">
+                      {item.amount} {item.symbol}
+                    </Text>
+                  </Box>
+                  <Text size="sm" color="muted">
+                    {toTitleCase(item.status)}
+                  </Text>
+                </Box>
+                <Box
+                  direction="horizontal"
+                  crossAlignment="center"
+                  alignment="space-between"
+                >
+                  <Box direction="horizontal" crossAlignment="center">
+                    <Image src={makeSpacerSVG(20)} />
+                    <Text size="sm" color="muted">
+                      {item.timestamp
+                        ? formatDateTime(new Date(item.timestamp * 1000))
+                        : '-'}
+                    </Text>
+                  </Box>
+                  <Text size="sm" color="muted">
+                    {item.type}
+                  </Text>
+                </Box>
+              </Box>
+            ))
+          )}
+        </Box>
+      ) : (
+        <PaddedBox
+          size={16}
+          direction="vertical"
+          children={
+            <PaddedBox direction="horizontal" children={<Spinner />} />
+          }
+        />
+      )}
+      <Divider />
+      <Section>
+        <Button
+          name="export-private-key"
+          children="Export Private Key"
+          disabled={loadingAny}
+        ></Button>
+        <Divider />
+        <Button
+          name="logout"
+          variant="destructive"
+          children="Logout"
+          disabled={loadingAny}
+        ></Button>
+      </Section>
+      <Text size="sm" alignment="center" color="muted">
+        Powered by Qtum
+      </Text>
     </Box>
   );
 }

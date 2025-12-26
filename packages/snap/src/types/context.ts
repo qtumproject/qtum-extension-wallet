@@ -1,4 +1,11 @@
-import { AddQRC20Type, DashboardType, NetworksType, ReceiveType, SendType } from '@/types';
+import {
+  AddQRC20Type,
+  DashboardType,
+  NetworksType,
+  ReceiveType,
+  SendType,
+  HistoryType,
+} from '@/types';
 
 export type ContextType = {
   networks: NetworksType;
@@ -6,4 +13,5 @@ export type ContextType = {
   addQRC20: AddQRC20Type | null;
   send: SendType | null;
   receive: ReceiveType | null;
+  history: HistoryType | null;
 };

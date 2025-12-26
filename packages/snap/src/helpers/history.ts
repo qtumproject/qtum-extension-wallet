@@ -1,23 +1,23 @@
 import { Chain } from 'qtum-snap-connector';
 import { ethers } from 'ethers';
 
-import { formatDateTime, formatUnits } from '@/helpers/format';
+import { formatUnits } from '@/helpers/format';
 import { getNativeBasicTransaction, getQRC20BalanceHistory } from '@/rpc';
 import type {
-  Histories,
-  HistoryItem,
-  HistoryStatus,
+  HistoriesType,
+  HistoryItemType,
+  HistoryStatusType,
   NativeBasicTransactionsResponse,
   QRC20BalanceHistoryResponse,
 } from '@/types';
 import { normalizeTransactionType } from '@/helpers/utils';
-import { WAITING_CONFIRMATIONS } from '@/consts';
+import { HISTORY_PAGE_SIZE, WAITING_CONFIRMATIONS } from '@/consts';
 
 export async function getNativeHistory(
   address: string, network: Chain, limit: number, offset: number
-): Promise<Histories> {
+): Promise<HistoriesType> {
   try {
-    const items: HistoryItem[] = [];
+    const items: HistoryItemType[] = [];
     const data: NativeBasicTransactionsResponse = await getNativeBasicTransaction(
       address, network, limit, offset
     );
@@ -27,14 +27,13 @@ export async function getNativeHistory(
       const abs = signed.startsWith('-') ? signed.slice(1) : signed;
       const amount = `${formatUnits(abs || '0', 8, 8)}`;
       const confirmations = Number(transaction?.confirmations ?? 0);
-      const timestamp = transaction?.timestamp
-        ? formatDateTime(new Date(Number(transaction.timestamp) * 1000)) : '-';
-      const status: HistoryStatus =
+      const timestamp = Number(transaction?.timestamp);
+      const status: HistoryStatusType =
         confirmations > WAITING_CONFIRMATIONS ? 'confirmed' : 'pending';
       items.push({
         transactionID: transaction.id,
         transactionLink,
-        timestamp,
+        timestamp: Number.isFinite(timestamp) ? timestamp : 0,
         status,
         amount,
         symbol: 'QTUM',
@@ -42,7 +41,7 @@ export async function getNativeHistory(
         confirmations: Number.isFinite(confirmations) ? confirmations : 0,
         type: normalizeTransactionType(transaction.type),
         isToken: false,
-      } as HistoryItem);
+      } as HistoryItemType);
     }
     return { items, totalCount: Number(data.totalCount), isValid: true };
   } catch (_) {
@@ -52,9 +51,9 @@ export async function getNativeHistory(
 
 export async function getQRC20History(
   address: string, network: Chain, limit: number, offset: number
-): Promise<Histories> {
+): Promise<HistoriesType> {
   try {
-    const items: HistoryItem[] = [];
+    const items: HistoryItemType[] = [];
     const data: QRC20BalanceHistoryResponse = await getQRC20BalanceHistory(
       address, network, limit, offset
     );
@@ -67,14 +66,13 @@ export async function getQRC20History(
         const decimals = Number(token.decimals || 0);
         const amount = decimals > 0 ? ethers.utils.formatUnits(abs || '0', decimals) : abs || '0';
         const confirmations = Number(transaction?.confirmations ?? 0);
-        const timestamp = transaction.timestamp
-          ? formatDateTime(new Date(Number(transaction.timestamp) * 1000)) : '-';
-        const status: HistoryStatus =
+        const timestamp = Number(transaction?.timestamp);
+        const status: HistoryStatusType =
           confirmations > WAITING_CONFIRMATIONS ? 'confirmed' : 'pending';
         items.push({
           transactionID: transaction.id,
           transactionLink,
-          timestamp,
+          timestamp: Number.isFinite(timestamp) ? timestamp : 0,
           direction: isSend ? 'send' : 'receive',
           status,
           amount,
@@ -85,10 +83,25 @@ export async function getQRC20History(
           tokenContractAddress: token.address,
           tokenName: token.name,
           tokenDecimals: Number.isFinite(decimals) ? decimals : undefined,
-        } as HistoryItem);
+        } as HistoryItemType);
       }
     }
     return { items, totalCount: Number(data.totalCount), isValid: true };
+  } catch (_) {
+    return { items: [], totalCount: 0, isValid: false };
+  }
+}
+
+export async function getTop5History(address: string, network: Chain): Promise<HistoriesType> {
+  try {
+    const [native, qrc20] = await Promise.all([
+      getNativeHistory(address, network, HISTORY_PAGE_SIZE, 0),
+      getQRC20History(address, network, HISTORY_PAGE_SIZE, 0),
+    ]);
+    const items: HistoryItemType[] = [...native.items, ...qrc20.items].sort(
+      (one: HistoryItemType, two: HistoryItemType): number => two.timestamp - one.timestamp
+    ).slice(0, HISTORY_PAGE_SIZE);
+    return { items, totalCount: Number(items.length), isValid: true };
   } catch (_) {
     return { items: [], totalCount: 0, isValid: false };
   }

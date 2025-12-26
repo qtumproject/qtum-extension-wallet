@@ -15,6 +15,7 @@ import {
 } from '@metamask/snaps-sdk/jsx';
 
 import { Ellipsis, Gap, makeSpacerSVG, PaddedBox, toTitleCase } from '@/helpers';
+import { formatDateTime } from '@/helpers/format';
 import type { HistoryType } from '@/types';
 
 export const renderHistory = (history: HistoryType, isLoading: boolean = false) => {
@@ -33,9 +34,12 @@ export const renderHistory = (history: HistoryType, isLoading: boolean = false) 
         alignment="space-between"
         crossAlignment="center"
       >
-        <Heading size="md">History</Heading>
+        <Heading>History</Heading>
         <Box direction="horizontal" crossAlignment="center" alignment="end">
-          <Button name="history-refresh" children={<Icon name="refresh" size="md" />}></Button>
+          <Button
+            name="history-refresh"
+            children={<Icon name="refresh" size="md" />}
+          ></Button>
           <Selector name="history-type" title="Select history">
             <SelectorOption key="qtum" value="qtum">
               <Card title="QTUM" value="" />
@@ -48,33 +52,50 @@ export const renderHistory = (history: HistoryType, isLoading: boolean = false) 
       </Box>
       <Divider />
       {isLoading && (
-        <Box alignment="center">
-          <PaddedBox
-            size={75}
-            direction="vertical"
-            children={
-              <PaddedBox direction="horizontal" children={<Spinner />} />
-            }
-          />
-        </Box>
+        <PaddedBox
+          size={16}
+          direction="vertical"
+          children={
+            <PaddedBox
+              direction="horizontal"
+              children={
+                <PaddedBox direction="horizontal" children={<Spinner />} />
+              }
+            />
+          }
+        />
       )}
       {!isLoading && !history.isValid && (
-        <Box>
-          <Gap />
-          <Text alignment="center" size="sm" color="muted">
-            Something went wrong
-          </Text>
-          <Gap />
-        </Box>
+        <PaddedBox
+          size={20}
+          direction="vertical"
+          children={
+            <PaddedBox
+              direction="horizontal"
+              children={
+                <Text alignment="center" color="muted" size="sm">
+                  Something went wrong
+                </Text>
+              }
+            />
+          }
+        />
       )}
       {!isLoading && history.items.length === 0 && history.isValid && (
-        <Box>
-          <Gap />
-          <Text alignment="center" size="sm" color="muted">
-            No transactions yet
-          </Text>
-          <Gap />
-        </Box>
+        <PaddedBox
+          size={20}
+          direction="vertical"
+          children={
+            <PaddedBox
+              direction="horizontal"
+              children={
+                <Text alignment="center" color="muted" size="sm">
+                  No transactions yet
+                </Text>
+              }
+            />
+          }
+        />
       )}
       {!isLoading && history.items.length !== 0 && history.isValid && (
         <Box>
@@ -103,7 +124,9 @@ export const renderHistory = (history: HistoryType, isLoading: boolean = false) 
                   <Box direction="horizontal" alignment="start">
                     <Image src={makeSpacerSVG(20)} />
                     <Text size="sm" color="muted">
-                      {item.timestamp}
+                      {item.timestamp
+                        ? formatDateTime(new Date(item.timestamp * 1000))
+                        : '-'}
                     </Text>
                   </Box>
                   <Text size="sm" color="muted">

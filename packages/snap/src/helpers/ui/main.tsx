@@ -73,36 +73,49 @@ export const getSnapDialog = async (type: DialogType, content: Component[]) => {
 export const renderExportPrivateKey = (privateKey: string) => (
   <Box>
     <Heading>Export Private Key</Heading>
-    <Divider/>
+    <Divider />
     <Text>Private Key</Text>
-    <Copyable value={privateKey} sensitive={true}/>
-    <Divider/>
+    <Copyable value={privateKey} sensitive={true} />
+    <Divider />
     <Section>
-      <Button name="back-to-dashboard" variant="destructive">Close</Button>
+      <Button name="back-to-dashboard" variant="destructive">
+        Close
+      </Button>
     </Section>
-    <Text size="sm" alignment="center" color="muted">Powered by Qtum</Text>
+    <Text size="sm" alignment="center" color="muted">
+      Powered by Qtum
+    </Text>
   </Box>
 );
 
 export const renderLogout = () => (
   <Box>
-    <Gap/>
+    <Gap />
     <Box direction="horizontal" alignment="space-between">
-      <Gap/>
-      <Image src={qtumIcon} alt="Qtum"/>
-      <Gap/>
+      <Gap />
+      <Image src={qtumIcon} alt="Qtum" />
+      <Gap />
     </Box>
-    <Text alignment="center" fontWeight="medium">Confirm logout</Text>
-    <Divider/>
+    <Text alignment="center" fontWeight="medium">
+      Confirm logout
+    </Text>
+    <Divider />
     <Banner title="Warning" severity="warning">
-      <Text size="sm">Are you sure you want to logout? Ensure you have securely saved the private key, otherwise you will no longer be able to access this wallet.</Text>
+      <Text size="sm">
+        Are you sure you want to logout? Ensure you have securely saved the
+        private key, otherwise you will no longer be able to access this wallet.
+      </Text>
     </Banner>
-    <Divider/>
+    <Divider />
     <Section>
       <Button name="logout-confirm">Confirm</Button>
-      <Divider/>
-      <Button name="back-to-dashboard" variant="destructive">Cancel</Button>
+      <Divider />
+      <Button name="back-to-dashboard" variant="destructive">
+        Cancel
+      </Button>
     </Section>
-    <Text size="sm" alignment="center" color="muted">Powered by Qtum</Text>
+    <Text size="sm" alignment="center" color="muted">
+      Powered by Qtum
+    </Text>
   </Box>
 );

@@ -1,15 +1,15 @@
-export type HistoryDirection = 'receive' | 'send' | 'gas-refund' | 'contract' | string;
+export type HistoryDirectionType = 'receive' | 'send' | 'gas-refund' | 'contract' | string;
 
-export type HistoryStatus = 'pending' | 'confirmed' | 'failed';
+export type HistoryStatusType = 'pending' | 'confirmed' | 'failed';
 
-export type HistoryItem = {
+export type HistoryItemType = {
   transactionID: string;
   transactionLink: string;
-  timestamp: string;
+  timestamp: number;
   amount: string;
   symbol: string;
-  direction: HistoryDirection;
-  status: HistoryStatus;
+  direction: HistoryDirectionType;
+  status: HistoryStatusType;
   confirmations: number;
   type?: string;
   isToken: boolean;
@@ -18,15 +18,15 @@ export type HistoryItem = {
   tokenDecimals?: number;
 };
 
-export type Histories = {
-  items: HistoryItem[];
+export type HistoriesType = {
+  items: HistoryItemType[];
   totalCount: number;
   isValid: boolean;
 };
 
 export type HistoryType = {
   filter: 'qtum' | 'qrc20';
-  items: HistoryItem[];
+  items: HistoryItemType[];
   totalCount: number;
   isValid: boolean;
   offset: number;
