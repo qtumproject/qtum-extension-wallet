@@ -4,6 +4,7 @@ import { getWallet } from '@/config';
 import { getQtumAddress } from '@/helpers/format';
 import { getTokensWithBalance } from '@/helpers/qrc20';
 import { renderDashboard, renderHome } from '@/helpers/ui';
+import { getTop5History } from '@/helpers/history';
 import { getNetworks, getTokens } from '@/storage';
 import type { ContextType } from '@/types';
 
@@ -29,7 +30,8 @@ export const onHomePage: OnHomePageHandler = async () => {
         chainId: networks.current.chainId
       },
       tokens: await getTokensWithBalance(tokens, wallet),
-      tokensPage: 1
+      tokensPage: 1,
+      histories: await getTop5History(qtumAddress, networks.current),
     }
     const id = await snap.request({
       method: 'snap_createInterface',

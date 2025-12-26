@@ -334,9 +334,9 @@ export const renderDashboard = (
         ></Button>
         <Divider />
         <Button
-          name="logout"
+          name="remove-wallet"
           variant="destructive"
-          children="Logout"
+          children="Remove Wallet"
           disabled={loadingAny}
         ></Button>
       </Section>

@@ -88,27 +88,31 @@ export const renderExportPrivateKey = (privateKey: string) => (
   </Box>
 );
 
-export const renderLogout = () => (
+export const renderRemoveWallet = () => (
   <Box>
-    <Gap />
-    <Box direction="horizontal" alignment="space-between">
-      <Gap />
-      <Image src={qtumIcon} alt="Qtum" />
-      <Gap />
-    </Box>
+    <PaddedBox
+      direction="vertical"
+      children={
+        <PaddedBox
+          direction="horizontal"
+          children={<Image src={qtumIcon} alt="Qtum" />}
+        />
+      }
+    />
     <Text alignment="center" fontWeight="medium">
-      Confirm logout
+      Confirm Remove Wallet
     </Text>
     <Divider />
     <Banner title="Warning" severity="warning">
-      <Text size="sm">
-        Are you sure you want to logout? Ensure you have securely saved the
-        private key, otherwise you will no longer be able to access this wallet.
+      <Text size="md">
+        Are you sure you want to remove wallet? Ensure you have securely saved
+        the private key, otherwise you will no longer be able to access this
+        wallet.
       </Text>
     </Banner>
     <Divider />
     <Section>
-      <Button name="logout-confirm">Confirm</Button>
+      <Button name="remove-wallet-confirm">Confirm</Button>
       <Divider />
       <Button name="back-to-dashboard" variant="destructive">
         Cancel
