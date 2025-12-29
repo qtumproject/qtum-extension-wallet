@@ -1,9 +1,10 @@
-import { Erc20__factory } from '@qtumproject/qtum-wallet-connector';
-import { QtumWallet} from 'qtum-ethers-wrapper';
+import { Chain, Erc20__factory } from 'qtum-snap-connector';
+import { QtumWallet } from 'qtum-ethers-wrapper';
 import type { Provider } from '@ethersproject/providers';
 import { Signer} from 'ethers';
 
 import type { AbstractFactoryClassType, AbstractFactoryClassReturnType, TokenType } from '@/types';
+import { getContract } from '@/rpc';
 
 const createContract = <F extends AbstractFactoryClassType>(
   address: string, signerOrProvider: Signer | Provider, factoryClass: F,
@@ -30,10 +31,22 @@ export const searchQRC20 = async (contractAddress: string, wallet: QtumWallet): 
       String(wallet.getChainId())
     ]);
     return { contractAddress, name, symbol, decimals, balance, chainId };
-  } catch (_) {
-    throw new Error('This is not a valid QRC20 token');
+  } catch (error) {
+    throw new Error(
+      error.code === 'CALL_EXCEPTION' ?
+        'Failed to fetch QRC20 token info' :
+        'Something went wrong'
+    );
   }
 }
+
+export const isValidQRC20ByExplorer = async (contractAddress: string, network: Chain): Promise<boolean> => {
+  try {
+    return (await getContract(contractAddress, network)).type === 'qrc20';
+  } catch (error) {
+    throw new Error('Something went wrong');
+  }
+};
 
 export const getTokensWithBalance = async (tokens: TokenType[], wallet: QtumWallet): Promise<TokenType[]> => {
   return Promise.all(tokens.map((token) => getTokenWithBalance(token, wallet)));

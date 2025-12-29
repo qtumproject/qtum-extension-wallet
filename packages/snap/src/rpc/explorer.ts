@@ -4,6 +4,7 @@ import {
   NativeBasicTransactionsResponse,
   NativeBalanceHistoryResponse,
   QRC20BalanceHistoryResponse,
+  ContractResponse,
 } from '@/types/explorer';
 
 export async function getNativeBasicTransaction(
@@ -55,4 +56,15 @@ export async function getQRC20BalanceHistory(
       )}&offset=${encodeURIComponent(String(offset))}`,
     )
   ).json() as QRC20BalanceHistoryResponse;
+}
+
+export async function getContract(
+  contractAddress: string,
+  network: Chain,
+): Promise<ContractResponse> {
+  return (await (
+    await fetch(
+      `${network.blockExplorerUrls[0]}api/contract/${contractAddress}`,
+    )
+  ).json()) as ContractResponse;
 }
