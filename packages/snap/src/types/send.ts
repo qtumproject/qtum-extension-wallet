@@ -11,9 +11,17 @@ export type SendResponseType = {
   errorMessage?: string;
 }
 
+export type GasEstimationType = {
+  gasLimit: string;
+  gasPrice: string;
+  fee: string;
+}
+
 export type TransactionType = {
+  sender: string;
   recipient: string;
   amount: string;
+  gas?: GasEstimationType;
 };
 
 export type SendType = {

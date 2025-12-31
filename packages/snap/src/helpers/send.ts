@@ -1,10 +1,12 @@
 import { fromBase58Check, Chain } from '@qtumproject/qtum-wallet-connector';
-import { QtumWallet } from "qtum-ethers-wrapper";
+import { QtumWallet } from 'qtum-ethers-wrapper';
 import { BN } from '@distributedlab/tools';
 import { ethers } from 'ethers';
 
-import { createQRC20 } from "@/helpers/qrc20";
-import { SendResponseType } from "@/types";
+import { createQRC20 } from '@/helpers/qrc20';
+import { SendResponseType, GasEstimationType } from '@/types';
+import { formatBalance, formatUnits } from '@/helpers/format';
+import { toBaseUnits } from '@/helpers/utils';
 
 export const sendNative = async (
   recipient: string, amount: any, decimals: number, wallet: QtumWallet, network: Chain
@@ -61,5 +63,92 @@ export const sendQRC20 = async (
       isValid: false,
       message: 'Unable to process transaction',
     };
+  }
+}
+
+export const estimateNative = async (
+  recipient: string,
+  amount: any,
+  decimals: number,
+  wallet: QtumWallet
+): Promise<GasEstimationType | undefined> => {
+  try {
+    if (!ethers.utils.isAddress(recipient)) {
+      recipient = fromBase58Check(recipient);
+    }
+
+    const amountBN = BN.fromRaw(amount, Number(decimals));
+    const gasLimit = await wallet.estimateGas({
+      to: recipient,
+      value: ethers.BigNumber.from(amountBN.value),
+    });
+    const gasPrice = await wallet.getGasPrice();
+    const fee = gasLimit.mul(gasPrice);
+
+    return {
+      gasLimit: gasLimit.toHexString(),
+      gasPrice: gasPrice.toHexString(),
+      fee: fee.toHexString(),
+    };
+  } catch (_) {
+    return undefined;
+  }
+}
+
+export const estimateQRC20 = async (
+  token: string,
+  recipient: string,
+  amount: any,
+  decimals: number,
+  wallet: QtumWallet
+): Promise<GasEstimationType | undefined> => {
+  try {
+    if (!ethers.utils.isAddress(recipient)) {
+      recipient = fromBase58Check(recipient);
+    }
+
+    const { contractInterface } = createQRC20(token, wallet);
+    const amountBN = BN.fromRaw(amount, Number(decimals));
+    const data = contractInterface.encodeFunctionData('transfer', [
+      recipient,
+      amountBN.value,
+    ]);
+
+    const gasLimit = await wallet.estimateGas({
+      to: token,
+      data,
+    });
+    const gasPrice = await wallet.getGasPrice();
+    const fee = gasLimit.mul(gasPrice);
+
+    return {
+      gasLimit: gasLimit.toHexString(),
+      gasPrice: gasPrice.toHexString(),
+      fee: fee.toHexString(),
+    };
+  } catch (_) {
+    return undefined;
+  }
+}
+
+export function totalAmount(
+  symbol: string,
+  amount: string,
+  isToken: boolean,
+  gas?: GasEstimationType,
+): string {
+  try {
+    if (!gas) {
+      return '-';
+    } else if (!isToken) {
+      const amt = toBaseUnits(amount, 18);
+      const fee = toBaseUnits(gas.fee);
+      const total = amt.add(fee).toHexString();
+      return `${formatUnits(total, 18)} QTUM`;
+    } else {
+      return `${amount} ${symbol} + ${formatUnits(gas.fee, 18)} QTUM`;
+    }
+  } catch {
+    return '-';
   }
 }

@@ -11,6 +11,7 @@ import {
 
 import { Gap } from '@/helpers';
 import { ReceiveType } from '@/types';
+import { SNAP_VERSION } from '@/consts';
 
 export const renderReceive = (receive: ReceiveType) => (
   <Box>
@@ -20,7 +21,7 @@ export const renderReceive = (receive: ReceiveType) => (
       alignment="space-between"
     >
       <Heading>Receive</Heading>
-      <Selector name="receive-type" title="Select receive">
+      <Selector name="receive-type" title="Select format">
         <SelectorOption key="qtum" value="qtum">
           <Card title="Qtum" value="" />
         </SelectorOption>
@@ -70,7 +71,7 @@ export const renderReceive = (receive: ReceiveType) => (
       </Button>
     </Section>
     <Text size="sm" alignment="center" color="muted">
-      Powered by Qtum
+      {SNAP_VERSION} / Powered by Qtum
     </Text>
   </Box>
 );
