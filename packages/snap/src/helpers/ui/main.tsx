@@ -4,17 +4,20 @@ import {
   Button,
   Copyable,
   Divider,
+  Form,
   Heading,
   Image,
+  Input,
   JSXElement,
   Section,
-  Text
+  Text,
 } from '@metamask/snaps-sdk/jsx';
 import { Component, DialogType, panel } from '@metamask/snaps-sdk';
+import { SNAP_VERSION } from '@/consts';
 
 import { makeSpacerSVG } from '@/helpers';
 import { PaddedBoxType, EllipsisOptions } from '@/types';
-import { qtumIcon } from '@/consts';
+import { QTUM_ICON } from '@/consts';
 
 export const Ellipsis = (options: EllipsisOptions) => {
   const head = options.head ?? 6;
@@ -70,12 +73,46 @@ export const getSnapDialog = async (type: DialogType, content: Component[]) => {
   });
 };
 
-export const renderExportPrivateKey = (privateKey: string) => (
+export const renderExportPrivateKey = (
+  privateKeyHex: string,
+  wifKey: string,
+  bip38Key?: string,
+  errorPassphrase?: string,
+) => (
   <Box>
     <Heading>Export Private Key</Heading>
     <Divider />
     <Text>Private Key</Text>
-    <Copyable value={privateKey} sensitive={true} />
+    <Copyable value={privateKeyHex} sensitive={true} />
+    <Divider />
+    <Text>Wallet Import Format</Text>
+    <Copyable value={wifKey} sensitive={true} />
+    <Divider />
+    <Text>Encrypt with BIP38</Text>
+    <Form name="export-private-key-form">
+      <Text size="sm" color="muted">Optionally add a passphrase to encrypt your private key (BIP38).</Text>
+      <Divider />
+      <Text>Passphrase</Text>
+      <Input name="bip38-passphrase" placeholder="(Optional)" />
+    </Form>
+    <Section>
+      <Button name="encrypt-bip38" form="export-private-key-form">Generate BIP38</Button>
+    </Section>
+    {errorPassphrase ? (
+      <Box>
+        <Divider />
+        <Banner severity="warning" title="">
+          <Text>{errorPassphrase}</Text>
+        </Banner>
+      </Box>
+    ) : null}
+    {bip38Key ? (
+      <Box>
+        <Divider />
+        <Text>BIP38 Encrypted Key</Text>
+        <Copyable value={bip38Key} sensitive={true} />
+      </Box>
+    ) : null}
     <Divider />
     <Section>
       <Button name="back-to-dashboard" variant="destructive">
@@ -83,27 +120,29 @@ export const renderExportPrivateKey = (privateKey: string) => (
       </Button>
     </Section>
     <Text size="sm" alignment="center" color="muted">
-      Powered by Qtum
+      {SNAP_VERSION} / Powered by Qtum
     </Text>
   </Box>
 );
 
 export const renderRemoveWallet = () => (
   <Box>
-    <PaddedBox
-      direction="vertical"
-      children={
-        <PaddedBox
-          direction="horizontal"
-          children={<Image src={qtumIcon} alt="Qtum" />}
-        />
-      }
-    />
-    <Text alignment="center" fontWeight="medium">
-      Confirm Remove Wallet
-    </Text>
+    <Box>
+      <PaddedBox
+        direction="vertical"
+        children={
+          <PaddedBox
+            direction="horizontal"
+            children={<Image src={QTUM_ICON} alt="Qtum" />}
+          />
+        }
+      />
+      <Text alignment="center" size="md" fontWeight="medium">
+        Confirm remove wallet
+      </Text>
+    </Box>
     <Divider />
-    <Banner title="Warning" severity="warning">
+    <Banner title="" severity="warning">
       <Text size="md">
         Are you sure you want to remove wallet? Ensure you have securely saved
         the private key, otherwise you will no longer be able to access this
@@ -119,7 +158,7 @@ export const renderRemoveWallet = () => (
       </Button>
     </Section>
     <Text size="sm" alignment="center" color="muted">
-      Powered by Qtum
+      {SNAP_VERSION} / Powered by Qtum
     </Text>
   </Box>
 );

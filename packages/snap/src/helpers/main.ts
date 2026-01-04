@@ -12,7 +12,15 @@ export const onHomePage: OnHomePageHandler = async () => {
 
   const networks = await getNetworks();
   let context: ContextType = {
-    networks, dashboard: null, addQRC20: null, send: null, receive: null, history: null
+    networks,
+    home: {
+      importType: 'private-key'
+    },
+    dashboard: null,
+    addQRC20: null,
+    send: null,
+    receive: null,
+    history: null
   };
 
   try {
