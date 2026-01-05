@@ -177,4 +177,3 @@ export function formatBalance(
     return '0';
   }
 }
-

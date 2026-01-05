@@ -1,4 +1,4 @@
-import { Chain } from 'qtum-snap-connector';
+import { Chain } from '@qtumproject/qtum-wallet-connector';
 import { ethers } from 'ethers';
 
 import { formatUnits } from '@/helpers/format';
@@ -10,7 +10,7 @@ import type {
   NativeBasicTransactionsResponse,
   QRC20BalanceHistoryResponse,
 } from '@/types';
-import { normalizeTransactionType } from '@/helpers/utils';
+import { toTitleCase } from '@/helpers/utils';
 import { HISTORY_PAGE_SIZE, WAITING_CONFIRMATIONS } from '@/consts';
 
 export async function getNativeHistory(
@@ -39,7 +39,7 @@ export async function getNativeHistory(
         symbol: 'QTUM',
         direction: transaction.type,
         confirmations: Number.isFinite(confirmations) ? confirmations : 0,
-        type: normalizeTransactionType(transaction.type),
+        type: transaction.type ? toTitleCase(transaction.type, /-/g, ' ') : '-',
         isToken: false,
       } as HistoryItemType);
     }

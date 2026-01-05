@@ -1,4 +1,4 @@
-import { Chain, Erc20__factory } from 'qtum-snap-connector';
+import { Chain, Erc20__factory } from '@qtumproject/qtum-wallet-connector';
 import { QtumWallet } from 'qtum-ethers-wrapper';
 import type { Provider } from '@ethersproject/providers';
 import { Signer} from 'ethers';

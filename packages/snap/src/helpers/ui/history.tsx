@@ -17,6 +17,7 @@ import {
 import { Ellipsis, Gap, makeSpacerSVG, PaddedBox, toTitleCase } from '@/helpers';
 import { formatDateTime } from '@/helpers/format';
 import type { HistoryType } from '@/types';
+import { SNAP_VERSION } from '@/consts';
 
 export const renderHistory = (history: HistoryType, isLoading: boolean = false) => {
 
@@ -116,9 +117,16 @@ export const renderHistory = (history: HistoryType, isLoading: boolean = false) 
                       {item.amount} {item.symbol}
                     </Text>
                   </Box>
-                  <Text size="sm" color="muted">
-                    {toTitleCase(item.status)}
-                  </Text>
+                  <Box direction="horizontal" crossAlignment="center">
+                    <Text size="sm" color="muted">
+                      {toTitleCase(item.status)}
+                    </Text>
+                    {item.confirmations <= 5 && (
+                      <Text size="sm" color="muted">
+                        · {String(item.confirmations)}/5
+                      </Text>
+                    )}
+                  </Box>
                 </Box>
                 <Box direction="horizontal" alignment="space-between">
                   <Box direction="horizontal" alignment="start">
@@ -183,7 +191,7 @@ export const renderHistory = (history: HistoryType, isLoading: boolean = false) 
         </Button>
       </Section>
       <Text size="sm" alignment="center" color="muted">
-        Powered by Qtum
+        {SNAP_VERSION} / Powered by Qtum
       </Text>
     </Box>
   );
