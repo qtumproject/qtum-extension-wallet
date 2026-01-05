@@ -30,7 +30,7 @@ export async function deriveFromInternalMnemonic(options: { derivationPath: stri
   const derivedNode = await rootNode.derive(segments);
 
   if (!derivedNode.privateKey) {
-    throw new Error('Something is wrong.')
+    throw new Error('Something went wrong')
   }
   return await importPrivateKey(derivedNode.privateKey);
 }
@@ -46,7 +46,7 @@ export async function deriveFromExternalMnemonic(options: {
   const derivedNode = await masterNode.derive(segments);
 
   if (!derivedNode.privateKey) {
-    throw new Error('Something is wrong.')
+    throw new Error('Something went wrong')
   }
   return await importPrivateKey(derivedNode.privateKey);
 }
