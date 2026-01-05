@@ -7,6 +7,7 @@ export * from './dashboard';
 export * from './explorer';
 export * from './global-types';
 export * from './history';
+export * from './home';
 export * from './network';
 export * from './qrc20';
 export * from './receive';

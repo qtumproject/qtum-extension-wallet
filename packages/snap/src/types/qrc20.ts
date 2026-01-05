@@ -18,3 +18,10 @@ export type QRC20Type = Record<string, TokenType[]>;
 export type AddQRC20Type = {
   token: TokenType | null,
 };
+
+export type ParamsQRC20Type = {
+  token?: TokenType;
+  errorContractAddress?: string;
+  failedMessage?: string;
+  isSearching?: boolean;
+};
