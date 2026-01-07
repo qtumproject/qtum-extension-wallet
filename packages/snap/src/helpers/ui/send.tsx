@@ -285,7 +285,7 @@ export const renderSend = (
           )}
         </Box>
         <Field error={errors?.amount}>
-          <Input name="amount" type="number" />
+          <Input name="amount" type="number" disabled={loading} />
         </Field>
       </Form>
       <Divider />

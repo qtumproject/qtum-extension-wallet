@@ -12,13 +12,14 @@ import {
   Card,
   Link,
   Tooltip,
-  Spinner,
+  Spinner
 } from '@metamask/snaps-sdk/jsx';
 
-import { QRC20_PAGE_SIZE } from '@/consts';
+import { QRC20_PAGE_SIZE, WAITING_CONFIRMATIONS } from '@/consts';
 import { formatBalance, formatDateTime } from '@/helpers/format';
 import { PaddedBox, makeSpacerSVG, toTitleCase } from '@/helpers';
 import type { DashboardType, NetworksType, TokenType } from '@/types';
+import { SNAP_VERSION } from '@/consts';
 
 export const renderDashboard = (
   networks: NetworksType, dashboard: DashboardType, tokens: TokenType[] = [], chainId?: string
@@ -98,9 +99,19 @@ export const renderDashboard = (
           crossAlignment="center"
           alignment="space-between"
         >
-          <Text fontWeight="medium" color={loadingTokens ? 'muted' : 'default'}>
-            Tokens
-          </Text>
+          <Box direction="horizontal" crossAlignment="center">
+            <Text
+              fontWeight="medium"
+              color={loadingTokens ? 'muted' : 'default'}
+            >
+              Tokens
+            </Text>
+            <Tooltip
+              content={<Text size="sm">Locally saved QRC20 token list</Text>}
+            >
+              <Icon name="info" />
+            </Tooltip>
+          </Box>
           <Button
             name="qrc20"
             children={<Icon name="add" size="md" />}
@@ -136,7 +147,7 @@ export const renderDashboard = (
               }
             />
           ) : (
-            visible.map((token) => (
+            visible.map((token: TokenType) => (
               <Box
                 direction="horizontal"
                 crossAlignment="center"
@@ -144,16 +155,10 @@ export const renderDashboard = (
               >
                 <Box direction="horizontal" crossAlignment="center">
                   <Image src={makeSpacerSVG(8)} />
-                  {!loadingNative && dashboard.native ? (
-                    <Box direction="horizontal" alignment="space-between">
-                      <Text>
-                        {formatBalance(token.balance, token.decimals)}
-                      </Text>
-                      <Text fontWeight="medium">{token.symbol}</Text>
-                    </Box>
-                  ) : (
-                    <Skeleton height={24} width="30%" borderRadius="medium" />
-                  )}
+                  <Box direction="horizontal" alignment="space-between">
+                    <Text>{formatBalance(token.balance, token.decimals)}</Text>
+                    <Text fontWeight="medium">{token.symbol}</Text>
+                  </Box>
                 </Box>
                 <Box direction="horizontal" crossAlignment="center">
                   <Button
@@ -173,8 +178,31 @@ export const renderDashboard = (
       ) : (
         <Box>
           {tokens && tokens.length !== 0 ? (
-            Array.from({ length: countedTokens }).map(() => (
-              <Skeleton height={24} width="100%" borderRadius="medium" />
+            Array.from({ length: countedTokens }).map((value, index, array) => (
+              <Box
+                direction="horizontal"
+                crossAlignment="center"
+                alignment="space-between"
+              >
+                <Skeleton
+                  height={20}
+                  width={(index % 2 == 0) ? '30%' : '25%'}
+                  borderRadius="medium"
+                />
+                <Box direction="horizontal" crossAlignment="center">
+                  <Button
+                    name={'send-qrc20-loading'}
+                    children={<Icon name="send" />}
+                    disabled={true}
+                  ></Button>
+                  <Button
+                    name={'delete-qrc20-loading'}
+                    children={<Icon name="trash" />}
+                    disabled={true}
+                  ></Button>
+                  <Image src={makeSpacerSVG(8)} />
+                </Box>
+              </Box>
             ))
           ) : (
             <PaddedBox
@@ -232,10 +260,7 @@ export const renderDashboard = (
         </Box>
       )}
       <Divider />
-      <Section
-        direction="horizontal"
-        alignment="space-between"
-      >
+      <Section direction="horizontal" alignment="space-between">
         <Box direction="horizontal" crossAlignment="center">
           <Text
             fontWeight="medium"
@@ -264,10 +289,14 @@ export const renderDashboard = (
               size={20}
               direction="vertical"
               children={
-              <PaddedBox direction="horizontal" children={
-                <Text alignment="center" color="muted" size="sm">
-                  No transactions yet
-                </Text>} />
+                <PaddedBox
+                  direction="horizontal"
+                  children={
+                    <Text alignment="center" color="muted" size="sm">
+                      No transactions yet
+                    </Text>
+                  }
+                />
               }
             />
           ) : (
@@ -291,9 +320,16 @@ export const renderDashboard = (
                       {item.amount} {item.symbol}
                     </Text>
                   </Box>
-                  <Text size="sm" color="muted">
-                    {toTitleCase(item.status)}
-                  </Text>
+                  <Box direction="horizontal" crossAlignment="center">
+                    <Text size="sm" color="muted">
+                      {toTitleCase(item.status)}
+                    </Text>
+                    {item.confirmations <= 5 && (
+                      <Text size="sm" color="muted">
+                        · {String(item.confirmations)}/{String(WAITING_CONFIRMATIONS)}
+                      </Text>
+                    )}
+                  </Box>
                 </Box>
                 <Box
                   direction="horizontal"
@@ -320,9 +356,7 @@ export const renderDashboard = (
         <PaddedBox
           size={16}
           direction="vertical"
-          children={
-            <PaddedBox direction="horizontal" children={<Spinner />} />
-          }
+          children={<PaddedBox direction="horizontal" children={<Spinner />} />}
         />
       )}
       <Divider />
@@ -341,7 +375,7 @@ export const renderDashboard = (
         ></Button>
       </Section>
       <Text size="sm" alignment="center" color="muted">
-        Powered by Qtum
+        {SNAP_VERSION} / Powered by Qtum
       </Text>
     </Box>
   );

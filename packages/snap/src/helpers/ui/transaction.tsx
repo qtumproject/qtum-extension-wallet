@@ -1,6 +1,6 @@
 import { Address, Box, Divider, Heading, Image, Row, Text } from '@metamask/snaps-sdk/jsx';
 import { type TransactionParams, TransactionType } from '@metamask/transaction-controller';
-import type { SnapRequestParams, RPCMethods } from 'qtum-snap-connector';
+import type { SnapRequestParams, RPCMethods } from '@qtumproject/qtum-wallet-connector';
 
 import { formatUnits } from '@/helpers/format';
 import { determineTransactionType, getErc20TokenDetails, parseErc20Transfer } from '@/helpers/parsers';

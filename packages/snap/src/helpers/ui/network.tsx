@@ -1,27 +1,30 @@
 import { Box, Divider, Icon, Image, Text } from '@metamask/snaps-sdk/jsx';
 import { DialogResult, DialogType } from '@metamask/snaps-sdk';
 
-import { qtumIcon } from '@/consts';
+import { QTUM_ICON } from '@/consts';
 import { Gap, snapDialog } from '@/helpers';
 
 export async function renderSwitchingNetworkDialog (
   fromNetwork: string, toNetwork: string, dialogType: DialogType
 ): Promise<DialogResult> {
 
-  return await snapDialog(dialogType, (
+  return await snapDialog(
+    dialogType,
     <Box>
-      <Gap/>
+      <Gap />
       <Box direction="horizontal" alignment="space-between">
-        <Gap/>
-        <Image src={qtumIcon} alt="Qtum"/>
-        <Gap/>
+        <Gap />
+        <Image src={QTUM_ICON} alt="Qtum" />
+        <Gap />
       </Box>
-      <Text alignment="center" fontWeight="bold">Switch Network</Text>
-      <Divider/>
+      <Text alignment="center" fontWeight="bold">
+        Switch Network
+      </Text>
+      <Divider />
       {dialogType === DialogType.Confirmation && (
         <Box>
           <Text alignment="center">{fromNetwork}</Text>
-          <Text alignment="center" color={<Icon name="arrow-2-down"/>}></Text>
+          <Text alignment="center" color={<Icon name="arrow-2-down" />}></Text>
           <Text alignment="center">{toNetwork}</Text>
         </Box>
       )}
@@ -30,6 +33,6 @@ export async function renderSwitchingNetworkDialog (
           <Text alignment="center">Switched to {toNetwork}</Text>
         </Box>
       )}
-    </Box>
-  ));
+    </Box>,
+  );
 }

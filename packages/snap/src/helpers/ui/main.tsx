@@ -11,6 +11,12 @@ import {
   JSXElement,
   Section,
   Text,
+  Selector,
+  SelectorOption,
+  Card,
+  Field,
+  Link,
+  Spinner,
 } from '@metamask/snaps-sdk/jsx';
 import { Component, DialogType, panel } from '@metamask/snaps-sdk';
 import { SNAP_VERSION } from '@/consts';
@@ -74,48 +80,128 @@ export const getSnapDialog = async (type: DialogType, content: Component[]) => {
 };
 
 export const renderExportPrivateKey = (
-  privateKeyHex: string,
-  wifKey: string,
-  bip38Key?: string,
+  exportType: string,
+  privateKey: string,
+  wif: string,
+  encryptedWIF?: string,
   errorPassphrase?: string,
+  loading: boolean = false,
 ) => (
   <Box>
-    <Heading>Export Private Key</Heading>
+    <Box
+      direction="horizontal"
+      alignment="space-between"
+      crossAlignment="center"
+    >
+      <Heading>Export</Heading>
+      <Selector
+        name="export-type"
+        title="Select type"
+        value={exportType}
+        disabled={loading}
+      >
+        <SelectorOption key="private-key" value="private-key">
+          <Card title="Private Key" value="" />
+        </SelectorOption>
+        <SelectorOption key="wif" value="wif">
+          <Card title="WIF" value="" />
+        </SelectorOption>
+        <SelectorOption key="encrypted-wif" value="encrypted-wif">
+          <Card title="Encrypted WIF" value="" />
+        </SelectorOption>
+      </Selector>
+    </Box>
     <Divider />
-    <Text>Private Key</Text>
-    <Copyable value={privateKeyHex} sensitive={true} />
-    <Divider />
-    <Text>Wallet Import Format</Text>
-    <Copyable value={wifKey} sensitive={true} />
-    <Divider />
-    <Text>Encrypt with BIP38</Text>
-    <Form name="export-private-key-form">
-      <Text size="sm" color="muted">Optionally add a passphrase to encrypt your private key (BIP38).</Text>
-      <Divider />
-      <Text>Passphrase</Text>
-      <Input name="bip38-passphrase" placeholder="(Optional)" />
-    </Form>
-    <Section>
-      <Button name="encrypt-bip38" form="export-private-key-form">Generate BIP38</Button>
-    </Section>
-    {errorPassphrase ? (
+    {exportType === 'private-key' && (
       <Box>
-        <Divider />
-        <Banner severity="warning" title="">
-          <Text>{errorPassphrase}</Text>
-        </Banner>
+        <Text>Private Key</Text>
+        <Copyable value={privateKey} sensitive={true} />
       </Box>
-    ) : null}
-    {bip38Key ? (
+    )}
+    {exportType === 'wif' && (
       <Box>
-        <Divider />
-        <Text>BIP38 Encrypted Key</Text>
-        <Copyable value={bip38Key} sensitive={true} />
+        <Text>Wallet Import Format</Text>
+        <Copyable value={wif} sensitive={true} />
       </Box>
-    ) : null}
+    )}
+    {exportType === 'encrypted-wif' && (
+      <Form name="export-key-form">
+        <Text>Passphrase</Text>
+        <Field error={errorPassphrase}>
+          <Input name="export-bip38-passphrase" placeholder="(Optional)" />
+        </Field>
+        {encryptedWIF ? (
+          <Box>
+            <Gap />
+            <Divider />
+            <Gap />
+            <Text>Encrypted WIF</Text>
+            <Copyable value={encryptedWIF} sensitive={true} />
+          </Box>
+        ) : (
+          <Box>
+            <Gap />
+            <Divider />
+            <Gap />
+            {loading ? (
+              <PaddedBox
+                size={13}
+                direction="vertical"
+                children={
+                  <PaddedBox
+                    direction="horizontal"
+                    children={
+                      <PaddedBox
+                        direction="horizontal"
+                        children={<Spinner />}
+                      />
+                    }
+                  />
+                }
+              />
+            ) : (
+              <PaddedBox
+                size={17}
+                direction="vertical"
+                children={
+                  <Box direction="horizontal" alignment="center">
+                    <Text alignment="center" color="muted" size="sm">
+                      BIP38 Encryption
+                    </Text>
+                    <Text alignment="center" color="muted" size="sm">
+                      /
+                    </Text>
+                    <Text
+                      size="sm"
+                      children={
+                        <Link href="https://docs.qtum.info/qtum-documentation/qtum-features-and-advances/qtum-bip38">
+                          For more
+                        </Link>
+                      }
+                    ></Text>
+                  </Box>
+                }
+              />
+            )}
+          </Box>
+        )}
+      </Form>
+    )}
     <Divider />
     <Section>
-      <Button name="back-to-dashboard" variant="destructive">
+      {exportType === 'encrypted-wif' && (
+        <Box>
+          <Button
+            name="encrypt-bip38"
+            form="export-private-key-form"
+            disabled={loading}
+          >
+            {loading ? 'Generating...' : 'Generate'}
+          </Button>
+          <Divider />
+        </Box>
+      )}
+      <Button name="back-to-dashboard" variant="destructive" disabled={loading}>
         Close
       </Button>
     </Section>
@@ -145,7 +231,7 @@ export const renderRemoveWallet = () => (
     <Banner title="" severity="warning">
       <Text size="md">
         Are you sure you want to remove wallet? Ensure you have securely saved
-        the private key, otherwise you will no longer be able to access this
+        the Private Key / WIF / Encrypted WIF, Otherwise you will no longer be able to access this
         wallet.
       </Text>
     </Banner>

@@ -15,7 +15,7 @@ import {
 
 import { PaddedBox } from '@/helpers';
 import { ParamsQRC20Type } from '@/types';
-import { SNAP_VERSION } from '@/version';
+import { SNAP_VERSION } from '@/consts';
 
 export const renderAddQRC20 = (params?: ParamsQRC20Type) => {
   return (
