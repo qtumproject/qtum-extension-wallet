@@ -307,7 +307,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
           false,
           contractAddress,
           {
-            recipient: 'Invalid recipient address. Enter a Qtum address or 0x hexadecimal address.',
+            recipient: 'Invalid recipient address',
           },
         ),
         context,
