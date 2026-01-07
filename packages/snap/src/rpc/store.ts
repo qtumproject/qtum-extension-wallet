@@ -1,5 +1,5 @@
-import type { StorageKeys } from '@/enums';
-import type { StorageMap } from '@/types/storage-types';
+import type { StorageEnum } from '@/enums';
+import type { StorageType } from '@/types';
 
 const getState = async () => {
   return await snap.request({
@@ -8,18 +8,18 @@ const getState = async () => {
   });
 };
 
-const getItem = async <T extends StorageKeys>(
+const getItem = async <T extends StorageEnum>(
   key: T,
-): Promise<StorageMap[T]> => {
+): Promise<StorageType[T]> => {
   const state = await getState();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return state?.[key] ? JSON.parse(state[key]) : null;
 };
 
-const setItem = async <T extends StorageKeys>(
+const setItem = async <T extends StorageEnum>(
   key: T,
-  inputData: StorageMap[T],
+  inputData: StorageType[T],
 ) => {
   const state = (await getState()) ?? {};
 

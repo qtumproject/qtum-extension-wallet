@@ -3,6 +3,7 @@ import { sleep } from '@qtumproject/qtum-wallet-connector';
 import { StorageEnum } from '@/enums';
 import { snapStorage } from '@/rpc';
 import type { QRC20Type, TokenType } from '@/types';
+import { normalizeHexadecimalAddress } from '@/helpers';
 
 export const addToken = async (chainId: string, token: TokenType): Promise<TokenType[]> => {
   const tokens = await getTokens(chainId);
@@ -26,6 +27,14 @@ export const getToken = async (contractAddress: string, chainId: string): Promis
     throw new Error('Token not found');
   }
   return token;
+};
+
+export const hasToken = async (contractAddress: string, chainId: string): Promise<boolean> => {
+  const tokens = await getTokens(chainId);
+  const token = tokens.find(
+    (qrc20) => normalizeHexadecimalAddress(qrc20.contractAddress) === normalizeHexadecimalAddress(contractAddress)
+  );
+  return !!token;
 };
 
 export const saveTokens = async (tokens: TokenType[], chainId: string): Promise<void> => {

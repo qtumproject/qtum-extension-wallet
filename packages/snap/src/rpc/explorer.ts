@@ -1,4 +1,4 @@
-import { Chain } from 'qtum-snap-connector';
+import { Chain } from '@qtumproject/qtum-wallet-connector';
 
 import {
   NativeBasicTransactionsResponse,
