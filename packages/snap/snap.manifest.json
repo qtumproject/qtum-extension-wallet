@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "1.0.0-beta.6",
   "description": "Qtum Wallet is a MetaMask Snap that plays the role of the RPC proxy that accepts requests to the MetaMask and forwards them to the Qtum network with the Qtum ethers adapter.",
   "proposedName": "Qtum Wallet",
   "repository": {
@@ -7,7 +7,7 @@
     "url": "https://github.com/qtumproject/qtum-extension-wallet.git"
   },
   "source": {
-    "shasum": "K2zqVs2G8XrHWKpgNO69LH15Csy2fmsaRS2VNMPtYAU=",
+    "shasum": "un9H6Xz0W3UEvQgIeBwc50jJQiB+qtWWVOgEoB8/pyg=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",

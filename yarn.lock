@@ -3442,6 +3442,7 @@ __metadata:
     "@types/uuid": "npm:9.0.2"
     "@typescript-eslint/eslint-plugin": "npm:5.33.0"
     "@typescript-eslint/parser": "npm:5.33.0"
+    bip38: "npm:^3.1.0"
     buffer: "npm:6.0.3"
     esbuild: "npm:0.17.19"
     eslint: "npm:^8.27.0"
@@ -3470,6 +3471,7 @@ __metadata:
     typescript: "npm:4.7.4"
     typia: "npm:4.1.3"
     uuid: "npm:9.0.0"
+    wif: "npm:^2.0.6"
   languageName: unknown
   linkType: soft
 
@@ -5464,7 +5466,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bigi@npm:^1.1.0, bigi@npm:^1.4.0, bigi@npm:^1.4.2":
+"bigi@npm:^1.1.0, bigi@npm:^1.2.0, bigi@npm:^1.4.0, bigi@npm:^1.4.2":
   version: 1.4.2
   resolution: "bigi@npm:1.4.2"
   checksum: 10/e8165beb2ad113add286f81a066653295737a3edc6287effae7b72c2d7695be19d36774069e80a977df7187857c9e2c4a9517f6ec966bb887e097ea8d36cc2e0
@@ -5541,6 +5543,22 @@ __metadata:
   version: 2.1.1
   resolution: "bip174@npm:2.1.1"
   checksum: 10/b90da3f9fe5b076a3d7b125a9dd39345a8cd8ece2dcc328a19c92948a60d7242886235bc94712935c71a9c5bc445b98a3570dca8881d19d421fc88a30b150b46
+  languageName: node
+  linkType: hard
+
+"bip38@npm:^3.1.0":
+  version: 3.1.1
+  resolution: "bip38@npm:3.1.1"
+  dependencies:
+    bigi: "npm:^1.2.0"
+    browserify-aes: "npm:^1.0.1"
+    bs58check: "npm:<3.0.0"
+    buffer-xor: "npm:^1.0.2"
+    create-hash: "npm:^1.1.1"
+    ecurve: "npm:^1.0.0"
+    safe-buffer: "npm:~5.1.1"
+    scryptsy: "npm:^2.1.0"
+  checksum: 10/98693dd4d74d64e7e6c5190ba8d2f4eeaaedd639268769075cccd417b833b9cc68286f917870cab39b6045f0bed2f1db6d828f540d490b5f0d2f5a7235e5ae54
   languageName: node
   linkType: hard
 
@@ -5690,7 +5708,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserify-aes@npm:^1.0.4, browserify-aes@npm:^1.2.0":
+"browserify-aes@npm:^1.0.1, browserify-aes@npm:^1.0.4, browserify-aes@npm:^1.2.0":
   version: 1.2.0
   resolution: "browserify-aes@npm:1.2.0"
   dependencies:
@@ -5883,7 +5901,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffer-xor@npm:^1.0.3":
+"buffer-xor@npm:^1.0.2, buffer-xor@npm:^1.0.3":
   version: 1.0.3
   resolution: "buffer-xor@npm:1.0.3"
   checksum: 10/4a63d48b5117c7eda896d81cd3582d9707329b07c97a14b0ece2edc6e64220ea7ea17c94b295e8c2cb7b9f8291e2b079f9096be8ac14be238420a43e06ec66e2
@@ -6595,7 +6613,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"create-hash@npm:^1.1.0, create-hash@npm:^1.1.2, create-hash@npm:^1.2.0":
+"create-hash@npm:^1.1.0, create-hash@npm:^1.1.1, create-hash@npm:^1.1.2, create-hash@npm:^1.2.0":
   version: 1.2.0
   resolution: "create-hash@npm:1.2.0"
   dependencies:
@@ -12393,9 +12411,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qtum-wallet-monorepo@workspace:.":
+"qtum-snap-monorepo@workspace:.":
   version: 0.0.0-use.local
-  resolution: "qtum-wallet-monorepo@workspace:."
+  resolution: "qtum-snap-monorepo@workspace:."
   dependencies:
     "@ethersproject/abi": "npm:^5.7.0"
     "@metamask/eslint-config": "npm:^14.1.0"
@@ -13011,6 +13029,13 @@ __metadata:
   version: 3.0.1
   resolution: "scrypt-js@npm:3.0.1"
   checksum: 10/2f8aa72b7f76a6f9c446bbec5670f80d47497bccce98474203d89b5667717223eeb04a50492ae685ed7adc5a060fc2d8f9fd988f8f7ebdaf3341967f3aeff116
+  languageName: node
+  linkType: hard
+
+"scryptsy@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "scryptsy@npm:2.1.0"
+  checksum: 10/1cbdab9d7eee87d2e6aaf86f6a3e759ccd0087d91ca6b760ffe23c0234cb3cc7ba8e1697a59ff84f06a4f08574940c2453dfbbd0e6db64c6c76992a21b6c3733
   languageName: node
   linkType: hard
 
