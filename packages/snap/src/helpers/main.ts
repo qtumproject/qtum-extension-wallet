@@ -14,7 +14,7 @@ export const onHomePage: OnHomePageHandler = async () => {
   let context: ContextType = {
     networks,
     home: {
-      importType: 'private-key'
+      keyType: 'private-key'
     },
     dashboard: null,
     addQRC20: null,
@@ -40,6 +40,7 @@ export const onHomePage: OnHomePageHandler = async () => {
       tokens: await getTokensWithBalance(tokens, wallet),
       tokensPage: 1,
       histories: await getTop5History(qtumAddress, networks.current),
+      keyType: 'private-key'
     }
     const id = await snap.request({
       method: 'snap_createInterface',
