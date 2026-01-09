@@ -1,5 +1,5 @@
 import { QtumProvider, QtumWallet } from 'qtum-ethers-wrapper';
-import { DEFAULT_NETWORKS_RPC_URLS } from "../consts";
+import { DEFAULT_NETWORKS_RPC_URLS } from '../consts';
 
 // Hash of Zero Address -- DO NOT USE IN PRODUCTION
 const PK = '0x4f64fe1ce613546d34d666d8258c13c6296820fd13114d784203feb91276e838';
