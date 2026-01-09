@@ -17,6 +17,8 @@ import {
   Field,
   Link,
   Spinner,
+  Tooltip,
+  Icon,
 } from '@metamask/snaps-sdk/jsx';
 import { Component, DialogType, panel } from '@metamask/snaps-sdk';
 import { SNAP_VERSION } from '@/consts';
@@ -126,7 +128,14 @@ export const renderExportPrivateKey = (
     )}
     {exportType === 'encrypted-wif' && (
       <Form name="export-key-form">
-        <Text>Passphrase</Text>
+        <Box direction="horizontal">
+          <Text>Passphrase</Text>
+          <Tooltip
+            content={<Text size="sm">Enter a passphrase to encrypt the WIF. Keep it safe — it's required to decrypt.</Text>}
+          >
+            <Icon name="info" />
+          </Tooltip>
+        </Box>
         <Field error={errorPassphrase}>
           <Input name="export-bip38-passphrase" placeholder="(Optional)" />
         </Field>
@@ -166,7 +175,7 @@ export const renderExportPrivateKey = (
                 children={
                   <Box direction="horizontal" alignment="center">
                     <Text alignment="center" color="muted" size="sm">
-                      BIP38 Encryption
+                      BIP38
                     </Text>
                     <Text alignment="center" color="muted" size="sm">
                       /
