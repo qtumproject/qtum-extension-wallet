@@ -22,6 +22,7 @@ export type AddQRC20Type = {
 export type ParamsQRC20Type = {
   token?: TokenType;
   errorContractAddress?: string;
+  warningMessage?: string;
   failedMessage?: string;
   isSearching?: boolean;
 };
