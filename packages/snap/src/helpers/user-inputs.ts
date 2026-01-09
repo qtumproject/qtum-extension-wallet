@@ -608,7 +608,14 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       if (!(await isValidQRC20ByExplorer(
         normalizeHexadecimalAddress(contractAddress), context.networks.current
       ))) {
-        await updateInterface(renderAddQRC20({ failedMessage: 'This token is not listed on the explorer' }), context);
+        await updateInterface(
+          renderAddQRC20({
+            token: context.addQRC20.token,
+            warningMessage:
+              'Not recognized by Qtum explorer — token history may not display',
+          }),
+          context,
+        );
         return;
       }
       await updateInterface(renderAddQRC20({ token: context.addQRC20.token }), context);

@@ -10,10 +10,11 @@ import {
   Field,
   Input,
   Tooltip,
-  Spinner
+  Spinner,
+  Banner,
 } from '@metamask/snaps-sdk/jsx';
 
-import { PaddedBox } from '@/helpers';
+import { Gap, PaddedBox } from '@/helpers';
 import { ParamsQRC20Type } from '@/types';
 import { SNAP_VERSION } from '@/consts';
 
@@ -52,6 +53,15 @@ export const renderAddQRC20 = (params?: ParamsQRC20Type) => {
           <Section>
             <Text color="muted">{String(params?.token?.decimals)}</Text>
           </Section>
+        </Box>
+      )}
+      {params?.warningMessage && (
+        <Box>
+          <Divider />
+          <Gap />
+          <Banner title="" severity="warning">
+            <Text>{params.warningMessage}</Text>
+          </Banner>
         </Box>
       )}
       {!params?.token && params?.isSearching && !params?.failedMessage && (
