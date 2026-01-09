@@ -120,9 +120,7 @@ export const renderSendTransaction = (
         <PaddedBox
           size={16}
           direction="vertical"
-          children={
-            <PaddedBox direction="horizontal" children={<Spinner />} />
-          }
+          children={<PaddedBox direction="horizontal" children={<Spinner />} />}
         />
         <Gap />
         <Divider />
@@ -161,7 +159,7 @@ export const renderSendTransaction = (
         <Divider />
         <Gap />
         <Section>
-          <Button name="back-to-dashboard" variant="destructive">
+          <Button name="dashboard-refresh" variant="destructive">
             Close
           </Button>
         </Section>
