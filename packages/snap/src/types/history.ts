@@ -11,7 +11,7 @@ export type HistoryItemType = {
   direction: HistoryDirectionType;
   status: HistoryStatusType;
   confirmations: number;
-  type?: string;
+  type: string;
   isToken: boolean;
   tokenContractAddress?: string;
   tokenName?: string;

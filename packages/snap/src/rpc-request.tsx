@@ -1,6 +1,5 @@
 // eslint-disable-next-line import/no-unassigned-import
-import './polyfill';
-import type { TransactionRequest, TransactionResponse, } from '@ethersproject/abstract-provider';
+import type { TransactionRequest } from '@ethersproject/abstract-provider';
 import type { TypedDataDomain, TypedDataField, } from '@ethersproject/abstract-signer';
 import type { Deferrable } from '@ethersproject/properties';
 import { DialogType } from '@metamask/snaps-sdk';
@@ -25,11 +24,8 @@ import { getQtumAddress } from '@/helpers/format';
 import { snapStorage } from '@/rpc';
 import { networks } from '@/storage';
 
-export const onRpcRequest = async ({
-  request,
-}: {
-  request: JsonRpcRequest;
-  origin: string;
+export const onRpcRequest = async ({ request }: {
+  request: JsonRpcRequest; origin: string;
 }) => {
   console.log('request', JSON.stringify(request));
 
@@ -496,7 +492,7 @@ export const onRpcRequest = async ({
           Object.entries(transaction).reduce<Deferrable<TransactionRequest>>(
             (acc, [key, value]) => {
               if (key === 'gas') {
-                acc.gasLimit = value;
+                acc.gasLimit = value as any;
 
                 return acc;
               }
@@ -505,11 +501,11 @@ export const onRpcRequest = async ({
                 return acc;
               }
 
-              acc[key] = value;
+              (acc as any)[key] = value;
 
               return acc;
             },
-            {},
+            {} as any,
           ),
         );
 
@@ -614,7 +610,7 @@ export const onRpcRequest = async ({
 
     case RPCMethods.EthGetCode: {
       const [address] =
-        request.params as SnapRequestParams[RPCMethods.EthGetCode];
+        request.params as [string];
 
       const { contractCode } = await readAddressAsContract(address);
 
@@ -665,7 +661,7 @@ export const onRpcRequest = async ({
 
         const tx = await provider.getTransaction(txHash);
 
-        return Object.entries(tx).reduce<TransactionResponse>(
+        return Object.entries(tx).reduce<any>(
           (acc, [key, value]) => {
             if (BigNumber.isBigNumber(value)) {
               acc[key] = value.toHexString();
@@ -700,7 +696,7 @@ export const onRpcRequest = async ({
 
         const txReceipt = await provider.getTransactionReceipt(txHash);
 
-        return Object.entries(txReceipt).reduce<TransactionResponse>(
+        return Object.entries(txReceipt).reduce<any>(
           (acc, [key, value]) => {
             if (BigNumber.isBigNumber(value)) {
               acc[key] = value.toHexString();
@@ -763,5 +759,3 @@ export const onRpcRequest = async ({
     }
   }
 };
-
-export { onHomePage, onUserInput } from '@/helpers';
