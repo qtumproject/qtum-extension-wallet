@@ -1,30 +1,26 @@
-import {
-  copyable,
-  DialogType,
-  divider,
-  heading,
-  text,
-} from '@metamask/snaps-sdk';
+import { Box, Copyable, Divider, Heading, Text } from '@metamask/snaps-sdk/jsx';
+import { DialogType } from '@metamask/snaps-sdk';
 
-import { getSnapDialog } from '@/helpers';
+import { snapDialog } from '@/helpers';
 
 // eslint-disable-next-line
 export async function showWalletCreatedSnapDialog(
   ethAddr: string,
   qtumAddr: string,
 ) {
-  return await getSnapDialog(DialogType.Confirmation, [
-    heading('Your Wallet'),
-    divider(),
+  return await snapDialog(
+    DialogType.Confirmation,
+    <Box
+      children={[
+        <Heading children="Your Wallet" />,
+        <Divider />,
 
-    text('Your Qtum address:'),
-    copyable({
-      value: qtumAddr,
-    }),
+        <Text children="Your Qtum address:" />,
+        <Copyable value={qtumAddr} />,
 
-    text('Your Qtum address in hexadecimal format:'),
-    copyable({
-      value: ethAddr,
-    }),
-  ]);
+        <Text children="Your Qtum address in hexadecimal format:" />,
+        <Copyable value={ethAddr} />,
+      ]}
+    />,
+  );
 }

@@ -1,23 +1,10 @@
 // eslint-disable-next-line import/no-unassigned-import
 import './polyfill';
-import type {
-  TransactionRequest,
-  TransactionResponse,
-} from '@ethersproject/abstract-provider';
-import type {
-  TypedDataDomain,
-  TypedDataField,
-} from '@ethersproject/abstract-signer';
+import type { TransactionRequest, TransactionResponse, } from '@ethersproject/abstract-provider';
+import type { TypedDataDomain, TypedDataField, } from '@ethersproject/abstract-signer';
 import type { Deferrable } from '@ethersproject/properties';
-import {
-  copyable,
-  DialogType,
-  divider,
-  heading,
-  panel,
-  row,
-  text,
-} from '@metamask/snaps-sdk';
+import { DialogType } from '@metamask/snaps-sdk';
+import { Box, Copyable, Divider, Heading, Row, Text } from '@metamask/snaps-sdk/jsx';
 import type { JsonRpcRequest } from '@metamask/utils';
 import type { SnapRequestParams } from '@qtumproject/qtum-wallet-connector';
 import { sleep, RPCMethods } from '@qtumproject/qtum-wallet-connector';
@@ -30,9 +17,9 @@ import { StorageEnum } from '@/enums';
 import {
   buildTxUi,
   genPkHexFromEntropy,
-  getSnapDialog,
   readAddressAsContract,
   showWalletCreatedSnapDialog,
+  snapDialog,
 } from '@/helpers';
 import { getQtumAddress } from '@/helpers/format';
 import { snapStorage } from '@/rpc';
@@ -48,12 +35,16 @@ export const onRpcRequest = async ({
 
   switch (request.method) {
     case RPCMethods.WalletCreateRandom: {
-      const res = await getSnapDialog(DialogType.Confirmation, [
-        heading('Create Wallet'),
-        divider(),
-
-        text('Do you want to create wallet?'),
-      ]);
+      const res = await snapDialog(
+        DialogType.Confirmation,
+        <Box
+          children={[
+            <Heading children="Create Wallet" />,
+            <Divider />,
+            <Text children="Do you want to create wallet?" />,
+          ]}
+        />,
+      );
 
       if (!res) {
         throw new Error('User rejected request');
@@ -80,12 +71,16 @@ export const onRpcRequest = async ({
         throw new TypeError('Private key not provided');
       }
 
-      const res = await getSnapDialog(DialogType.Confirmation, [
-        heading('Import Wallet'),
-        divider(),
-
-        text('Do you want to import wallet?'),
-      ]);
+      const res = await snapDialog(
+        DialogType.Confirmation,
+        <Box
+          children={[
+            <Heading children="Import Wallet" />,
+            <Divider />,
+            <Text children="Do you want to import wallet?" />,
+          ]}
+        />,
+      );
 
       if (!res) {
         throw new Error('User rejected request');
@@ -105,12 +100,16 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.WalletFromMnemonic: {
-      const res = await getSnapDialog(DialogType.Confirmation, [
-        heading('Create Wallet'),
-        divider(),
-
-        text('Do you want to create wallet?'),
-      ]);
+      const res = await snapDialog(
+        DialogType.Confirmation,
+        <Box
+          children={[
+            <Heading children="Create Wallet" />,
+            <Divider />,
+            <Text children="Do you want to create wallet?" />,
+          ]}
+        />,
+      );
 
       if (!res) {
         throw new Error('User rejected request');
@@ -132,21 +131,17 @@ export const onRpcRequest = async ({
     case RPCMethods.WalletExportPrivateKey: {
       const wallet = await getWallet();
 
-      return snap.request({
-        method: 'snap_dialog',
-        params: {
-          type: 'alert',
-          content: panel([
-            heading('Wallet private key'),
-            divider(),
-            text('Сopy:'),
-            copyable({
-              value: wallet.privateKey,
-              sensitive: true,
-            }),
-          ]),
-        },
-      });
+      return await snapDialog(
+        DialogType.Alert,
+        <Box
+          children={[
+            <Heading children="Wallet private key" />,
+            <Divider />,
+            <Text children="Сopy:" />,
+            <Copyable value={wallet.privateKey} sensitive={true} />,
+          ]}
+        />,
+      );
     }
 
     case RPCMethods.WalletGetAddress: {
@@ -186,32 +181,53 @@ export const onRpcRequest = async ({
       );
 
       if (!isNetworkExists) {
-        return await getSnapDialog(DialogType.Alert, [
-          heading('Network not found'),
-          divider(),
+        return await snapDialog(
+          DialogType.Alert,
+          <Box
+            children={[
+              <Heading children="Network not found" />,
+              <Divider />,
 
-          text('Network with this chainId not found'),
-        ]);
+              <Text children="Network with this chainId not found" />,
+            ]}
+          />,
+        );
       }
 
       if (isNetworkFromDefaults) {
-        return await getSnapDialog(DialogType.Alert, [
-          heading('Network cannot be removed'),
-          divider(),
+        return await snapDialog(
+          DialogType.Alert,
+          <Box
+            children={[
+              <Heading children="Network cannot be removed" />,
+              <Divider />,
 
-          text('Network with this chainId cannot be removed'),
-        ]);
+              <Text children="Network with this chainId cannot be removed" />,
+            ]}
+          />,
+        );
       }
 
-      const res = await getSnapDialog(DialogType.Confirmation, [
-        heading('Remove Network'),
-        divider(),
+      const res = await snapDialog(
+        DialogType.Confirmation,
+        <Box
+          children={[
+            <Heading children="Remove Network" />,
+            <Divider />,
 
-        row('Network:', text(isNetworkExists.chainName)),
-        row('Chain ID:', text(isNetworkExists.chainId)),
+            <Row
+              label="Network:"
+              children={<Text children={isNetworkExists.chainName} />}
+            />,
+            <Row
+              label="Chain ID:"
+              children={<Text children={isNetworkExists.chainId} />}
+            />,
 
-        text('Do you want to remove this network?'),
-      ]);
+            <Text children="Do you want to remove this network?" />,
+          ]}
+        />,
+      );
 
       if (!res) {
         return null;
@@ -219,10 +235,18 @@ export const onRpcRequest = async ({
 
       await networks.remove(chainIdToRemove);
 
-      return await getSnapDialog(DialogType.Alert, [
-        heading('Network Removed'),
-        row(isNetworkExists.chainName),
-      ]);
+      return await snapDialog(
+        DialogType.Alert,
+        <Box
+          children={[
+            <Heading children="Network Removed" />,
+            <Row
+              label={isNetworkExists.chainName}
+              children={<Text children="" />}
+            />,
+          ]}
+        />,
+      );
     }
 
     case RPCMethods.WalletAddEthereumChain: {
@@ -240,41 +264,70 @@ export const onRpcRequest = async ({
       );
 
       if (isNetworkExists) {
-        return await getSnapDialog(DialogType.Alert, [
-          heading('Network already exists'),
-          divider(),
+        return await snapDialog(
+          DialogType.Alert,
+          <Box
+            children={[
+              <Heading children="Network already exists" />,
+              <Divider />,
 
-          text('Network with this chainId already exists'),
-        ]);
+              <Text children="Network with this chainId already exists" />,
+            ]}
+          />,
+        );
       }
 
       if (
-        !(await getSnapDialog(DialogType.Confirmation, [
-          heading('Add Network'),
-          divider(),
+        !(await snapDialog(
+          DialogType.Confirmation,
+          <Box
+            children={[
+              <Heading children="Add Network" />,
+              <Divider />,
 
-          text(storedNetworks.current.chainName),
-          row('Chain ID:', text(newChain.chainId)),
-          row('Chain Name:', text(newChain.chainName)),
-          row('RPC URLs:', text(newChain.rpcUrls.join(', '))),
-          row('Native Currency:', text(newChain.nativeCurrency.symbol)),
-          row(
-            'Block Explorer URLs:',
-            text(newChain.blockExplorerUrls.join(', ')),
-          ),
+              <Text children={storedNetworks.current.chainName} />,
+              <Row
+                label="Chain ID:"
+                children={<Text children={newChain.chainId} />}
+              />,
+              <Row
+                label="Chain Name:"
+                children={<Text children={newChain.chainName} />}
+              />,
+              <Row
+                label="RPC URLs:"
+                children={<Text children={newChain.rpcUrls.join(', ')} />}
+              />,
+              <Row
+                label="Native Currency:"
+                children={<Text children={newChain.nativeCurrency.symbol} />}
+              />,
+              <Row
+                label="Block Explorer URLs:"
+                children={
+                  <Text children={newChain.blockExplorerUrls.join(', ')} />
+                }
+              />,
 
-          text('Do you want to add this network?'),
-        ]))
+              <Text children="Do you want to add this network?" />,
+            ]}
+          />,
+        ))
       ) {
         return null;
       }
 
       await networks.add(newChain);
 
-      await getSnapDialog(DialogType.Alert, [
-        heading('Network Added'),
-        row(newChain.chainName),
-      ]);
+      await snapDialog(
+        DialogType.Alert,
+        <Box
+          children={[
+            <Heading children="Network Added" />,
+            <Row label={newChain.chainName} children={<Text children="" />} />,
+          ]}
+        />,
+      );
 
       await sleep(300);
 
@@ -361,18 +414,17 @@ export const onRpcRequest = async ({
     case RPCMethods.EthSignTypedDataV4: {
       const wallet = await getWallet();
 
-      const res = await snap.request({
-        method: 'snap_dialog',
-        params: {
-          type: 'confirmation',
-          content: panel([
-            heading('EthSignTypedDataV4'),
-            divider(),
+      const res = await snapDialog(
+        DialogType.Confirmation,
+        <Box
+          children={[
+            <Heading children="EthSignTypedDataV4" />,
+            <Divider />,
 
-            text('Do you want to sign?'),
-          ]),
-        },
-      });
+            <Text children="Do you want to sign?" />,
+          ]}
+        />,
+      );
 
       if (!res) {
         throw new Error('User rejected request');
@@ -405,19 +457,18 @@ export const onRpcRequest = async ({
 
       const message = params[0] as string;
 
-      const res = await snap.request({
-        method: 'snap_dialog',
-        params: {
-          type: 'confirmation',
-          content: panel([
-            heading('Personal Sign'),
-            divider(),
+      const res = await snapDialog(
+        DialogType.Confirmation,
+        <Box
+          children={[
+            <Heading children="Personal Sign" />,
+            <Divider />,
 
-            text('Do you want to sign the message?'),
-            text(message),
-          ]),
-        },
-      });
+            <Text children="Do you want to sign the message?" />,
+            <Text children={message} />,
+          ]}
+        />,
+      );
 
       if (!res) {
         throw new Error('User rejected request');

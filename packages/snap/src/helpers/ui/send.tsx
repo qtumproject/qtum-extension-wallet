@@ -40,152 +40,214 @@ export const renderSendTransaction = (
   gas?: GasEstimationType,
   gasLoading: boolean = false,
 ) => (
-  <Box alignment="center">
-    <Box>
-      <PaddedBox
-        direction="vertical"
-        children={
+  <Box
+    alignment="center"
+    children={[
+      <Box
+        children={[
           <PaddedBox
-            direction="horizontal"
-            children={<Image src={QTUM_ICON} alt="Qtum" />}
-          />
-        }
-      />
-      <Text alignment="center" size="md" fontWeight="medium">
-        Confirm send
-      </Text>
-    </Box>
-    <Divider />
-    <Box>
-      <Box direction="horizontal" alignment="space-between">
-        <Text color="muted" size="sm">
-          {isToken ? 'Token' : 'Native'}
-        </Text>
-        <Text size="sm" fontWeight="medium">
-          {name}
-        </Text>
-      </Box>
-      <Box direction="horizontal" alignment="space-between">
-        <Text color="muted" size="sm">
-          Amount
-        </Text>
-        <Text size="sm" fontWeight="medium">
-          {amount} {symbol}
-        </Text>
-      </Box>
-      <Box direction="horizontal" alignment="space-between">
-        <Text color="muted" size="sm">
-          From
-        </Text>
-        <Text size="sm" fontWeight="medium">
-          {sender}
-        </Text>
-      </Box>
-      <Box direction="horizontal" alignment="space-between">
-        <Text color="muted" size="sm">
-          To
-        </Text>
-        <Text size="sm" fontWeight="medium">
-          {recipient}
-        </Text>
-      </Box>
-      <Box direction="horizontal" alignment="space-between">
-        <Text color="muted" size="sm">
-          Estimated fee
-        </Text>
-        {gasLoading || !gas ? (
-          <Skeleton height={20} width="23%" />
-        ) : (
-          <Text size="sm" fontWeight="medium">
-            {formatUnits(gas.fee, 18)} QTUM
-          </Text>
-        )}
-      </Box>
-      <Box direction="horizontal" alignment="space-between">
-        <Text color="muted" size="sm">
-          Total amount
-        </Text>
-        {gasLoading || !gas ? (
-          <Skeleton height={20} width="28%" />
-        ) : (
-          <Text size="sm" fontWeight="medium">
-            {totalAmount(symbol, amount, isToken, gas)}
-          </Text>
-        )}
-      </Box>
-    </Box>
-    <Divider />
-    {!response && !isConfirm && loading && (
-      <Box alignment="center">
-        <PaddedBox
-          size={16}
-          direction="vertical"
-          children={<PaddedBox direction="horizontal" children={<Spinner />} />}
-        />
-        <Gap />
-        <Divider />
-        <Gap />
-      </Box>
-    )}
-    {!isConfirm && !loading && (
-      <Box>
-        <Banner title="" severity="warning">
-          <Text>Are you sure you want to proceed with this transaction?</Text>
-        </Banner>
-        <Gap />
-        <Divider />
-        <Gap />
-        <Section>
-          <Button name="send-confirm">Confirm</Button>
-          <Divider />
-          <Button name="send-cancel" variant="destructive">
-            Cancel
-          </Button>
-        </Section>
-      </Box>
-    )}
-    {response && isConfirm && !loading && response.isValid && (
-      <Box>
-        <Banner title="" severity="success">
-          <Text>Transaction completed successfully</Text>
-          <Text
-            size="sm"
+            direction="vertical"
             children={
-              <Link href={response.transactionLink}>{response.hash}</Link>
+              <PaddedBox
+                direction="horizontal"
+                children={<Image src={QTUM_ICON} alt="Qtum" />}
+              />
             }
-          ></Text>
-        </Banner>
-        <Gap />
-        <Divider />
-        <Gap />
-        <Section>
-          <Button name="dashboard-refresh" variant="destructive">
-            Close
-          </Button>
-        </Section>
-      </Box>
-    )}
-    {response && isConfirm && !loading && !response.isValid && (
-      <Box>
-        <Banner title="" severity="danger">
-          <Text>Unable to process transaction</Text>
-        </Banner>
-        <Gap />
-        <Divider />
-        <Gap />
-        <Section>
-          <Button name="send-confirm">Resend</Button>
-          <Divider />
-          <Button name="send-cancel" variant="destructive">
-            Cancel
-          </Button>
-        </Section>
-      </Box>
-    )}
-    <Text size="sm" alignment="center" color="muted">
-      {SNAP_VERSION} / Powered by Qtum
-    </Text>
-  </Box>
+          />,
+          <Text
+            alignment="center"
+            size="md"
+            fontWeight="medium"
+            children="Confirm send"
+          />,
+        ]}
+      />,
+      <Divider />,
+      <Box
+        children={[
+          <Box
+            direction="horizontal"
+            alignment="space-between"
+            children={[
+              <Text
+                color="muted"
+                size="sm"
+                children={isToken ? 'Token' : 'Native'}
+              />,
+              <Text size="sm" fontWeight="medium" children={name} />,
+            ]}
+          />,
+          <Box
+            direction="horizontal"
+            alignment="space-between"
+            children={[
+              <Text color="muted" size="sm" children="Amount" />,
+              <Text
+                size="sm"
+                fontWeight="medium"
+                children={`${amount} ${symbol}`}
+              />,
+            ]}
+          />,
+          <Box
+            direction="horizontal"
+            alignment="space-between"
+            children={[
+              <Text color="muted" size="sm" children="From" />,
+              <Text size="sm" fontWeight="medium" children={sender} />,
+            ]}
+          />,
+          <Box
+            direction="horizontal"
+            alignment="space-between"
+            children={[
+              <Text color="muted" size="sm" children="To" />,
+              <Text size="sm" fontWeight="medium" children={recipient} />,
+            ]}
+          />,
+          <Box
+            direction="horizontal"
+            alignment="space-between"
+            children={[
+              <Text color="muted" size="sm" children="Estimated fee" />,
+              gasLoading || !gas ? (
+                <Skeleton height={20} width="23%" />
+              ) : (
+                <Text
+                  size="sm"
+                  fontWeight="medium"
+                  children={`${formatUnits(gas.fee, 18)} QTUM`}
+                />
+              ),
+            ]}
+          />,
+          <Box
+            direction="horizontal"
+            alignment="space-between"
+            children={[
+              <Text color="muted" size="sm" children="Total amount" />,
+              gasLoading || !gas ? (
+                <Skeleton height={20} width="28%" />
+              ) : (
+                <Text
+                  size="sm"
+                  fontWeight="medium"
+                  children={totalAmount(symbol, amount, isToken, gas)}
+                />
+              ),
+            ]}
+          />,
+        ]}
+      />,
+      <Divider />,
+      !response && !isConfirm && loading && (
+        <Box
+          alignment="center"
+          children={[
+            <PaddedBox
+              size={16}
+              direction="vertical"
+              children={
+                <PaddedBox direction="horizontal" children={<Spinner />} />
+              }
+            />,
+            <Gap />,
+            <Divider />,
+            <Gap />,
+          ]}
+        />
+      ),
+      !isConfirm && !loading && (
+        <Box
+          children={[
+            <Banner
+              title=""
+              severity="warning"
+              children={
+                <Text children="Are you sure you want to proceed with this transaction?" />
+              }
+            />,
+            <Gap />,
+            <Divider />,
+            <Gap />,
+            <Section
+              children={[
+                <Button name="send-confirm" children="Confirm" />,
+                <Divider />,
+                <Button
+                  name="send-cancel"
+                  variant="destructive"
+                  children="Cancel"
+                />,
+              ]}
+            />,
+          ]}
+        />
+      ),
+      response && isConfirm && !loading && response.isValid && response.transactionLink && response.hash && (
+          <Box
+            children={[
+              <Banner
+                title=""
+                severity="success"
+                children={[
+                  <Text children="Transaction completed successfully" />,
+                  <Text
+                    size="sm"
+                    children={
+                      <Link href={response.transactionLink} children={response.hash} />
+                    }
+                  />,
+                ]}
+              />,
+              <Gap />,
+              <Divider />,
+              <Gap />,
+              <Section
+                children={
+                  <Button
+                    name="dashboard-refresh"
+                    variant="destructive"
+                    children="Close"
+                  />
+                }
+              />,
+            ]}
+          />
+        ),
+      response && isConfirm && !loading && !response.isValid && (
+        <Box
+          children={[
+            <Banner
+              title=""
+              severity="danger"
+              children={<Text children="Unable to process transaction" />}
+            />,
+            <Gap />,
+            <Divider />,
+            <Gap />,
+            <Section
+              children={[
+                <Button name="send-confirm" children="Resend" />,
+                <Divider />,
+                <Button
+                  name="send-cancel"
+                  variant="destructive"
+                  children="Cancel"
+                />,
+              ]}
+            />,
+          ]}
+        />
+      ),
+      <Text
+        size="sm"
+        alignment="center"
+        color="muted"
+        children={`${SNAP_VERSION} / Powered by Qtum`}
+      />,
+    ]}
+  />
 );
 
 export const renderSend = (
@@ -197,108 +259,126 @@ export const renderSend = (
 ) => {
 
   return (
-    <Box>
-      <Box
-        direction="horizontal"
-        crossAlignment="center"
-        alignment="space-between"
-      >
-        <Heading>Send</Heading>
-        <Box>
-          <Checkbox
-            name="isQRC20"
-            label="QRC20"
-            variant="toggle"
-            checked={send.type === SendEnum.Token}
-            disabled={tokens.length == 0}
-          />
-        </Box>
-      </Box>
-      <Divider />
-      <Form name="send-form">
-        {send.type === SendEnum.Token && tokens.length > 0 && (
-          <Box>
-            <Box direction="horizontal">
-              <Text>Token</Text>
-              <Tooltip
-                content={
-                  <Text size="sm">Choose the QRC20 token you want to send</Text>
-                }
-              >
-                <Icon name="info" />
-              </Tooltip>
-            </Box>
-            <Field>
-              <Dropdown
-                name="contract-address"
-                value={contractAddress ?? undefined}
-              >
-                {tokens.map((token) => (
-                  <Option
-                    key={token.contractAddress}
-                    value={token.contractAddress ?? ''}
-                  >
-                    {token.name}
-                  </Option>
-                ))}
-              </Dropdown>
-            </Field>
-          </Box>
-        )}
-        <Box direction="horizontal">
-          <Text>Recipient</Text>
-          <Tooltip
-            content={
-              <Text size="sm">Enter the recipient's address carefully</Text>
-            }
-          >
-            <Icon name="info" />
-          </Tooltip>
-        </Box>
-        <Field error={errors?.recipient}>
-          <Input name="recipient" />
-        </Field>
-        <Box direction="horizontal" alignment="space-between">
-          <Box direction="horizontal">
-            <Text>Amount</Text>
-            <Tooltip
-              content={<Text size="sm">Enter the amount you want to send</Text>}
-            >
-              <Icon name="info" />
-            </Tooltip>
-          </Box>
-          {loading && (
-            <Skeleton height={22} width="25%" borderRadius="medium" />
-          )}
-          {!loading && send.type === SendEnum.Native && send.native && (
-            <Text color="muted" size="sm">
-              {formatBalance(send.native.balance, 18)} {send.native.symbol}
-            </Text>
-          )}
-          {!loading && send.type === SendEnum.Token && send.token && (
-            <Text color="muted" size="sm">
-              {formatBalance(send.token.balance, send.token.decimals)}{' '}
-              {send.token.symbol}
-            </Text>
-          )}
-        </Box>
-        <Field error={errors?.amount}>
-          <Input name="amount" type="number" disabled={loading} />
-        </Field>
-      </Form>
-      <Divider />
-      <Section>
-        <Button name="send-action" type="submit" form="send-form">
-          Send
-        </Button>
-        <Divider />
-        <Button name="back-to-dashboard" variant="destructive">
-          Back
-        </Button>
-      </Section>
-      <Text size="sm" alignment="center" color="muted">
-        {SNAP_VERSION} / Powered by Qtum
-      </Text>
-    </Box>
+    <Box
+      children={[
+        <Box
+          direction="horizontal"
+          crossAlignment="center"
+          alignment="space-between"
+          children={[
+            <Heading children="Send" />,
+            <Box
+              children={
+                <Checkbox
+                  name="isQRC20"
+                  label="QRC20"
+                  variant="toggle"
+                  checked={send.type === SendEnum.Token}
+                  disabled={tokens.length == 0}
+                />
+              }
+            />,
+          ]}
+        />,
+        <Divider />,
+        <Form
+          name="send-form"
+          children={[
+            send.type === SendEnum.Token && tokens.length > 0 && (
+              <Box
+                children={[
+                  <Box
+                    direction="horizontal"
+                    children={[
+                      <Text children="Token" />,
+                      <Tooltip
+                        content={
+                          <Text size="sm" children="Choose the QRC20 token you want to send" />
+                        }
+                        children={<Icon name="info" />}
+                      />,
+                    ]}
+                  />,
+                  <Field
+                    children={
+                      <Dropdown
+                        name="contract-address"
+                        value={contractAddress ?? undefined}
+                        children={tokens.map((token) => (
+                          <Option
+                            key={token.contractAddress}
+                            value={token.contractAddress ?? ''}
+                            children={token.name}
+                          />
+                        ))}
+                      />
+                    }
+                  />,
+                ]}
+              />
+            ),
+            <Box
+              direction="horizontal"
+              children={[
+                <Text children="Recipient" />,
+                <Tooltip
+                  content={
+                    <Text size="sm" children="Enter the recipient's address carefully" />
+                  }
+                  children={<Icon name="info" />}
+                />,
+              ]}
+            />,
+            <Field
+              error={errors?.recipient}
+              children={<Input name="recipient" />}
+            />,
+            <Box
+              direction="horizontal"
+              alignment="space-between"
+              children={[
+                <Box
+                  direction="horizontal"
+                  children={[
+                    <Text children="Amount" />,
+                    <Tooltip
+                      content={<Text size="sm" children="Enter the amount you want to send" />}
+                      children={<Icon name="info" />}
+                    />,
+                  ]}
+                />,
+                loading && (
+                  <Skeleton height={22} width="25%" borderRadius="medium" />
+                ),
+                !loading && send.type === SendEnum.Native && send.native && (
+                  <Text color="muted" size="sm" children={`${formatBalance(send.native.balance ?? 0, 18)} ${send.native.symbol}`} />
+                ),
+                !loading && send.type === SendEnum.Token && send.token && (
+                  <Text color="muted" size="sm" children={`${formatBalance(send.token.balance ?? 0, send.token.decimals)} ${send.token.symbol}`} />
+                ),
+              ]}
+            />,
+            <Field
+              error={errors?.amount}
+              children={<Input name="amount" type="number" disabled={loading} />}
+            />,
+          ]}
+        />,
+        <Divider />,
+        <Section
+          children={[
+            <Button name="send-action" type="submit" form="send-form" children="Send" />,
+            <Divider />,
+            <Button name="back-to-dashboard" variant="destructive" children="Back" />,
+          ]}
+        />,
+        <Text
+          size="sm"
+          alignment="center"
+          color="muted"
+          children={`${SNAP_VERSION} / Powered by Qtum`}
+        />,
+      ]}
+    />
   );
 }

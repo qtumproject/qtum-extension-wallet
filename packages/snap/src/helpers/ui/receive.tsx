@@ -14,64 +14,104 @@ import { ReceiveType } from '@/types';
 import { SNAP_VERSION } from '@/consts';
 
 export const renderReceive = (receive: ReceiveType) => (
-  <Box>
-    <Box
-      direction="horizontal"
-      crossAlignment="center"
-      alignment="space-between"
-    >
-      <Heading>Receive</Heading>
-      <Selector name="receive-type" title="Select format">
-        <SelectorOption key="qtum" value="qtum">
-          <Card title="Qtum" value="" />
-        </SelectorOption>
-        <SelectorOption key="hexadecimal" value="hexadecimal">
-          <Card title="Hexadecimal" value="" />
-        </SelectorOption>
-      </Selector>
-    </Box>
-    <Divider />
-    {receive.type === 'qtum' && (
-      <Box>
-        <Box direction="horizontal" alignment="space-between">
-          <Gap />
-          <Image src={receive.qrCodes.qtum} alt="Qtum Address" />
-          <Gap />
-        </Box>
-        <Box>
-          <Text alignment="center" size="sm" color="muted">
-            Your Qtum address
-          </Text>
-          <Copyable value={receive.address.qtum} />
-        </Box>
-      </Box>
-    )}
-    {receive.type === 'hexadecimal' && (
-      <Box>
-        <Box direction="horizontal" alignment="space-between">
-          <Gap />
-          <Image
-            src={receive.qrCodes.hexadecimal}
-            alt="Qtum Address in Hexadecimal"
+  <Box
+    children={[
+      <Box
+        direction="horizontal"
+        crossAlignment="center"
+        alignment="space-between"
+        children={[
+          <Heading children="Receive" />,
+          <Selector
+            name="receive-type"
+            title="Select format"
+            children={[
+              <SelectorOption
+                key="qtum"
+                value="qtum"
+                children={<Card title="Qtum" value="" />}
+              />,
+              <SelectorOption
+                key="hexadecimal"
+                value="hexadecimal"
+                children={<Card title="Hexadecimal" value="" />}
+              />,
+            ]}
+          />,
+        ]}
+      />,
+      <Divider />,
+      receive.type === 'qtum' && (
+        <Box
+          children={[
+            <Box
+              direction="horizontal"
+              alignment="space-between"
+              children={[
+                <Gap />,
+                <Image src={receive.qrCodes.qtum} alt="Qtum Address" />,
+                <Gap />,
+              ]}
+            />,
+            <Box
+              children={[
+                <Text
+                  alignment="center"
+                  size="sm"
+                  color="muted"
+                  children="Your Qtum address"
+                />,
+                <Copyable value={receive.address.qtum} />,
+              ]}
+            />,
+          ]}
+        />
+      ),
+      receive.type === 'hexadecimal' && (
+        <Box
+          children={[
+            <Box
+              direction="horizontal"
+              alignment="space-between"
+              children={[
+                <Gap />,
+                <Image
+                  src={receive.qrCodes.hexadecimal}
+                  alt="Qtum Address in Hexadecimal"
+                />,
+                <Gap />,
+              ]}
+            />,
+            <Box
+              children={[
+                <Text
+                  alignment="center"
+                  size="sm"
+                  color="muted"
+                  children="Your Qtum address in Hexadecimal format"
+                />,
+                <Copyable value={receive.address.hexadecimal} />,
+              ]}
+            />,
+          ]}
+        />
+      ),
+      <Divider />,
+      <Section
+        children={
+          <Button
+            name="back-to-dashboard"
+            variant="destructive"
+            children="Back"
           />
-          <Gap />
-        </Box>
-        <Box>
-          <Text alignment="center" size="sm" color="muted">
-            Your Qtum address in Hexadecimal format
-          </Text>
-          <Copyable value={receive.address.hexadecimal} />
-        </Box>
-      </Box>
-    )}
-    <Divider />
-    <Section>
-      <Button name="back-to-dashboard" variant="destructive">
-        Back
-      </Button>
-    </Section>
-    <Text size="sm" alignment="center" color="muted">
-      {SNAP_VERSION} / Powered by Qtum
-    </Text>
-  </Box>
+        }
+      />,
+      <Text
+        size="sm"
+        alignment="center"
+        color="muted"
+        children={`${SNAP_VERSION} / Powered by Qtum`}
+      />,
+    ]}
+  />
 );

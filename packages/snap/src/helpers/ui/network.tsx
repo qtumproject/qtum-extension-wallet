@@ -10,29 +10,45 @@ export async function renderSwitchingNetworkDialog (
 
   return await snapDialog(
     dialogType,
-    <Box>
-      <Gap />
-      <Box direction="horizontal" alignment="space-between">
-        <Gap />
-        <Image src={QTUM_ICON} alt="Qtum" />
-        <Gap />
-      </Box>
-      <Text alignment="center" fontWeight="bold">
-        Switch Network
-      </Text>
-      <Divider />
-      {dialogType === DialogType.Confirmation && (
-        <Box>
-          <Text alignment="center">{fromNetwork}</Text>
-          <Text alignment="center" color={<Icon name="arrow-2-down" />}></Text>
-          <Text alignment="center">{toNetwork}</Text>
-        </Box>
-      )}
-      {dialogType === DialogType.Alert && (
-        <Box>
-          <Text alignment="center">Switched to {toNetwork}</Text>
-        </Box>
-      )}
-    </Box>,
+    <Box
+      children={[
+        <Gap />,
+        <Box
+          direction="horizontal"
+          alignment="space-between"
+          children={[
+            <Gap />,
+            <Image src={QTUM_ICON} alt="Qtum" />,
+            <Gap />,
+          ]}
+        />,
+        <Text
+          alignment="center"
+          fontWeight="bold"
+          children="Switch Network"
+        />,
+        <Divider />,
+        dialogType === DialogType.Confirmation && (
+          <Box
+            children={[
+              <Text alignment="center" children={fromNetwork} />,
+              <Text
+                alignment="center"
+                color={<Icon name="arrow-2-down" />}
+                children=""
+              />,
+              <Text alignment="center" children={toNetwork} />,
+            ]}
+          />
+        ),
+        dialogType === DialogType.Alert && (
+          <Box
+            children={
+              <Text alignment="center" children={`Switched to ${toNetwork}`} />
+            }
+          />
+        ),
+      ]}
+    />,
   );
 }
