@@ -1,7 +1,7 @@
 {
   "name": "@qtumproject/qtum-wallet-monorepo",
   "private": true,
-  "description": "",
+  "description": "Monorepo for the Qtum Wallet project.",
   "homepage": "https://github.com/qtumproject/qtum-extension-wallet",
   "bugs": {
     "url": "https://github.com/qtumproject/qtum-extension-wallet/issues"

@@ -1,6 +1,4 @@
-import type { Config } from '@jest/types';
-
-const config: Config.InitialOptions = {
+module.exports = {
   preset: '@metamask/snaps-jest',
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
@@ -21,5 +19,3 @@ const config: Config.InitialOptions = {
     ],
   },
 };
-
-export default config;
