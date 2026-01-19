@@ -1,3 +1,5 @@
+export const DID_PART_LENGTH = 8;
+export const DID_SHORT_PART_LENGTH = 6;
 export const QRC20_PAGE_SIZE: number = 5;
 export const HISTORY_PAGE_SIZE: number = 5;
 export const WAITING_CONFIRMATIONS: number = 5;

@@ -4,7 +4,11 @@ import type { BigNumberish } from 'ethers';
 import { ethers } from 'ethers';
 
 import { getProvider, getWallet } from '@/config';
-import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
+import {
+  DEFAULT_NETWORKS_RPC_URLS,
+  DID_PART_LENGTH,
+  DID_SHORT_PART_LENGTH,
+} from '@/consts';
 
 export function formatUnits(
   value: BigNumberish,
@@ -38,9 +42,6 @@ export async function getQtumAddress(hexadecimalAddress?: string, chainId?: numb
 export function formatDateDMYT(date: TimeDate) {
   return time(date).format('DD MMM YYYY HH:mm');
 }
-
-const DID_PART_LENGTH = 8;
-const DID_SHORT_PART_LENGTH = 12;
 
 export function formatAddr(did: string, partLength = DID_PART_LENGTH) {
   return did.length > partLength * 2
@@ -104,7 +105,8 @@ function convertNumberWithPrefix(value: string) {
     return '';
   }
 
-  const prefix = getPrefix(+value);
+  const numValue = Number(value.replace(/,/g, ''));
+  const prefix = getPrefix(numValue);
 
   const divider = {
     M: M_PREFIX_AMOUNT,
@@ -113,7 +115,7 @@ function convertNumberWithPrefix(value: string) {
     '': 1,
   }[prefix]
 
-  const finalAmount = BN.fromRaw(Number(value) / divider, 3).format({
+  const finalAmount = BN.fromRaw(numValue / divider, 3).format({
     decimals: 3,
     groupSeparator: '',
     decimalSeparator: '.',
@@ -148,9 +150,14 @@ export function formatAmount(
       ...(decimals && { decimals }),
     }
 
-    const formattedAmount = BN.fromBigInt(amount, decimalsOrConfig).format(formatCfg);
+    const bn = amount instanceof BN
+      ? amount
+      : (typeof amount === 'string' && !amount.includes('.') && decimalsOrConfig !== undefined) ||
+        typeof amount === 'bigint'
+        ? BN.fromBigInt(amount, decimalsOrConfig)
+        : BN.fromRaw(amount, decimalsOrConfig);
 
-    return removeTrailingZeros(formattedAmount);
+    return removeTrailingZeros(bn.format(formatCfg));
   } catch (error) {
     return '0';
   }
