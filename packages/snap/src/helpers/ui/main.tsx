@@ -24,7 +24,7 @@ import { Component, DialogType, panel } from '@metamask/snaps-sdk';
 import { SNAP_VERSION } from '@/consts';
 
 import { makeSpacerSVG } from '@/helpers';
-import { PaddedBoxType, EllipsisOptions } from '@/types';
+import { PaddedBoxType, EllipsisOptions, GapType } from '@/types';
 import { QTUM_ICON } from '@/consts';
 
 export const Ellipsis = (options: EllipsisOptions) => {
@@ -46,14 +46,31 @@ export const Ellipsis = (options: EllipsisOptions) => {
   return `${prefix}${start}${ellipsis}${end}`;
 };
 
-export const Gap = (space: number = 1, size: 'sm' | 'md' = 'sm'): JSXElement => <Text size={size}>{' '.repeat(space)}</Text>;
+export const Gap = (params: GapType = { space: 1, size: 'sm' }): JSXElement => (
+  <Text children={' '.repeat(params.space ?? 1)} size={params.size ?? 'sm'}></Text>
+);
 
-export const PaddedBox = (params: PaddedBoxType) => (
-  <Box direction={params.direction} alignment="space-between" crossAlignment="center">
-    <Image src={makeSpacerSVG(params.direction === 'horizontal' ? params.size : 1, params.direction === 'vertical' ? params.size : 1)}/>
-    {params.children}
-    <Image src={makeSpacerSVG(params.direction === 'horizontal' ? params.size : 1, params.direction === 'vertical' ? params.size : 1)}/>
-  </Box>
+export const PaddedBox = (params: PaddedBoxType): JSXElement => (
+  <Box
+    direction={params.direction}
+    alignment="space-between"
+    crossAlignment="center"
+    children={[
+      <Image
+        src={makeSpacerSVG(
+          params.direction === 'horizontal' ? params.size : 1,
+          params.direction === 'vertical' ? params.size : 1,
+        )}
+      />,
+      params.children,
+      <Image
+        src={makeSpacerSVG(
+          params.direction === 'horizontal' ? params.size : 1,
+          params.direction === 'vertical' ? params.size : 1,
+        )}
+      />
+    ]}
+  ></Box>
 );
 
 export const snapDialog = async (type: DialogType, content: JSXElement) => {
@@ -64,10 +81,12 @@ export const errorSnapDialog = async (options: { title?: string, message?: strin
   const { title, message } = options;
 
   return await snapDialog(DialogType.Alert, (
-    <Box>
-      <Heading>{title ?? 'Error'}</Heading>
-      <Text>{message ?? 'Something went wrong'}</Text>
-    </Box>
+    <Box
+      children={[
+        <Heading children={title ?? 'Error'} />,
+        <Text children={message ?? 'Something went wrong'} />,
+      ]}
+    />
   ));
 };
 
@@ -89,171 +108,217 @@ export const renderExportPrivateKey = (
   errorPassphrase?: string,
   loading: boolean = false,
 ) => (
-  <Box>
-    <Box
-      direction="horizontal"
-      alignment="space-between"
-      crossAlignment="center"
-    >
-      <Heading>Export</Heading>
-      <Selector
-        name="export-type"
-        title="Select type"
-        value={exportType}
-        disabled={loading}
-      >
-        <SelectorOption key="private-key" value="private-key">
-          <Card title="Private Key" value="" />
-        </SelectorOption>
-        <SelectorOption key="wif" value="wif">
-          <Card title="WIF" value="" />
-        </SelectorOption>
-        <SelectorOption key="encrypted-wif" value="encrypted-wif">
-          <Card title="Encrypted WIF" value="" />
-        </SelectorOption>
-      </Selector>
-    </Box>
-    <Divider />
-    {exportType === 'private-key' && (
-      <Box>
-        <Text>Private Key</Text>
-        <Copyable value={privateKey} sensitive={true} />
-      </Box>
-    )}
-    {exportType === 'wif' && (
-      <Box>
-        <Text>Wallet Import Format</Text>
-        <Copyable value={wif} sensitive={true} />
-      </Box>
-    )}
-    {exportType === 'encrypted-wif' && (
-      <Form name="export-key-form">
-        <Box direction="horizontal">
-          <Text>Passphrase</Text>
-          <Tooltip
-            content={<Text size="sm">Enter a passphrase to encrypt the WIF. Keep it safe — it's required to decrypt.</Text>}
-          >
-            <Icon name="info" />
-          </Tooltip>
-        </Box>
-        <Field error={errorPassphrase}>
-          <Input name="export-bip38-passphrase" placeholder="(Optional)" />
-        </Field>
-        {encryptedWIF ? (
-          <Box>
-            <Gap />
-            <Divider />
-            <Gap />
-            <Text>Encrypted WIF</Text>
-            <Copyable value={encryptedWIF} sensitive={true} />
-          </Box>
-        ) : (
-          <Box>
-            <Gap />
-            <Divider />
-            <Gap />
-            {loading ? (
-              <PaddedBox
-                size={13}
-                direction="vertical"
-                children={
-                  <PaddedBox
-                    direction="horizontal"
-                    children={
-                      <PaddedBox
-                        direction="horizontal"
-                        children={<Spinner />}
-                      />
-                    }
-                  />
-                }
-              />
-            ) : (
-              <PaddedBox
-                size={17}
-                direction="vertical"
-                children={
-                  <Box direction="horizontal" alignment="center">
-                    <Text alignment="center" color="muted" size="sm">
-                      BIP38
-                    </Text>
-                    <Text alignment="center" color="muted" size="sm">
-                      /
-                    </Text>
+  <Box
+    children={[
+      <Box
+        direction="horizontal"
+        alignment="space-between"
+        crossAlignment="center"
+        children={[
+          <Heading children="Export" />,
+          <Selector
+            name="export-type"
+            title="Select type"
+            value={exportType}
+            disabled={loading}
+            children={[
+              <SelectorOption key="private-key" value="private-key" children={<Card title="Private Key" value="" />} />,
+              <SelectorOption key="wif" value="wif" children={<Card title="WIF" value="" />} />,
+              <SelectorOption key="encrypted-wif" value="encrypted-wif" children={<Card title="Encrypted WIF" value="" />} />,
+            ]}
+          />,
+        ]}
+      />,
+      <Divider />,
+      exportType === 'private-key' && (
+        <Box
+          children={[
+            <Text children="Private Key" />,
+            <Copyable value={privateKey} sensitive={true} />,
+          ]}
+        />
+      ),
+      exportType === 'wif' && (
+        <Box
+          children={[
+            <Text children="Wallet Import Format" />,
+            <Copyable value={wif} sensitive={true} />,
+          ]}
+        />
+      ),
+      exportType === 'encrypted-wif' && (
+        <Form
+          name="export-key-form"
+          children={[
+            <Box
+              direction="horizontal"
+              children={[
+                <Text children="Passphrase" />,
+                <Tooltip
+                  content={
                     <Text
                       size="sm"
-                      children={
-                        <Link href="https://docs.qtum.info/qtum-documentation/qtum-features-and-advances/qtum-bip38">
-                          For more
-                        </Link>
-                      }
-                    ></Text>
-                  </Box>
-                }
+                      children="Enter a passphrase to encrypt the WIF. Keep it safe — it's required to decrypt."
+                    />
+                  }
+                  children={<Icon name="info" />}
+                />,
+              ]}
+            />,
+            <Field
+              error={errorPassphrase}
+              children={
+                <Input name="export-bip38-passphrase" placeholder="(Optional)" />
+              }
+            />,
+            encryptedWIF ? (
+              <Box
+                children={[
+                  <Gap />,
+                  <Divider />,
+                  <Gap />,
+                  <Text children="Encrypted WIF" />,
+                  <Copyable value={encryptedWIF} sensitive={true} />,
+                ]}
               />
-            )}
-          </Box>
-        )}
-      </Form>
-    )}
-    <Divider />
-    <Section>
-      {exportType === 'encrypted-wif' && (
-        <Box>
+            ) : (
+              <Box
+                children={[
+                  <Gap />,
+                  <Divider />,
+                  <Gap />,
+                  loading ? (
+                    <PaddedBox
+                      size={13}
+                      direction="vertical"
+                      children={
+                        <PaddedBox
+                          direction="horizontal"
+                          children={
+                            <PaddedBox
+                              direction="horizontal"
+                              children={<Spinner />}
+                            />
+                          }
+                        />
+                      }
+                    />
+                  ) : (
+                    <PaddedBox
+                      size={17}
+                      direction="vertical"
+                      children={
+                        <Box
+                          direction="horizontal"
+                          alignment="center"
+                          children={[
+                            <Text alignment="center" color="muted" size="sm" children="BIP38" />,
+                            <Text alignment="center" color="muted" size="sm" children="/" />,
+                            <Text
+                              size="sm"
+                              children={
+                                <Link
+                                  href="https://docs.qtum.info/qtum-documentation/qtum-features-and-advances/qtum-bip38"
+                                  children="For more"
+                                />
+                              }
+                            />,
+                          ]}
+                        />
+                      }
+                    />
+                  ),
+                ]}
+              />
+            ),
+          ]}
+        />
+      ),
+      <Divider />,
+      <Section
+        children={[
+          exportType === 'encrypted-wif' && (
+            <Box
+              children={[
+                <Button
+                  name="encrypt-bip38"
+                  form="export-private-key-form"
+                  disabled={loading}
+                  children={loading ? 'Generating...' : 'Generate'}
+                />,
+                <Divider />,
+              ]}
+            />
+          ),
           <Button
-            name="encrypt-bip38"
-            form="export-private-key-form"
+            name="back-to-dashboard"
+            variant="destructive"
             disabled={loading}
-          >
-            {loading ? 'Generating...' : 'Generate'}
-          </Button>
-          <Divider />
-        </Box>
-      )}
-      <Button name="back-to-dashboard" variant="destructive" disabled={loading}>
-        Close
-      </Button>
-    </Section>
-    <Text size="sm" alignment="center" color="muted">
-      {SNAP_VERSION} / Powered by Qtum
-    </Text>
-  </Box>
+            children="Close"
+          />,
+        ]}
+      />,
+      <Text
+        size="sm"
+        alignment="center"
+        color="muted"
+        children={`${SNAP_VERSION} / Powered by Qtum`}
+      />,
+    ]}
+  />
 );
 
 export const renderRemoveWallet = () => (
-  <Box>
-    <Box>
-      <PaddedBox
-        direction="vertical"
-        children={
+  <Box
+    children={[
+      <Box
+        children={[
           <PaddedBox
-            direction="horizontal"
-            children={<Image src={QTUM_ICON} alt="Qtum" />}
+            direction="vertical"
+            children={
+              <PaddedBox
+                direction="horizontal"
+                children={<Image src={QTUM_ICON} alt="Qtum" />}
+              />
+            }
+          />,
+          <Text
+            alignment="center"
+            size="md"
+            fontWeight="medium"
+            children="Confirm remove wallet"
+          />,
+        ]}
+      />,
+      <Divider />,
+      <Banner
+        title=""
+        severity="warning"
+        children={
+          <Text
+            size="md"
+            children="Are you sure you want to remove wallet? Ensure you have securely saved the Private Key / WIF / Encrypted WIF, Otherwise you will no longer be able to access this wallet."
           />
         }
-      />
-      <Text alignment="center" size="md" fontWeight="medium">
-        Confirm remove wallet
-      </Text>
-    </Box>
-    <Divider />
-    <Banner title="" severity="warning">
-      <Text size="md">
-        Are you sure you want to remove wallet? Ensure you have securely saved
-        the Private Key / WIF / Encrypted WIF, Otherwise you will no longer be able to access this
-        wallet.
-      </Text>
-    </Banner>
-    <Divider />
-    <Section>
-      <Button name="remove-wallet-confirm">Confirm</Button>
-      <Divider />
-      <Button name="back-to-dashboard" variant="destructive">
-        Cancel
-      </Button>
-    </Section>
-    <Text size="sm" alignment="center" color="muted">
-      {SNAP_VERSION} / Powered by Qtum
-    </Text>
-  </Box>
+      />,
+      <Divider />,
+      <Section
+        children={[
+          <Button name="remove-wallet-confirm" children="Confirm" />,
+          <Divider />,
+          <Button
+            name="back-to-dashboard"
+            variant="destructive"
+            children="Cancel"
+          />,
+        ]}
+      />,
+      <Text
+        size="sm"
+        alignment="center"
+        color="muted"
+        children={`${SNAP_VERSION} / Powered by Qtum`}
+      />,
+    ]}
+  />
 );

@@ -14,6 +14,11 @@ export * from './receive';
 export * from './send';
 export * from './storage';
 
+export type GapType = {
+  space?: number;
+  size?: 'sm' | 'md';
+};
+
 export type PaddedBoxType = {
   size?: number;
   direction: 'horizontal' | 'vertical';
