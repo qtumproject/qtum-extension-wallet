@@ -322,7 +322,7 @@ export const renderRemoveWallet = () => (
         children={
           <Text
             size="md"
-            children="Are you sure you want to remove wallet? Ensure you have securely saved the Private Key, otherwise you will no longer be able to access this wallet."
+            children="Are you sure you want to remove wallet? Ensure you have securely saved the private key, otherwise you will no longer be able to access this wallet."
           />
         }
       />,
