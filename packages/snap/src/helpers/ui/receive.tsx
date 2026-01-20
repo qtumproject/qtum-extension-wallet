@@ -9,9 +9,9 @@ import {
   Text
 } from '@metamask/snaps-sdk/jsx';
 
+import { FOOTER_TEXT } from '@/consts';
 import { Gap } from '@/helpers';
 import { ReceiveType } from '@/types';
-import { SNAP_VERSION } from '@/consts';
 
 export const renderReceive = (receive: ReceiveType) => (
   <Box
@@ -110,7 +110,7 @@ export const renderReceive = (receive: ReceiveType) => (
         size="sm"
         alignment="center"
         color="muted"
-        children={`${SNAP_VERSION} / Powered by Qtum`}
+        children={FOOTER_TEXT}
       />,
     ]}
   />

@@ -16,9 +16,8 @@ import {
   Card,
 } from '@metamask/snaps-sdk/jsx';
 
-import { QTUM_ICON } from '@/consts';
+import { FOOTER_TEXT, QTUM_ICON } from '@/consts';
 import { PaddedBox } from '@/helpers';
-import { SNAP_VERSION } from '@/consts';
 
 export const renderHome = () => (
   <Box
@@ -68,7 +67,7 @@ export const renderHome = () => (
         size="sm"
         alignment="center"
         color="muted"
-        children={`${SNAP_VERSION} / Powered by Qtum`}
+        children={FOOTER_TEXT}
       />,
     ]}
   />
@@ -121,7 +120,7 @@ export const renderDriveInternalMnemonic = (errorDerivationPath?: string) => (
         size="sm"
         alignment="center"
         color="muted"
-        children={`${SNAP_VERSION} / Powered by Qtum`}
+        children={FOOTER_TEXT}
       />,
     ]}
   />
@@ -216,7 +215,7 @@ export const renderDriveExternalMnemonic = (
         size="sm"
         alignment="center"
         color="muted"
-        children={`${SNAP_VERSION} / Powered by Qtum`}
+        children={FOOTER_TEXT}
       />,
     ]}
   />
@@ -338,7 +337,7 @@ export const renderImportPrivateKey = (
         size="sm"
         alignment="center"
         color="muted"
-        children={`${SNAP_VERSION} / Powered by Qtum`}
+        children={FOOTER_TEXT}
       />,
     ]}
   />

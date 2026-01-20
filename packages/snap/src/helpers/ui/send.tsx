@@ -20,12 +20,11 @@ import {
   Tooltip
 } from '@metamask/snaps-sdk/jsx';
 
-import { QTUM_ICON } from '@/consts';
+import { FOOTER_TEXT, QTUM_ICON } from '@/consts';
 import { SendEnum } from '@/enums';
 import { PaddedBox, Gap, totalAmount, formatUnits } from '@/helpers';
 import { formatBalance } from '@/helpers/format';
 import type { SendErrorsType, SendResponseType, SendType, TokenType, GasEstimationType } from '@/types';
-import { SNAP_VERSION } from '@/consts';
 
 export const renderSendTransaction = (
   name: string,
@@ -244,7 +243,7 @@ export const renderSendTransaction = (
         size="sm"
         alignment="center"
         color="muted"
-        children={`${SNAP_VERSION} / Powered by Qtum`}
+        children={FOOTER_TEXT}
       />,
     ]}
   />
@@ -376,7 +375,7 @@ export const renderSend = (
           size="sm"
           alignment="center"
           color="muted"
-          children={`${SNAP_VERSION} / Powered by Qtum`}
+          children={FOOTER_TEXT}
         />,
       ]}
     />

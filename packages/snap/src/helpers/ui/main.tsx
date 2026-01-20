@@ -21,11 +21,10 @@ import {
   Icon,
 } from '@metamask/snaps-sdk/jsx';
 import { Component, DialogType, panel } from '@metamask/snaps-sdk';
-import { SNAP_VERSION } from '@/consts';
 
+import { FOOTER_TEXT, QTUM_ICON } from '@/consts';
 import { makeSpacerSVG } from '@/helpers';
 import { PaddedBoxType, EllipsisOptions, GapType } from '@/types';
-import { QTUM_ICON } from '@/consts';
 
 export const Ellipsis = (options: EllipsisOptions) => {
   const head = options.head ?? 6;
@@ -262,7 +261,7 @@ export const renderExportPrivateKey = (
         size="sm"
         alignment="center"
         color="muted"
-        children={`${SNAP_VERSION} / Powered by Qtum`}
+        children={FOOTER_TEXT}
       />,
     ]}
   />
@@ -317,7 +316,7 @@ export const renderRemoveWallet = () => (
         size="sm"
         alignment="center"
         color="muted"
-        children={`${SNAP_VERSION} / Powered by Qtum`}
+        children={FOOTER_TEXT}
       />,
     ]}
   />

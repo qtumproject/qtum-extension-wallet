@@ -14,10 +14,10 @@ import {
   Spinner,
 } from '@metamask/snaps-sdk/jsx';
 
+import { FOOTER_TEXT } from '@/consts';
 import { Ellipsis, Gap, makeSpacerSVG, PaddedBox, toTitleCase } from '@/helpers';
 import { formatDateTime } from '@/helpers/format';
 import type { HistoryType } from '@/types';
-import { SNAP_VERSION } from '@/consts';
 
 export const renderHistory = (history: HistoryType, isLoading: boolean = false) => {
 
@@ -192,7 +192,7 @@ export const renderHistory = (history: HistoryType, isLoading: boolean = false) 
           size="sm"
           alignment="center"
           color="muted"
-          children={`${SNAP_VERSION} / Powered by Qtum`}
+          children={FOOTER_TEXT}
         />,
       ]}
     />

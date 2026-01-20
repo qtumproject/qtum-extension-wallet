@@ -15,11 +15,10 @@ import {
   Spinner
 } from '@metamask/snaps-sdk/jsx';
 
-import { QRC20_PAGE_SIZE, WAITING_CONFIRMATIONS } from '@/consts';
+import { FOOTER_TEXT, QRC20_PAGE_SIZE, WAITING_CONFIRMATIONS } from '@/consts';
 import { formatBalance, formatDateTime } from '@/helpers/format';
 import { PaddedBox, makeSpacerSVG, toTitleCase } from '@/helpers';
 import type { DashboardType, NetworksType, TokenType } from '@/types';
-import { SNAP_VERSION } from '@/consts';
 
 export const renderDashboard = (
   networks: NetworksType, dashboard: DashboardType, tokens: TokenType[] = [], chainId?: string
@@ -499,7 +498,7 @@ export const renderDashboard = (
           size="sm"
           alignment="center"
           color="muted"
-          children={`${SNAP_VERSION} / Powered by Qtum`}
+          children={FOOTER_TEXT}
         />,
       ]}
     />

@@ -14,9 +14,9 @@ import {
   Banner,
 } from '@metamask/snaps-sdk/jsx';
 
+import { FOOTER_TEXT } from '@/consts';
 import { Gap, PaddedBox } from '@/helpers';
 import { ParamsQRC20Type } from '@/types';
-import { SNAP_VERSION } from '@/consts';
 
 export const renderAddQRC20 = (params?: ParamsQRC20Type) => {
   return (
@@ -146,7 +146,7 @@ export const renderAddQRC20 = (params?: ParamsQRC20Type) => {
           size="sm"
           alignment="center"
           color="muted"
-          children={`${SNAP_VERSION} / Powered by Qtum`}
+          children={FOOTER_TEXT}
         />,
       ]}
     />
