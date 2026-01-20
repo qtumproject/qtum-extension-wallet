@@ -9,12 +9,12 @@ export type TextField = {
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ethereum: providers.ExternalProvider;
   }
 }
 
+// @ts-ignore
 declare module 'wif' {
   export function encode(
     version: number,
@@ -22,9 +22,11 @@ declare module 'wif' {
     compressed?: boolean,
   ): string;
 
-  export function decode(
-    wif: string,
-  ): { version: number; privateKey: Uint8Array; compressed: boolean };
+  export function decode(wif: string): {
+    version: number;
+    privateKey: Uint8Array;
+    compressed: boolean;
+  };
 
   const _default: {
     encode: typeof encode;
@@ -33,6 +35,7 @@ declare module 'wif' {
   export default _default;
 }
 
+// @ts-ignore
 declare module 'bip38' {
   export function encrypt(
     privateKey: Uint8Array,

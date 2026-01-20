@@ -17,14 +17,20 @@ import {
   Skeleton,
   Spinner,
   Text,
-  Tooltip
+  Tooltip,
 } from '@metamask/snaps-sdk/jsx';
 
 import { FOOTER_TEXT, QTUM_ICON } from '@/consts';
 import { SendEnum } from '@/enums';
 import { PaddedBox, Gap, totalAmount, formatUnits } from '@/helpers';
 import { formatBalance } from '@/helpers/format';
-import type { SendErrorsType, SendResponseType, SendType, TokenType, GasEstimationType } from '@/types';
+import type {
+  SendErrorsType,
+  SendResponseType,
+  SendType,
+  TokenType,
+  GasEstimationType,
+} from '@/types';
 
 export const renderSendTransaction = (
   name: string,
@@ -183,7 +189,12 @@ export const renderSendTransaction = (
           ]}
         />
       ),
-      response && isConfirm && !loading && response.isValid && response.transactionLink && response.hash && (
+      response &&
+        isConfirm &&
+        !loading &&
+        response.isValid &&
+        response.transactionLink &&
+        response.hash && (
           <Box
             children={[
               <Banner
@@ -194,7 +205,10 @@ export const renderSendTransaction = (
                   <Text
                     size="sm"
                     children={
-                      <Link href={response.transactionLink} children={response.hash} />
+                      <Link
+                        href={response.transactionLink}
+                        children={response.hash}
+                      />
                     }
                   />,
                 ]}
@@ -254,9 +268,8 @@ export const renderSend = (
   tokens: TokenType[],
   loading: boolean = false,
   contractAddress?: string,
-  errors?: SendErrorsType
+  errors?: SendErrorsType,
 ) => {
-
   return (
     <Box
       children={[
@@ -273,7 +286,7 @@ export const renderSend = (
                   label="QRC20"
                   variant="toggle"
                   checked={send.type === SendEnum.Token}
-                  disabled={tokens.length == 0}
+                  disabled={tokens.length === 0}
                 />
               }
             />,
@@ -292,7 +305,10 @@ export const renderSend = (
                       <Text children="Token" />,
                       <Tooltip
                         content={
-                          <Text size="sm" children="Choose the QRC20 token you want to send" />
+                          <Text
+                            size="sm"
+                            children="Choose the QRC20 token you want to send"
+                          />
                         }
                         children={<Icon name="info" />}
                       />,
@@ -322,7 +338,10 @@ export const renderSend = (
                 <Text children="Recipient" />,
                 <Tooltip
                   content={
-                    <Text size="sm" children="Enter the recipient's address carefully" />
+                    <Text
+                      size="sm"
+                      children="Enter the recipient's address carefully"
+                    />
                   }
                   children={<Icon name="info" />}
                 />,
@@ -341,7 +360,12 @@ export const renderSend = (
                   children={[
                     <Text children="Amount" />,
                     <Tooltip
-                      content={<Text size="sm" children="Enter the amount you want to send" />}
+                      content={
+                        <Text
+                          size="sm"
+                          children="Enter the amount you want to send"
+                        />
+                      }
                       children={<Icon name="info" />}
                     />,
                   ]}
@@ -350,25 +374,44 @@ export const renderSend = (
                   <Skeleton height={22} width="25%" borderRadius="medium" />
                 ),
                 !loading && send.type === SendEnum.Native && send.native && (
-                  <Text color="muted" size="sm" children={`${formatBalance(send.native.balance ?? 0, 18)} ${send.native.symbol}`} />
+                  <Text
+                    color="muted"
+                    size="sm"
+                    children={`${formatBalance(send.native.balance ?? 0, 18)} ${send.native.symbol}`}
+                  />
                 ),
                 !loading && send.type === SendEnum.Token && send.token && (
-                  <Text color="muted" size="sm" children={`${formatBalance(send.token.balance ?? 0, send.token.decimals)} ${send.token.symbol}`} />
+                  <Text
+                    color="muted"
+                    size="sm"
+                    children={`${formatBalance(send.token.balance ?? 0, send.token.decimals)} ${send.token.symbol}`}
+                  />
                 ),
               ]}
             />,
             <Field
               error={errors?.amount}
-              children={<Input name="amount" type="number" disabled={loading} />}
+              children={
+                <Input name="amount" type="number" disabled={loading} />
+              }
             />,
           ]}
         />,
         <Divider />,
         <Section
           children={[
-            <Button name="send-action" type="submit" form="send-form" children="Send" />,
+            <Button
+              name="send-action"
+              type="submit"
+              form="send-form"
+              children="Send"
+            />,
             <Divider />,
-            <Button name="back-to-dashboard" variant="destructive" children="Back" />,
+            <Button
+              name="back-to-dashboard"
+              variant="destructive"
+              children="Back"
+            />,
           ]}
         />,
         <Text
@@ -380,4 +423,4 @@ export const renderSend = (
       ]}
     />
   );
-}
+};

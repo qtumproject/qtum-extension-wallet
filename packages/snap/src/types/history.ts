@@ -1,4 +1,9 @@
-export type HistoryDirectionType = 'receive' | 'send' | 'gas-refund' | 'contract' | string;
+export type HistoryDirectionType =
+  | 'receive'
+  | 'send'
+  | 'gas-refund'
+  | 'contract'
+  | string;
 
 export type HistoryStatusType = 'pending' | 'confirmed' | 'failed';
 

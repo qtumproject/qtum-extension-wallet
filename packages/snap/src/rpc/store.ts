@@ -12,7 +12,6 @@ const getItem = async <T extends StorageEnum>(
   key: T,
 ): Promise<StorageType[T]> => {
   const state = await getState();
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return state?.[key] ? JSON.parse(state[key]) : null;
 };

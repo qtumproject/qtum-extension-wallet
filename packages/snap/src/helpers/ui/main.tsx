@@ -1,3 +1,5 @@
+import { DialogType } from '@metamask/snaps-sdk';
+import type { JSXElement } from '@metamask/snaps-sdk/jsx';
 import {
   Banner,
   Box,
@@ -8,7 +10,6 @@ import {
   Heading,
   Image,
   Input,
-  JSXElement,
   Section,
   Text,
   Selector,
@@ -20,11 +21,10 @@ import {
   Tooltip,
   Icon,
 } from '@metamask/snaps-sdk/jsx';
-import { Component, DialogType, panel } from '@metamask/snaps-sdk';
 
 import { FOOTER_TEXT, QTUM_ICON } from '@/consts';
 import { makeSpacerSVG } from '@/helpers';
-import { PaddedBoxType, EllipsisOptions, GapType } from '@/types';
+import type { PaddedBoxType, EllipsisOptions, GapType } from '@/types';
 
 export const Ellipsis = (options: EllipsisOptions) => {
   const head = options.head ?? 6;
@@ -32,13 +32,17 @@ export const Ellipsis = (options: EllipsisOptions) => {
   const ellipsis = options.ellipsis ?? '...';
 
   const value = (options.data ?? '').trim();
-  if (!value) return '';
+  if (!value) {
+    return '';
+  }
 
   const has0x = value.startsWith('0x') || value.startsWith('0X');
   const prefix = has0x ? value.slice(0, 2) : '';
   const body = has0x ? value.slice(2) : value;
 
-  if (body.length <= head + tail) return value;
+  if (body.length <= head + tail) {
+    return value;
+  }
 
   const start = body.slice(0, head);
   const end = body.slice(-tail);
@@ -46,7 +50,10 @@ export const Ellipsis = (options: EllipsisOptions) => {
 };
 
 export const Gap = (params: GapType = { space: 1, size: 'sm' }): JSXElement => (
-  <Text children={' '.repeat(params.space ?? 1)} size={params.size ?? 'sm'}></Text>
+  <Text
+    children={' '.repeat(params.space ?? 1)}
+    size={params.size ?? 'sm'}
+  ></Text>
 );
 
 export const PaddedBox = (params: PaddedBoxType): JSXElement => (
@@ -67,7 +74,7 @@ export const PaddedBox = (params: PaddedBoxType): JSXElement => (
           params.direction === 'horizontal' ? params.size : 1,
           params.direction === 'vertical' ? params.size : 1,
         )}
-      />
+      />,
     ]}
   ></Box>
 );
@@ -76,27 +83,21 @@ export const snapDialog = async (type: DialogType, content: JSXElement) => {
   return snap.request({ method: 'snap_dialog', params: { type, content } });
 };
 
-export const errorSnapDialog = async (options: { title?: string, message?: string }) => {
+export const errorSnapDialog = async (options: {
+  title?: string;
+  message?: string;
+}) => {
   const { title, message } = options;
 
-  return await snapDialog(DialogType.Alert, (
+  return await snapDialog(
+    DialogType.Alert,
     <Box
       children={[
         <Heading children={title ?? 'Error'} />,
         <Text children={message ?? 'Something went wrong'} />,
       ]}
-    />
-  ));
-};
-
-export const getSnapDialog = async (type: DialogType, content: Component[]) => {
-  return snap.request({
-    method: 'snap_dialog',
-    params: {
-      type,
-      content: panel(content),
-    },
-  });
+    />,
+  );
 };
 
 export const renderExportPrivateKey = (
@@ -121,9 +122,21 @@ export const renderExportPrivateKey = (
             value={exportType}
             disabled={loading}
             children={[
-              <SelectorOption key="private-key" value="private-key" children={<Card title="Private Key" value="" />} />,
-              <SelectorOption key="wif" value="wif" children={<Card title="WIF" value="" />} />,
-              <SelectorOption key="encrypted-wif" value="encrypted-wif" children={<Card title="Encrypted WIF" value="" />} />,
+              <SelectorOption
+                key="private-key"
+                value="private-key"
+                children={<Card title="Private Key" value="" />}
+              />,
+              <SelectorOption
+                key="wif"
+                value="wif"
+                children={<Card title="WIF" value="" />}
+              />,
+              <SelectorOption
+                key="encrypted-wif"
+                value="encrypted-wif"
+                children={<Card title="Encrypted WIF" value="" />}
+              />,
             ]}
           />,
         ]}
@@ -167,7 +180,10 @@ export const renderExportPrivateKey = (
             <Field
               error={errorPassphrase}
               children={
-                <Input name="export-bip38-passphrase" placeholder="(Optional)" />
+                <Input
+                  name="export-bip38-passphrase"
+                  placeholder="(Optional)"
+                />
               }
             />,
             encryptedWIF ? (
@@ -211,8 +227,18 @@ export const renderExportPrivateKey = (
                           direction="horizontal"
                           alignment="center"
                           children={[
-                            <Text alignment="center" color="muted" size="sm" children="BIP38" />,
-                            <Text alignment="center" color="muted" size="sm" children="/" />,
+                            <Text
+                              alignment="center"
+                              color="muted"
+                              size="sm"
+                              children="BIP38"
+                            />,
+                            <Text
+                              alignment="center"
+                              color="muted"
+                              size="sm"
+                              children="/"
+                            />,
                             <Text
                               size="sm"
                               children={
@@ -296,7 +322,7 @@ export const renderRemoveWallet = () => (
         children={
           <Text
             size="md"
-            children="Are you sure you want to remove wallet? Ensure you have securely saved the Private Key / WIF / Encrypted WIF, Otherwise you will no longer be able to access this wallet."
+            children="Are you sure you want to remove wallet? Ensure you have securely saved the Private Key, otherwise you will no longer be able to access this wallet."
           />
         }
       />,

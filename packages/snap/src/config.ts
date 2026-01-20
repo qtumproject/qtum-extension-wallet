@@ -1,5 +1,5 @@
+import type { Json } from '@metamask/snaps-sdk';
 import { QtumProvider, QtumWallet } from 'qtum-ethers-wrapper';
-import { Json } from "@metamask/snaps-sdk";
 
 import { StorageEnum } from '@/enums';
 import { snapStorage } from '@/rpc';
@@ -27,7 +27,6 @@ export const clearWallet = async (): Promise<void> => {
   if (typeof maybeRemove === 'function') {
     await maybeRemove(StorageEnum.Identity);
   } else {
-    // @ts-ignore
     await snapStorage.setItem(StorageEnum.Identity, null);
     try {
       const state = (await snap.request({
@@ -42,6 +41,8 @@ export const clearWallet = async (): Promise<void> => {
           params: { operation: 'update', newState: state },
         });
       }
-    } catch { }
+    } catch {
+      /* empty */
+    }
   }
 };

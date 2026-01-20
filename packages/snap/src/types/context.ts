@@ -1,4 +1,4 @@
-import {
+import type {
   AddQRC20Type,
   DashboardType,
   HistoryType,

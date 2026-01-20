@@ -19,7 +19,6 @@ export class QtumWallet extends QtumSnapBase implements ExternalProvider {
     super(snapId, version);
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   async request<T extends RPCMethods>(request: {
     method: RPCMethods;
@@ -28,7 +27,6 @@ export class QtumWallet extends QtumSnapBase implements ExternalProvider {
     return this.sendSnapRequest(request.method, request.params);
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   async send<T extends RPCMethods>(
     req: { method: RPCMethods; params?: SnapRequestParams[T] },
@@ -43,7 +41,6 @@ export class QtumWallet extends QtumSnapBase implements ExternalProvider {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   async sendAsync<T extends RPCMethods>(
     req: { method: RPCMethods; params?: SnapRequestParams[T] },

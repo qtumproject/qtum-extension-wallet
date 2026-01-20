@@ -1,17 +1,20 @@
 import {
   Box,
   Button,
-  Card, Copyable,
+  Card,
+  Copyable,
   Divider,
   Heading,
   Image,
-  Section, Selector, SelectorOption,
-  Text
+  Section,
+  Selector,
+  SelectorOption,
+  Text,
 } from '@metamask/snaps-sdk/jsx';
 
 import { FOOTER_TEXT } from '@/consts';
 import { Gap } from '@/helpers';
-import { ReceiveType } from '@/types';
+import type { ReceiveType } from '@/types';
 
 export const renderReceive = (receive: ReceiveType) => (
   <Box

@@ -1,4 +1,7 @@
-import { SnapsChildren, GenericSnapElement } from '@metamask/snaps-sdk/jsx';
+import type {
+  SnapsChildren,
+  GenericSnapElement,
+} from '@metamask/snaps-sdk/jsx';
 
 export * from './address';
 export * from './coin';

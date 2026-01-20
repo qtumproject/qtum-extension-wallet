@@ -2,7 +2,6 @@ import bs58check from 'bs58check';
 // eslint-disable-next-line
 import { Buffer } from 'buffer';
 
-// eslint-disable-next-line jsdoc/require-jsdoc
 export function toBase58Check(ethAddress: string, version: number) {
   const hash = Buffer.from(ethAddress.slice(2), 'hex');
   const payload = Buffer.allocUnsafe(21);
@@ -11,14 +10,12 @@ export function toBase58Check(ethAddress: string, version: number) {
   return bs58check.encode(payload);
 }
 
-// eslint-disable-next-line jsdoc/require-jsdoc
 export function fromBase58Check(qtumAddress: string) {
   const payload = bs58check.decode(qtumAddress);
   const buffer = Buffer.from(payload);
   return `0x${buffer.toString('hex').slice(2)}`;
 }
 
-// eslint-disable-next-line jsdoc/require-jsdoc
 export function isAddressMatchNetwork(qtumAddress: string, chainId: number) {
   const payload = bs58check.decode(qtumAddress);
 

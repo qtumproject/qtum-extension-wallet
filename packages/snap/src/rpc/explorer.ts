@@ -1,6 +1,6 @@
-import { Chain } from '@qtumproject/qtum-wallet-connector';
+import type { Chain } from '@qtumproject/qtum-wallet-connector';
 
-import {
+import type {
   NativeBasicTransactionsResponse,
   NativeBalanceHistoryResponse,
   QRC20BalanceHistoryResponse,
@@ -11,9 +11,9 @@ export async function getNativeBasicTransaction(
   address: string,
   network: Chain,
   limit: number,
-  offset: number
+  offset: number,
 ): Promise<NativeBasicTransactionsResponse> {
-  return await (
+  return (await (
     await fetch(
       `${
         network.blockExplorerUrls[0]
@@ -21,7 +21,7 @@ export async function getNativeBasicTransaction(
         String(limit),
       )}&offset=${encodeURIComponent(String(offset))}`,
     )
-  ).json() as NativeBasicTransactionsResponse;
+  ).json()) as NativeBasicTransactionsResponse;
 }
 
 export async function getNativeBalanceHistory(
@@ -30,7 +30,7 @@ export async function getNativeBalanceHistory(
   limit: number,
   offset: number,
 ): Promise<NativeBalanceHistoryResponse> {
-  return await(
+  return (await (
     await fetch(
       `${
         network.blockExplorerUrls[0]
@@ -38,7 +38,7 @@ export async function getNativeBalanceHistory(
         String(limit),
       )}&offset=${encodeURIComponent(String(offset))}`,
     )
-  ).json() as NativeBalanceHistoryResponse;
+  ).json()) as NativeBalanceHistoryResponse;
 }
 
 export async function getQRC20BalanceHistory(
@@ -47,7 +47,7 @@ export async function getQRC20BalanceHistory(
   limit: number,
   offset: number,
 ): Promise<QRC20BalanceHistoryResponse> {
-  return await(
+  return (await (
     await fetch(
       `${
         network.blockExplorerUrls[0]
@@ -55,7 +55,7 @@ export async function getQRC20BalanceHistory(
         String(limit),
       )}&offset=${encodeURIComponent(String(offset))}`,
     )
-  ).json() as QRC20BalanceHistoryResponse;
+  ).json()) as QRC20BalanceHistoryResponse;
 }
 
 export async function getContract(

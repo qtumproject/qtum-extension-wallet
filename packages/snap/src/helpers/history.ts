@@ -1,7 +1,9 @@
-import { Chain } from '@qtumproject/qtum-wallet-connector';
+import type { Chain } from '@qtumproject/qtum-wallet-connector';
 import { ethers } from 'ethers';
 
+import { HISTORY_PAGE_SIZE, WAITING_CONFIRMATIONS } from '@/consts';
 import { formatUnits } from '@/helpers/format';
+import { toTitleCase } from '@/helpers/utils';
 import { getNativeBasicTransaction, getQRC20BalanceHistory } from '@/rpc';
 import type {
   HistoriesType,
@@ -10,18 +12,18 @@ import type {
   NativeBasicTransactionsResponse,
   QRC20BalanceHistoryResponse,
 } from '@/types';
-import { toTitleCase } from '@/helpers/utils';
-import { HISTORY_PAGE_SIZE, WAITING_CONFIRMATIONS } from '@/consts';
 
 export async function getNativeHistory(
-  address: string, network: Chain, limit: number, offset: number
+  address: string,
+  network: Chain,
+  limit: number,
+  offset: number,
 ): Promise<HistoriesType> {
   try {
     const items: HistoryItemType[] = [];
-    const data: NativeBasicTransactionsResponse = await getNativeBasicTransaction(
-      address, network, limit, offset
-    );
-    for (const transaction of data?.transactions) {
+    const data: NativeBasicTransactionsResponse =
+      await getNativeBasicTransaction(address, network, limit, offset);
+    for (const transaction of data.transactions) {
       const transactionLink = `${network.blockExplorerUrls[0]}tx/${transaction.id}`;
       const signed = String(transaction.amount ?? '0');
       const abs = signed.startsWith('-') ? signed.slice(1) : signed;
@@ -39,32 +41,43 @@ export async function getNativeHistory(
         symbol: 'QTUM',
         direction: transaction.type,
         confirmations: Number.isFinite(confirmations) ? confirmations : 0,
-        type: transaction.type ? toTitleCase(transaction.type, /-/g, ' ') : '-',
+        type: transaction.type
+          ? toTitleCase(transaction.type, /-/gu, ' ')
+          : '-',
         isToken: false,
       } as HistoryItemType);
     }
     return { items, totalCount: Number(data.totalCount), isValid: true };
-  } catch (_) {
+  } catch {
     return { items: [], totalCount: 0, isValid: false };
   }
 }
 
 export async function getQRC20History(
-  address: string, network: Chain, limit: number, offset: number
+  address: string,
+  network: Chain,
+  limit: number,
+  offset: number,
 ): Promise<HistoriesType> {
   try {
     const items: HistoryItemType[] = [];
     const data: QRC20BalanceHistoryResponse = await getQRC20BalanceHistory(
-      address, network, limit, offset
+      address,
+      network,
+      limit,
+      offset,
     );
-    for (const transaction of data?.transactions) {
+    for (const transaction of data.transactions) {
       const transactionLink = `${network.blockExplorerUrls[0]}tx/${transaction.id}`;
       for (const token of transaction.tokens) {
         const signed = String(token.amount ?? '0');
         const isSend = signed.startsWith('-');
         const abs = isSend ? signed.slice(1) : signed;
         const decimals = Number(token.decimals || 0);
-        const amount = decimals > 0 ? ethers.utils.formatUnits(abs || '0', decimals) : abs || '0';
+        const amount =
+          decimals > 0
+            ? ethers.utils.formatUnits(abs || '0', decimals)
+            : abs || '0';
         const confirmations = Number(transaction?.confirmations ?? 0);
         const timestamp = Number(transaction?.timestamp);
         const status: HistoryStatusType =
@@ -87,22 +100,28 @@ export async function getQRC20History(
       }
     }
     return { items, totalCount: Number(data.totalCount), isValid: true };
-  } catch (_) {
+  } catch {
     return { items: [], totalCount: 0, isValid: false };
   }
 }
 
-export async function getTop5History(address: string, network: Chain): Promise<HistoriesType> {
+export async function getTop5History(
+  address: string,
+  network: Chain,
+): Promise<HistoriesType> {
   try {
     const [native, qrc20] = await Promise.all([
       getNativeHistory(address, network, HISTORY_PAGE_SIZE, 0),
       getQRC20History(address, network, HISTORY_PAGE_SIZE, 0),
     ]);
-    const items: HistoryItemType[] = [...native.items, ...qrc20.items].sort(
-      (one: HistoryItemType, two: HistoryItemType): number => two.timestamp - one.timestamp
-    ).slice(0, HISTORY_PAGE_SIZE);
+    const items: HistoryItemType[] = [...native.items, ...qrc20.items]
+      .sort(
+        (one: HistoryItemType, two: HistoryItemType): number =>
+          two.timestamp - one.timestamp,
+      )
+      .slice(0, HISTORY_PAGE_SIZE);
     return { items, totalCount: Number(items.length), isValid: true };
-  } catch (_) {
+  } catch {
     return { items: [], totalCount: 0, isValid: false };
   }
 }

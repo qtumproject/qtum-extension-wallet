@@ -1,5 +1,6 @@
-import { Chain, sleep } from '@qtumproject/qtum-wallet-connector';
-import { DialogType} from '@metamask/snaps-sdk';
+import { DialogType } from '@metamask/snaps-sdk';
+import type { Chain } from '@qtumproject/qtum-wallet-connector';
+import { sleep } from '@qtumproject/qtum-wallet-connector';
 
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
 import { StorageEnum } from '@/enums';
@@ -8,37 +9,48 @@ import { snapStorage } from '@/rpc';
 import type { NetworksType } from '@/types';
 
 export const getNetworks = async (): Promise<NetworksType> => {
-  const storedNetworks = (await snapStorage.getItem(StorageEnum.Networks)) ?? {};
-  const storedList = Array.isArray(storedNetworks.list) ? storedNetworks.list : [];
+  const storedNetworks =
+    (await snapStorage.getItem(StorageEnum.Networks)) ?? {};
+  const storedList = Array.isArray(storedNetworks.list)
+    ? storedNetworks.list
+    : [];
   const list: Chain[] = [
     ...DEFAULT_NETWORKS_RPC_URLS.filter((network: Chain) => {
-      return !storedList.map(({ chainId }: Chain) => chainId).includes(network.chainId);
+      return !storedList
+        .map(({ chainId }: Chain) => chainId)
+        .includes(network.chainId);
     }),
     ...storedList,
   ];
-  const current: Chain = storedNetworks?.current ?? DEFAULT_NETWORKS_RPC_URLS[0];
+  const current: Chain =
+    storedNetworks?.current ?? DEFAULT_NETWORKS_RPC_URLS[0];
   return { list, current };
 };
 
-export const getNetwork = async (chainId: string, networks?: NetworksType): Promise<Chain> => {
-
-  const { list } = networks ? networks : await getNetworks();
-  const network = list.find(
-    (network) => String(network.chainId) === String(chainId),
-  );
+export const getNetwork = async (
+  chainId: string,
+  networks?: NetworksType,
+): Promise<Chain> => {
+  const { list } = networks || (await getNetworks());
+  const network = list.find((nt) => {
+    return String(nt.chainId) === String(chainId);
+  });
   if (!network) {
     throw new TypeError('Network not found');
   }
   return network;
 };
 
-export const setAndGetNetworks = async (network: Chain, networks?: NetworksType): Promise<NetworksType> => {
-
-  let { list, current } = networks ? networks : await getNetworks();
+export const setAndGetNetworks = async (
+  network: Chain,
+  networks?: NetworksType,
+): Promise<NetworksType> => {
+  const { list, current } = networks || (await getNetworks());
 
   if (current !== network) {
     await snapStorage.setItem(StorageEnum.Networks, {
-      ...{ list }, current: network
+      ...{ list },
+      current: network,
     });
     await sleep(500);
   }
@@ -63,7 +75,7 @@ export const setCurrentNetwork = async (chainId: string) => {
   const dialogResult = await renderSwitchingNetworkDialog(
     storedNetworks.current.chainName,
     nextNetwork.chainName,
-    DialogType.Confirmation
+    DialogType.Confirmation,
   );
   if (!dialogResult) {
     return;
@@ -77,7 +89,7 @@ export const setCurrentNetwork = async (chainId: string) => {
   await renderSwitchingNetworkDialog(
     storedNetworks.current.chainName,
     nextNetwork.chainName,
-    DialogType.Alert
+    DialogType.Alert,
   );
 };
 

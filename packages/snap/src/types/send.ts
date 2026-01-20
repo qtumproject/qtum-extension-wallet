@@ -1,7 +1,7 @@
-import { TransactionResponse } from '@ethersproject/abstract-provider';
+import type { TransactionResponse } from '@ethersproject/abstract-provider';
 
-import { SendEnum } from "@/enums";
-import { NativeType, TokenType } from '@/types';
+import type { SendEnum } from '@/enums';
+import type { NativeType, TokenType } from '@/types';
 
 export type SendResponseType = {
   isValid: boolean;
@@ -9,13 +9,13 @@ export type SendResponseType = {
   hash?: string;
   transactionLink?: string;
   errorMessage?: string;
-}
+};
 
 export type GasEstimationType = {
   gasLimit: string;
   gasPrice: string;
   fee: string;
-}
+};
 
 export type TransactionType = {
   sender: string;
@@ -26,7 +26,7 @@ export type TransactionType = {
 
 export type SendType = {
   type: SendEnum;
-  native: NativeType | null,
+  native: NativeType | null;
   token: TokenType | null;
   transaction: TransactionType | null;
 };
@@ -34,4 +34,4 @@ export type SendType = {
 export type SendErrorsType = {
   recipient?: string;
   amount?: string;
-}
+};

@@ -4,7 +4,7 @@ export type NativeType = {
   decimals: number;
   balance: string | null;
   chainId: string;
-}
+};
 
 export type TokenType = NativeType & {
   contractAddress: string;

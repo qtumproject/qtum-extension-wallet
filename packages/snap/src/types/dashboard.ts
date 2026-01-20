@@ -1,5 +1,5 @@
-import { AddressType } from '@/types/address';
-import { NativeType, TokenType, HistoriesType, KeyType } from '@/types';
+import type { NativeType, TokenType, HistoriesType, KeyType } from '@/types';
+import type { AddressType } from '@/types/address';
 
 export type DashboardType = {
   address: AddressType | null;

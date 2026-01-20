@@ -1,12 +1,34 @@
-import { OnUserInputHandler, UserInputEventType } from '@metamask/snaps-sdk';
-import type { ComponentOrElement, InterfaceContext } from '@metamask/snaps-sdk';
+import { UserInputEventType } from '@metamask/snaps-sdk';
+import type {
+  ComponentOrElement,
+  InterfaceContext,
+  OnUserInputHandler,
+} from '@metamask/snaps-sdk';
 import { fromBase58Check } from '@qtumproject/qtum-wallet-connector';
-import { QtumWallet } from 'qtum-ethers-wrapper';
 import { ethers } from 'ethers';
-import QRCode from 'qrcode';
+import type { QtumWallet } from 'qtum-ethers-wrapper';
 
 import { clearWallet, getWallet } from '@/config';
 import { HISTORY_PAGE_SIZE, QRC20_PAGE_SIZE } from '@/consts';
+import { SendEnum } from '@/enums';
+import { getQtumAddress } from '@/helpers/format';
+import {
+  getNativeHistory,
+  getQRC20History,
+  getTop5History,
+} from '@/helpers/history';
+import {
+  getTokensWithBalance,
+  getTokenWithBalance,
+  isValidQRC20ByExplorer,
+  searchQRC20,
+} from '@/helpers/qrc20';
+import {
+  sendNative,
+  sendQRC20,
+  estimateNative,
+  estimateQRC20,
+} from '@/helpers/send';
 import {
   renderHome,
   renderDashboard,
@@ -22,42 +44,6 @@ import {
   renderRemoveWallet,
   renderHistory,
 } from '@/helpers/ui';
-import { getQtumAddress } from '@/helpers/format';
-import { getNetwork, setAndGetNetworks } from '@/storage/networks';
-import { sendNative, sendQRC20, estimateNative, estimateQRC20 } from '@/helpers/send';
-import {
-  createWallet,
-  deriveFromExternalMnemonic,
-  deriveFromInternalMnemonic,
-  importPrivateKey
-} from '@/helpers/wallet';
-import { SendEnum } from '@/enums';
-import {
-  NetworksType,
-  SendResponseType,
-  ContextType,
-  HistoriesType,
-  HistoryType,
-  KeyType,
-} from '@/types';
-import {
-  addToken,
-  deleteToken,
-  getToken,
-  getTokens,
-  hasToken,
-} from '@/storage';
-import {
-  getTokensWithBalance,
-  getTokenWithBalance,
-  isValidQRC20ByExplorer,
-  searchQRC20,
-} from '@/helpers/qrc20';
-import {
-  getNativeHistory,
-  getQRC20History,
-  getTop5History,
-} from '@/helpers/history';
 import {
   isValidPrivateKey,
   isValidQtumOrHexadecimalAddress,
@@ -71,43 +57,93 @@ import {
   decryptBIP38,
   isValidWIF,
 } from '@/helpers/utils';
+import {
+  createWallet,
+  deriveFromExternalMnemonic,
+  deriveFromInternalMnemonic,
+  importPrivateKey,
+} from '@/helpers/wallet';
+import {
+  addToken,
+  deleteToken,
+  getToken,
+  getTokens,
+  hasToken,
+} from '@/storage';
+import { getNetwork, setAndGetNetworks } from '@/storage/networks';
+import type {
+  NetworksType,
+  SendResponseType,
+  ContextType,
+  HistoriesType,
+  HistoryType,
+  KeyType,
+} from '@/types';
+
+const QRCode = require('qrcode');
 
 export const onUserInput: OnUserInputHandler = async (inputs) => {
+  const context = inputs.context as ContextType;
+  const state: Record<string, any> = await snap.request({
+    method: 'snap_getInterfaceState',
+    params: { id: inputs.id },
+  });
 
-  let context = inputs.context as ContextType;
-  const state: Record<string, any> = await snap.request({ method: 'snap_getInterfaceState', params: { id: inputs.id } });
-
-  async function updateInterface (ui: ComponentOrElement, context?: InterfaceContext) {
-    await snap.request({ method: 'snap_updateInterface', params: { id: inputs.id, ui, context } });
+  async function updateInterface(
+    ui: ComponentOrElement,
+    conText?: InterfaceContext,
+  ) {
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: { id: inputs.id, ui, context: conText },
+    });
   }
 
   if (
     inputs.event.type === UserInputEventType.InputChangeEvent &&
-    inputs.event.name === 'networks' && context.dashboard
+    inputs.event.name === 'networks' &&
+    context.dashboard
   ) {
     context.dashboard.native = null;
     context.dashboard.tokens = null;
     context.dashboard.histories = null;
     const network = await getNetwork(inputs.event.value as string);
     const tokens = await getTokens(network.chainId);
-    await updateInterface(renderDashboard(context.networks, context.dashboard, tokens, network.chainId), context);
+    await updateInterface(
+      renderDashboard(
+        context.networks,
+        context.dashboard,
+        tokens,
+        network.chainId,
+      ),
+      context,
+    );
     const networks = await setAndGetNetworks(network, context.networks);
     const wallet = await getWallet();
     context.networks = networks;
     context.dashboard.address = {
       qtum: await getQtumAddress(wallet.address, network.chainId),
-      hexadecimal: wallet.address
+      hexadecimal: wallet.address,
     };
     context.dashboard.native = {
       ...networks.current.nativeCurrency,
       balance: String(await wallet.getBalance()),
-      chainId: networks.current.chainId
+      chainId: networks.current.chainId,
     };
-    await updateInterface(renderDashboard(context.networks, context.dashboard, tokens), context);
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard, tokens),
+      context,
+    );
     context.dashboard.tokens = await getTokensWithBalance(tokens, wallet);
     context.dashboard.tokensPage = 1;
-    context.dashboard.histories = await getTop5History(context.dashboard.address.qtum, networks.current);
-    await updateInterface(renderDashboard(context.networks, context.dashboard), context);
+    context.dashboard.histories = await getTop5History(
+      context.dashboard.address.qtum,
+      networks.current,
+    );
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard),
+      context,
+    );
     return;
   }
 
@@ -129,10 +165,14 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
 
   if (
     inputs.event.type === UserInputEventType.InputChangeEvent &&
-    inputs.event.name === 'import-type' && context.home
+    inputs.event.name === 'import-type' &&
+    context.home
   ) {
     context.home.keyType = inputs.event.value as KeyType;
-    await updateInterface(renderImportPrivateKey(context.home.keyType), context);
+    await updateInterface(
+      renderImportPrivateKey(context.home.keyType),
+      context,
+    );
     return;
   }
 
@@ -156,7 +196,8 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
 
   if (
     inputs.event.type === UserInputEventType.InputChangeEvent &&
-    inputs.event.name === 'export-type' && context.dashboard
+    inputs.event.name === 'export-type' &&
+    context.dashboard
   ) {
     const wallet = await getWallet();
     const privateKey = wallet.privateKey.startsWith('0x')
@@ -211,26 +252,64 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     return;
   }
 
-  if (context.dashboard?.tokens && (
-    inputs.event.name === 'send-native' ||
-    inputs.event.name?.startsWith('send-qrc20')
-  )) {
+  if (
+    context.dashboard?.tokens &&
+    (inputs.event.name === 'send-native' ||
+      inputs.event.name?.startsWith('send-qrc20'))
+  ) {
     const wallet = await getWallet();
     if (inputs.event.name === 'send-native') {
-      context.send = { type: SendEnum.Native, native: null, token: null, transaction: null };
-      await updateInterface(renderSend(context.send, context.dashboard.tokens, true), context);
+      context.send = {
+        type: SendEnum.Native,
+        native: null,
+        token: null,
+        transaction: null,
+      };
+      await updateInterface(
+        renderSend(context.send, context.dashboard.tokens, true),
+        context,
+      );
       const balance = String(await wallet.getBalance());
       context.send.native = {
-        ...context.networks.current.nativeCurrency, balance, chainId: context.networks.current.chainId
+        ...context.networks.current.nativeCurrency,
+        balance,
+        chainId: context.networks.current.chainId,
       };
-      await updateInterface(renderSend(context.send, context.dashboard.tokens, false), context);
+      await updateInterface(
+        renderSend(context.send, context.dashboard.tokens, false),
+        context,
+      );
     } else {
       const contractAddress = inputs.event.name.replace('send-qrc20-', '');
-      context.send = { type: SendEnum.Token, native: null, token: null, transaction: null };
-      await updateInterface(renderSend(context.send, context.dashboard.tokens, true, contractAddress), context);
-      const token = await getToken(contractAddress, context.networks.current.chainId);
+      context.send = {
+        type: SendEnum.Token,
+        native: null,
+        token: null,
+        transaction: null,
+      };
+      await updateInterface(
+        renderSend(
+          context.send,
+          context.dashboard.tokens,
+          true,
+          contractAddress,
+        ),
+        context,
+      );
+      const token = await getToken(
+        contractAddress,
+        context.networks.current.chainId,
+      );
       context.send.token = await getTokenWithBalance(token, wallet);
-      await updateInterface(renderSend(context.send, context.dashboard.tokens, false, contractAddress), context);
+      await updateInterface(
+        renderSend(
+          context.send,
+          context.dashboard.tokens,
+          false,
+          contractAddress,
+        ),
+        context,
+      );
     }
     return;
   }
@@ -241,22 +320,33 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     context.dashboard?.tokens &&
     context.send
   ) {
-    context.send.type = Boolean(inputs.event.value) ? SendEnum.Token : SendEnum.Native;
-    let contractAddress = context.dashboard.tokens?.[0].contractAddress;
-    await updateInterface(renderSend(context.send, context.dashboard.tokens, true, contractAddress), context);
+    context.send.type = inputs.event.value ? SendEnum.Token : SendEnum.Native;
+    const contractAddress = context.dashboard.tokens?.[0].contractAddress;
+    await updateInterface(
+      renderSend(context.send, context.dashboard.tokens, true, contractAddress),
+      context,
+    );
     const wallet = await getWallet();
     if (context.send.type === SendEnum.Token) {
       context.send.native = null;
-      const token = await getToken(contractAddress, context.networks.current.chainId);
+      const token = await getToken(
+        contractAddress,
+        context.networks.current.chainId,
+      );
       context.send.token = await getTokenWithBalance(token, wallet);
     } else {
       const balance = String(await wallet.getBalance());
       context.send.native = {
-        ...context.networks.current.nativeCurrency, balance: balance, chainId: context.networks.current.chainId
+        ...context.networks.current.nativeCurrency,
+        balance,
+        chainId: context.networks.current.chainId,
       };
       context.send.token = null;
     }
-    await updateInterface(renderSend(context.send, context.dashboard.tokens, false), context);
+    await updateInterface(
+      renderSend(context.send, context.dashboard.tokens, false),
+      context,
+    );
     return;
   }
 
@@ -267,12 +357,21 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     context.send
   ) {
     const contractAddress = inputs.event.value as string;
-    await updateInterface(renderSend(context.send, context.dashboard.tokens, true, contractAddress), context);
+    await updateInterface(
+      renderSend(context.send, context.dashboard.tokens, true, contractAddress),
+      context,
+    );
     const wallet = await getWallet();
     context.send.native = null;
-    const token = await getToken(contractAddress, context.networks.current.chainId);
+    const token = await getToken(
+      contractAddress,
+      context.networks.current.chainId,
+    );
     context.send.token = await getTokenWithBalance(token, wallet);
-    await updateInterface(renderSend(context.send, context.dashboard.tokens, false), context);
+    await updateInterface(
+      renderSend(context.send, context.dashboard.tokens, false),
+      context,
+    );
     return;
   }
 
@@ -283,9 +382,9 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     context.send
   ) {
     const contractAddress = state?.['send-form']?.['contract-address'];
-    let sender = context.dashboard.address.qtum;
-    let recipient = (state?.['send-form']?.['recipient'] as string)?.trim();
-    const amount = state?.['send-form']?.['amount'];
+    const sender = context.dashboard.address.qtum;
+    const recipient = (state?.['send-form']?.recipient as string)?.trim();
+    const amount = state?.['send-form']?.amount;
 
     if (!recipient) {
       await updateInterface(
@@ -444,7 +543,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     }
   }
 
-  if (inputs.event.name === 'send-confirm' && context.send && context.send.transaction) {
+  if (inputs.event.name === 'send-confirm' && context.send?.transaction) {
     const wallet = await getWallet();
     if (context.send.type === SendEnum.Token && context.send.token) {
       await updateInterface(
@@ -465,15 +564,13 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       );
       const response = await sendQRC20(
         context.send.token.contractAddress,
-        (
-          ethers.utils.isAddress(context.send.transaction.recipient) ?
-            context.send.transaction.recipient :
-            fromBase58Check(context.send.transaction.recipient)
-        ),
+        ethers.utils.isAddress(context.send.transaction.recipient)
+          ? context.send.transaction.recipient
+          : fromBase58Check(context.send.transaction.recipient),
         context.send.transaction.amount,
         context.send.token.decimals,
         wallet,
-        context.networks.current
+        context.networks.current,
       );
       await updateInterface(
         renderSendTransaction(
@@ -509,15 +606,13 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
         context,
       );
       const response: SendResponseType = await sendNative(
-        (
-          ethers.utils.isAddress(context.send.transaction.recipient) ?
-            context.send.transaction.recipient :
-            fromBase58Check(context.send.transaction.recipient)
-        ),
+        ethers.utils.isAddress(context.send.transaction.recipient)
+          ? context.send.transaction.recipient
+          : fromBase58Check(context.send.transaction.recipient),
         context.send.transaction.amount,
         context.send.native.decimals,
         wallet,
-        context.networks.current
+        context.networks.current,
       );
       await updateInterface(
         renderSendTransaction(
@@ -539,17 +634,33 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     }
   }
 
-  if (inputs.event.name === 'send-cancel' && context.dashboard?.tokens && context.send && context.send.transaction) {
-    await updateInterface(renderSend(context.send, context.dashboard.tokens, true, (
-      context.send.token ? context.send.token.contractAddress : undefined
-    )), context);
+  if (
+    inputs.event.name === 'send-cancel' &&
+    context.dashboard?.tokens &&
+    context.send?.transaction
+  ) {
+    await updateInterface(
+      renderSend(
+        context.send,
+        context.dashboard.tokens,
+        true,
+        context.send.token ? context.send.token.contractAddress : undefined,
+      ),
+      context,
+    );
     const wallet = await getWallet();
     if (context.send.type === SendEnum.Token && context.send.token) {
-      context.send.token = await getTokenWithBalance(context.send.token, wallet);
+      context.send.token = await getTokenWithBalance(
+        context.send.token,
+        wallet,
+      );
     } else if (context.send.type === SendEnum.Native && context.send.native) {
       context.send.native.balance = String(await wallet.getBalance());
     }
-    await updateInterface(renderSend(context.send, context.dashboard.tokens, false), context);
+    await updateInterface(
+      renderSend(context.send, context.dashboard.tokens, false),
+      context,
+    );
     return;
   }
 
@@ -558,18 +669,19 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       type: 'qtum',
       address: {
         qtum: context.dashboard.address.qtum,
-        hexadecimal: context.dashboard.address.hexadecimal
+        hexadecimal: context.dashboard.address.hexadecimal,
       },
       qrCodes: {
-        qtum: await QRCode.toString(
-          context.dashboard.address.qtum,
-          { type: 'svg', margin: 1, width: 150 }
-        ),
+        qtum: await QRCode.toString(context.dashboard.address.qtum, {
+          type: 'svg',
+          margin: 1,
+          width: 150,
+        }),
         hexadecimal: await QRCode.toString(
           context.dashboard.address.hexadecimal,
-          { type: 'svg', margin: 1, width: 150 }
-        )
-      }
+          { type: 'svg', margin: 1, width: 150 },
+        ),
+      },
     };
     await updateInterface(renderReceive(context.receive), context);
     return;
@@ -577,7 +689,8 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
 
   if (
     inputs.event.type === UserInputEventType.InputChangeEvent &&
-    inputs.event.name === 'receive-type' && context.receive
+    inputs.event.name === 'receive-type' &&
+    context.receive
   ) {
     context.receive.type = inputs.event.value as 'qtum' | 'hexadecimal';
     await updateInterface(renderReceive(context.receive), context);
@@ -593,21 +706,40 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
   if (inputs.event.name === 'search-qrc20' && context.addQRC20) {
     const contractAddress = state?.['qrc20-form']?.['qrc20-contract-address'];
     if (!contractAddress) {
-      await updateInterface(renderAddQRC20({ errorContractAddress: 'Contract address is required', }), context);
+      await updateInterface(
+        renderAddQRC20({
+          errorContractAddress: 'Contract address is required',
+        }),
+        context,
+      );
       return;
     } else if (!isValidQtumOrHexadecimalAddress(contractAddress)) {
-      await updateInterface(renderAddQRC20({ errorContractAddress: 'Invalid token address' }), context);
+      await updateInterface(
+        renderAddQRC20({ errorContractAddress: 'Invalid token address' }),
+        context,
+      );
       return;
-    } else if (await hasToken(contractAddress, context.networks.current.chainId)) {
-      await updateInterface(renderAddQRC20({ errorContractAddress: 'This token is already added' }), context);
+    } else if (
+      await hasToken(contractAddress, context.networks.current.chainId)
+    ) {
+      await updateInterface(
+        renderAddQRC20({ errorContractAddress: 'This token is already added' }),
+        context,
+      );
       return;
     }
     await updateInterface(renderAddQRC20({ isSearching: true }), context);
     try {
-      context.addQRC20.token = await searchQRC20(contractAddress, await getWallet());
-      if (!(await isValidQRC20ByExplorer(
-        normalizeHexadecimalAddress(contractAddress), context.networks.current
-      ))) {
+      context.addQRC20.token = await searchQRC20(
+        contractAddress,
+        await getWallet(),
+      );
+      if (
+        !(await isValidQRC20ByExplorer(
+          normalizeHexadecimalAddress(contractAddress),
+          context.networks.current,
+        ))
+      ) {
         await updateInterface(
           renderAddQRC20({
             token: context.addQRC20.token,
@@ -618,51 +750,90 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
         );
         return;
       }
-      await updateInterface(renderAddQRC20({ token: context.addQRC20.token }), context);
+      await updateInterface(
+        renderAddQRC20({ token: context.addQRC20.token }),
+        context,
+      );
       return;
     } catch (error) {
-      await updateInterface(renderAddQRC20({ failedMessage: error.message }), context);
+      await updateInterface(
+        renderAddQRC20({ failedMessage: error.message }),
+        context,
+      );
       return;
     }
   }
 
-  if (inputs.event.name === 'add-qrc20' && context.dashboard && context.addQRC20?.token) {
+  if (
+    inputs.event.name === 'add-qrc20' &&
+    context.dashboard &&
+    context.addQRC20?.token
+  ) {
     context.dashboard.tokens = null;
     await addToken(context.networks.current.chainId, context.addQRC20.token);
     const tokens = await getTokens(context.networks.current.chainId);
-    await updateInterface(renderDashboard(context.networks, context.dashboard, tokens), context);
-    context.dashboard.tokens = await getTokensWithBalance(tokens, await getWallet());
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard, tokens),
+      context,
+    );
+    context.dashboard.tokens = await getTokensWithBalance(
+      tokens,
+      await getWallet(),
+    );
     context.dashboard.tokensPage = 1;
-    await updateInterface(renderDashboard(context.networks, context.dashboard), context);
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard),
+      context,
+    );
     return;
   }
 
   if (inputs.event.name === 'qrc20-previous' && context.dashboard) {
-    context.dashboard.tokensPage = Math.min(context.dashboard.tokensPage ?? 1 - 1, 1);
-    await updateInterface(renderDashboard(context.networks, context.dashboard), context);
+    context.dashboard.tokensPage = Math.min(
+      context.dashboard.tokensPage ?? 1 - 1,
+      1,
+    );
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard),
+      context,
+    );
     return;
   }
 
   if (inputs.event.name === 'qrc20-next' && context.dashboard) {
-    const totalPages = Math.max(1, Math.ceil((context.dashboard.tokens ?? []).length / QRC20_PAGE_SIZE));
-    context.dashboard.tokensPage = Math.min((context.dashboard.tokensPage ?? 0) + 1, totalPages);
-    await updateInterface(renderDashboard(context.networks, context.dashboard), context);
+    const totalPages = Math.max(
+      1,
+      Math.ceil((context.dashboard.tokens ?? []).length / QRC20_PAGE_SIZE),
+    );
+    context.dashboard.tokensPage = Math.min(
+      (context.dashboard.tokensPage ?? 0) + 1,
+      totalPages,
+    );
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard),
+      context,
+    );
     return;
   }
 
   if (inputs.event.name?.startsWith('delete-qrc20') && context.dashboard) {
     const contractAddress = inputs.event.name.replace('delete-qrc20-', '');
-    const tokens = await deleteToken(contractAddress, context.networks.current.chainId);
-    context.dashboard.tokens = await getTokensWithBalance(tokens, await getWallet());
+    const tokens = await deleteToken(
+      contractAddress,
+      context.networks.current.chainId,
+    );
+    context.dashboard.tokens = await getTokensWithBalance(
+      tokens,
+      await getWallet(),
+    );
     context.dashboard.tokensPage = 1;
-    await updateInterface(renderDashboard(context.networks, context.dashboard), context);
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard),
+      context,
+    );
   }
 
-  if (
-    inputs.event.name === 'dashboard-refresh' &&
-    context.dashboard &&
-    context.dashboard.address
-  ) {
+  if (inputs.event.name === 'dashboard-refresh' && context.dashboard?.address) {
     const tokens = await getTokens(context.networks.current.chainId);
     context.dashboard.native = null;
     context.dashboard.tokens = null;
@@ -694,8 +865,12 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     return;
   }
 
-  if (inputs.event.name === 'open-history' && context.networks?.current && context.dashboard?.address) {
-    let history: HistoryType = {
+  if (
+    inputs.event.name === 'open-history' &&
+    context.networks?.current &&
+    context.dashboard?.address
+  ) {
+    const history: HistoryType = {
       items: [],
       offset: 0,
       pageSize: HISTORY_PAGE_SIZE,
@@ -710,7 +885,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       context.dashboard.address.qtum,
       context.networks.current,
       history.pageSize,
-      history.offset
+      history.offset,
     );
     history.items = histories.items;
     history.hasMore = histories.totalCount > history.offset + history.pageSize;
@@ -726,11 +901,14 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     context.networks?.current &&
     context.dashboard?.address
   ) {
-    let history = context.history as HistoryType;
+    const history = context.history as HistoryType;
     await updateInterface(renderHistory(history, true), context);
-    const totalPages = Math.max(1, Math.ceil(
-      Math.max(0, history.totalCount) / Math.max(1, history.pageSize),
-    ));
+    const totalPages = Math.max(
+      1,
+      Math.ceil(
+        Math.max(0, history.totalCount) / Math.max(1, history.pageSize),
+      ),
+    );
     const nextPage = Math.min(history.page + 1, totalPages);
     const nextOffset = (nextPage - 1) * history.pageSize;
     if (history.filter === 'qtum') {
@@ -738,7 +916,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
         context.dashboard.address.qtum,
         context.networks.current,
         history.pageSize,
-        nextOffset
+        nextOffset,
       );
       history.items = histories.items;
       history.hasMore = histories.totalCount > nextOffset + history.pageSize;
@@ -768,7 +946,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     context.networks?.current &&
     context.dashboard?.address
   ) {
-    let history = context.history as HistoryType;
+    const history = context.history as HistoryType;
     await updateInterface(renderHistory(history, true), context);
     const previousPage = Math.max(1, history.page - 1);
     const previousOffset = (previousPage - 1) * history.pageSize;
@@ -780,7 +958,8 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
         previousOffset,
       );
       history.items = histories.items;
-      history.hasMore = histories.totalCount > previousOffset + history.pageSize;
+      history.hasMore =
+        histories.totalCount > previousOffset + history.pageSize;
       history.totalCount = histories.totalCount;
       history.isValid = histories.isValid;
     } else {
@@ -791,7 +970,8 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
         previousOffset,
       );
       history.items = histories.items;
-      history.hasMore = histories.totalCount > previousOffset + history.pageSize;
+      history.hasMore =
+        histories.totalCount > previousOffset + history.pageSize;
       history.totalCount = histories.totalCount;
       history.isValid = histories.isValid;
     }
@@ -808,7 +988,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     context.networks?.current &&
     context.dashboard?.address
   ) {
-    let history: HistoryType = {
+    const history: HistoryType = {
       items: [],
       offset: 0,
       pageSize: HISTORY_PAGE_SIZE,
@@ -824,7 +1004,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
         context.dashboard.address.qtum,
         context.networks.current,
         history.pageSize,
-        history.offset
+        history.offset,
       );
       history.items = histories.items;
       history.hasMore = histories.totalCount > history.pageSize;
@@ -835,7 +1015,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
         context.dashboard.address.qtum,
         context.networks.current,
         history.pageSize,
-        history.offset
+        history.offset,
       );
       history.items = histories.items;
       history.hasMore = histories.totalCount > history.pageSize;
@@ -852,7 +1032,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     context.networks?.current &&
     context.dashboard?.address
   ) {
-    let history = context.history as HistoryType;
+    const history = context.history as HistoryType;
     await updateInterface(renderHistory(history, true), context);
     if (history.filter === 'qtum') {
       const histories: HistoriesType = await getNativeHistory(
@@ -862,7 +1042,8 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
         history.offset,
       );
       history.items = histories.items;
-      history.hasMore = histories.totalCount > history.offset + history.pageSize;
+      history.hasMore =
+        histories.totalCount > history.offset + history.pageSize;
       history.totalCount = histories.totalCount;
       history.isValid = histories.isValid;
     } else {
@@ -873,7 +1054,8 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
         history.offset,
       );
       history.items = histories.items;
-      history.hasMore = histories.totalCount > history.offset + history.pageSize;
+      history.hasMore =
+        histories.totalCount > history.offset + history.pageSize;
       history.totalCount = histories.totalCount;
       history.isValid = histories.isValid;
     }
@@ -883,89 +1065,122 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
   }
 
   if (inputs.event.name === 'back-to-dashboard' && context.dashboard) {
-    await updateInterface(renderDashboard(context.networks, context.dashboard), context);
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard),
+      context,
+    );
     return;
   }
 
   async function login(networks: NetworksType, wallet: QtumWallet) {
-    context.dashboard = { address: null, native: null, tokens: null, keyType: 'private-key' };
+    context.dashboard = {
+      address: null,
+      native: null,
+      tokens: null,
+      keyType: 'private-key',
+    };
     const tokens = await getTokens(networks.current.chainId);
-    await updateInterface(renderDashboard(context.networks, context.dashboard, tokens), context);
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard, tokens),
+      context,
+    );
     context.dashboard.address = {
       qtum: await getQtumAddress(wallet.address, networks.current.chainId),
-      hexadecimal: wallet.address
+      hexadecimal: wallet.address,
     };
     context.dashboard.native = {
       ...context.networks.current.nativeCurrency,
       balance: String(await wallet.getBalance()),
-      chainId: networks.current.chainId
+      chainId: networks.current.chainId,
     };
-    await updateInterface(renderDashboard(context.networks, context.dashboard, tokens), context);
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard, tokens),
+      context,
+    );
     context.dashboard.tokens = await getTokensWithBalance(tokens, wallet);
     context.dashboard.tokensPage = 1;
-    await updateInterface(renderDashboard(context.networks, context.dashboard), context);
-    context.dashboard.histories = await getTop5History(context.dashboard.address.qtum, networks.current);
-    await updateInterface(renderDashboard(context.networks, context.dashboard), context);
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard),
+      context,
+    );
+    context.dashboard.histories = await getTop5History(
+      context.dashboard.address.qtum,
+      networks.current,
+    );
+    await updateInterface(
+      renderDashboard(context.networks, context.dashboard),
+      context,
+    );
   }
 
   if (inputs.event.name === 'create-wallet') {
     try {
       const { networks, wallet } = await createWallet();
       await login(networks, wallet);
-    } catch (_) {
+    } catch {
       await errorSnapDialog({ message: 'Something went wrong' });
     }
     return;
   }
 
   if (inputs.event.name === 'submit-drive-internal-mnemonic') {
-
-    const derivationPath = state?.['drive-internal-mnemonic-form']?.['derivation-path'];
+    const derivationPath =
+      state?.['drive-internal-mnemonic-form']?.['derivation-path'];
 
     if (!derivationPath) {
-      await updateInterface(renderDriveInternalMnemonic('Derivation path is required'));
+      await updateInterface(
+        renderDriveInternalMnemonic('Derivation path is required'),
+      );
       return;
     }
 
     try {
-      const { networks, wallet } = await deriveFromInternalMnemonic({ derivationPath });
+      const { networks, wallet } = await deriveFromInternalMnemonic({
+        derivationPath,
+      });
       await login(networks, wallet);
       return;
-    } catch (_) {
+    } catch {
       await errorSnapDialog({ message: 'Something went wrong' });
     }
     return;
   }
 
   if (inputs.event.name === 'submit-drive-external-mnemonic') {
-
-    const mnemonic = state?.['drive-external-mnemonic-form']?.['mnemonic'];
-    const passphrase = state?.['drive-external-mnemonic-form']?.['passphrase'];
-    const derivationPath = state?.['drive-external-mnemonic-form']?.['derivation-path'];
+    const mnemonic = state?.['drive-external-mnemonic-form']?.mnemonic;
+    const passphrase = state?.['drive-external-mnemonic-form']?.passphrase;
+    const derivationPath =
+      state?.['drive-external-mnemonic-form']?.['derivation-path'];
 
     if (!mnemonic) {
-      await updateInterface(renderDriveExternalMnemonic('Mnemonic is required', undefined));
+      await updateInterface(
+        renderDriveExternalMnemonic('Mnemonic is required', undefined),
+      );
       return;
     } else if (!derivationPath) {
-      await updateInterface(renderDriveExternalMnemonic(undefined, 'Derivation path is required'));
+      await updateInterface(
+        renderDriveExternalMnemonic(undefined, 'Derivation path is required'),
+      );
       return;
     }
 
     try {
       const { networks, wallet } = await deriveFromExternalMnemonic({
-        mnemonic, passphrase, derivationPath
-      })
+        mnemonic,
+        passphrase,
+        derivationPath,
+      });
       await login(networks, wallet);
-    } catch (_) {
+    } catch {
       await errorSnapDialog({ message: 'Something went wrong' });
     }
     return;
   }
 
   if (inputs.event.name === 'submit-import-private-key' && context.home) {
-
     const importKey = state?.['import-key-form']?.['import-key'] as string;
-    const bip38Passphrase = state?.['import-key-form']?.['import-bip38-passphrase'] as string || '';
+    const bip38Passphrase =
+      (state?.['import-key-form']?.['import-bip38-passphrase'] as string) || '';
 
     if (!importKey) {
       await updateInterface(
@@ -975,8 +1190,8 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
             context.home.keyType === 'encrypted-wif'
               ? 'Encrypted WIF'
               : context.home.keyType === 'wif'
-              ? 'WIF'
-              : 'Private key'
+                ? 'WIF'
+                : 'Private key'
           } is required`,
         ),
         context,
@@ -1015,7 +1230,9 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
           context.networks.current.chainId,
         );
       } catch (error) {
-        const isWrongPassphrase = (error as Error).message.startsWith('Wrong passphrase');
+        const isWrongPassphrase = (error as Error).message.startsWith(
+          'Wrong passphrase',
+        );
         await updateInterface(
           renderImportPrivateKey(
             context.home.keyType,
@@ -1029,10 +1246,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     } else if (context.home.keyType === 'wif') {
       if (!isValidWIF(importKey)) {
         await updateInterface(
-          renderImportPrivateKey(
-            context.home.keyType,
-            'Invalid WIF',
-          ),
+          renderImportPrivateKey(context.home.keyType, 'Invalid WIF'),
           context,
         );
         return;
@@ -1045,21 +1259,15 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
           true,
         ),
         context,
-      )
+      );
       const chainId = await getChainIdFromWIF(importKey);
       const nextNetwork = await getNetwork(String(chainId), context.networks);
-      context.networks = await setAndGetNetworks(
-        nextNetwork,
-        context.networks,
-      );
+      context.networks = await setAndGetNetworks(nextNetwork, context.networks);
       privateKey = await wifToPrivateKey(importKey, chainId);
     } else {
       if (!isValidPrivateKey(importKey)) {
         await updateInterface(
-          renderImportPrivateKey(
-            context.home.keyType,
-            'Invalid private key',
-          ),
+          renderImportPrivateKey(context.home.keyType, 'Invalid private key'),
         );
         return;
       }
@@ -1077,7 +1285,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     try {
       const { networks, wallet } = await importPrivateKey(privateKey);
       await login(networks, wallet);
-    } catch (_) {
+    } catch {
       await errorSnapDialog({ message: 'Something went wrong' });
     }
     return;
@@ -1096,6 +1304,5 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
   if (inputs.event.name === 'remove-wallet-confirm') {
     await clearWallet();
     await updateInterface(renderHome());
-    return;
   }
 };

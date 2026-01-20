@@ -1,4 +1,10 @@
-import { BN, BnConfigLike, BnFormatConfig, BnLike, time, TimeDate } from '@distributedlab/tools';
+import type {
+  BnConfigLike,
+  BnFormatConfig,
+  BnLike,
+  TimeDate,
+} from '@distributedlab/tools';
+import { BN, time } from '@distributedlab/tools';
 import { toBase58Check } from '@qtumproject/qtum-wallet-connector';
 import type { BigNumberish } from 'ethers';
 import { ethers } from 'ethers';
@@ -20,7 +26,10 @@ export function formatUnits(
     .toString();
 }
 
-export async function getQtumAddress(hexadecimalAddress?: string, chainId?: number | string) {
+export async function getQtumAddress(
+  hexadecimalAddress?: string,
+  chainId?: number | string,
+) {
   let address = hexadecimalAddress;
   chainId = Number(chainId ?? DEFAULT_NETWORKS_RPC_URLS[0].chainId);
 
@@ -45,7 +54,7 @@ export function formatDateDMYT(date: TimeDate) {
 
 export function formatAddr(did: string, partLength = DID_PART_LENGTH) {
   return did.length > partLength * 2
-    ? did.slice(0, partLength) + '...' + did.slice(-partLength)
+    ? `${did.slice(0, partLength)}...${did.slice(-partLength)}`
     : did;
 }
 
@@ -73,12 +82,14 @@ const defaultBnFormatConfig: BnFormatConfig = {
   decimals: 2,
   groupSeparator: ',',
   decimalSeparator: '.',
-}
+};
 
 function removeTrailingZeros(amount: string) {
   const [integer, fraction] = amount.split('.');
 
-  if (!fraction) return integer;
+  if (!fraction) {
+    return integer;
+  }
 
   let result = integer;
 
@@ -97,15 +108,21 @@ function convertNumberWithPrefix(value: string) {
   const B_PREFIX_AMOUNT = 1_000_000_000;
   const T_PREFIX_AMOUNT = 1_000_000_000_000;
 
-  const getPrefix = (value: number): 'M' | 'B' | 'T' | '' => {
-    if (value >= T_PREFIX_AMOUNT) return 'T';
-    if (value >= B_PREFIX_AMOUNT) return 'B';
-    if (value >= M_PREFIX_AMOUNT) return 'M';
+  const getPrefix = (data: number): 'M' | 'B' | 'T' | '' => {
+    if (data >= T_PREFIX_AMOUNT) {
+      return 'T';
+    }
+    if (data >= B_PREFIX_AMOUNT) {
+      return 'B';
+    }
+    if (data >= M_PREFIX_AMOUNT) {
+      return 'M';
+    }
 
     return '';
-  }
+  };
 
-  const numValue = Number(value.replace(/,/g, ''));
+  const numValue = Number(value.replace(/,/gu, ''));
   const prefix = getPrefix(numValue);
 
   const divider = {
@@ -113,13 +130,13 @@ function convertNumberWithPrefix(value: string) {
     B: B_PREFIX_AMOUNT,
     T: T_PREFIX_AMOUNT,
     '': 1,
-  }[prefix]
+  }[prefix];
 
   const finalAmount = BN.fromRaw(numValue / divider, 3).format({
     decimals: 3,
     groupSeparator: '',
     decimalSeparator: '.',
-  })
+  });
 
   return `${removeTrailingZeros(finalAmount)}${prefix}`;
 }
@@ -128,10 +145,10 @@ export function formatNumber(value: number, formatConfig?: BnFormatConfig) {
   try {
     const formatCfg = formatConfig || {
       ...defaultBnFormatConfig,
-    }
+    };
 
     return removeTrailingZeros(BN.fromRaw(value).format(formatCfg));
-  } catch (error) {
+  } catch {
     return '0';
   }
 }
@@ -143,22 +160,27 @@ export function formatAmount(
 ) {
   try {
     const decimals =
-      typeof decimalsOrConfig === 'number' ? decimalsOrConfig : decimalsOrConfig?.decimals;
+      typeof decimalsOrConfig === 'number'
+        ? decimalsOrConfig
+        : decimalsOrConfig?.decimals;
 
     const formatCfg = formatConfig || {
       ...defaultBnFormatConfig,
       ...(decimals && { decimals }),
-    }
+    };
 
-    const bn = amount instanceof BN
-      ? amount
-      : (typeof amount === 'string' && !amount.includes('.') && decimalsOrConfig !== undefined) ||
-        typeof amount === 'bigint'
-        ? BN.fromBigInt(amount, decimalsOrConfig)
-        : BN.fromRaw(amount, decimalsOrConfig);
+    const bn =
+      amount instanceof BN
+        ? amount
+        : (typeof amount === 'string' &&
+              !amount.includes('.') &&
+              decimalsOrConfig !== undefined) ||
+            typeof amount === 'bigint'
+          ? BN.fromBigInt(amount, decimalsOrConfig)
+          : BN.fromRaw(amount, decimalsOrConfig);
 
     return removeTrailingZeros(bn.format(formatCfg));
-  } catch (error) {
+  } catch {
     return '0';
   }
 }
@@ -170,17 +192,19 @@ export function formatBalance(
 ) {
   try {
     const decimals =
-      typeof decimalsOrConfig === 'number' ? decimalsOrConfig : decimalsOrConfig?.decimals;
+      typeof decimalsOrConfig === 'number'
+        ? decimalsOrConfig
+        : decimalsOrConfig?.decimals;
 
     const formatCfg = formatConfig || {
       ...defaultBnFormatConfig,
       ...(decimals && { decimals }),
-    }
+    };
 
     const formattedAmount = formatAmount(amount, decimalsOrConfig, formatCfg);
 
     return convertNumberWithPrefix(formattedAmount);
-  } catch (error) {
+  } catch {
     return '0';
   }
 }

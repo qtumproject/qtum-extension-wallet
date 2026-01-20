@@ -48,7 +48,11 @@ export const renderHome = () => (
       <Divider />,
       <Section
         children={[
-          <Button name="create-wallet" variant="primary" children="Create a Wallet" />,
+          <Button
+            name="create-wallet"
+            variant="primary"
+            children="Create a Wallet"
+          />,
           <Divider />,
           <Button
             name="drive-internal-mnemonic"
@@ -60,7 +64,10 @@ export const renderHome = () => (
             children="Drive from External Mnemonic"
           />,
           <Divider />,
-          <Button name="import-private-key" children="Import from Private Key" />,
+          <Button
+            name="import-private-key"
+            children="Import from Private Key"
+          />,
         ]}
       />,
       <Text
@@ -99,7 +106,11 @@ export const renderDriveInternalMnemonic = (errorDerivationPath?: string) => (
           <Field
             error={errorDerivationPath}
             children={
-              <Input name="derivation-path" placeholder="/0'/0/0" value="0'/0/0" />
+              <Input
+                name="derivation-path"
+                placeholder="/0'/0/0"
+                value="0'/0/0"
+              />
             }
           />,
         ]}
@@ -113,7 +124,11 @@ export const renderDriveInternalMnemonic = (errorDerivationPath?: string) => (
             children="Derive"
           />,
           <Divider />,
-          <Button name="cancel-wallet" variant="destructive" children="Cancel" />,
+          <Button
+            name="cancel-wallet"
+            variant="destructive"
+            children="Cancel"
+          />,
         ]}
       />,
       <Text
@@ -171,7 +186,9 @@ export const renderDriveExternalMnemonic = (
               />,
             ]}
           />,
-          <Field children={<Input name="passphrase" placeholder="(Optional)" />} />,
+          <Field
+            children={<Input name="passphrase" placeholder="(Optional)" />}
+          />,
           <Box
             direction="horizontal"
             children={[
@@ -208,7 +225,11 @@ export const renderDriveExternalMnemonic = (
             children="Derive"
           />,
           <Divider />,
-          <Button name="cancel-wallet" variant="destructive" children="Cancel" />,
+          <Button
+            name="cancel-wallet"
+            variant="destructive"
+            children="Cancel"
+          />,
         ]}
       />,
       <Text
@@ -241,9 +262,21 @@ export const renderImportPrivateKey = (
             value={importType}
             disabled={loading}
             children={[
-              <SelectorOption key="private-key" value="private-key" children={<Card title="Private Key" value="" />} />,
-              <SelectorOption key="wif" value="wif" children={<Card title="WIF" value="" />} />,
-              <SelectorOption key="encrypted-wif" value="encrypted-wif" children={<Card title="Encrypted WIF" value="" />} />,
+              <SelectorOption
+                key="private-key"
+                value="private-key"
+                children={<Card title="Private Key" value="" />}
+              />,
+              <SelectorOption
+                key="wif"
+                value="wif"
+                children={<Card title="WIF" value="" />}
+              />,
+              <SelectorOption
+                key="encrypted-wif"
+                value="encrypted-wif"
+                children={<Card title="Encrypted WIF" value="" />}
+              />,
             ]}
           />,
         ]}
@@ -260,8 +293,8 @@ export const renderImportPrivateKey = (
                   importType === 'encrypted-wif'
                     ? 'Encrypted WIF'
                     : importType === 'wif'
-                    ? 'Wallet Import Format'
-                    : 'Private Key'
+                      ? 'Wallet Import Format'
+                      : 'Private Key'
                 }
               />,
               <Tooltip
@@ -272,8 +305,8 @@ export const renderImportPrivateKey = (
                       importType === 'encrypted-wif'
                         ? 'Paste your Qtum BIP38 - Encrypted WIF (Wallet Import Format).'
                         : importType === 'wif'
-                        ? 'Paste your Qtum WIF (Wallet Import Format).'
-                        : 'Paste your Qtum private key.'
+                          ? 'Paste your Qtum WIF (Wallet Import Format).'
+                          : 'Paste your Qtum private key.'
                     }
                   />
                 }
@@ -281,7 +314,10 @@ export const renderImportPrivateKey = (
               />,
             ]}
           />,
-          <Field error={errorImportKey} children={<Input name="import-key" />} />,
+          <Field
+            error={errorImportKey}
+            children={<Input name="import-key" />}
+          />,
           importType === 'encrypted-wif' && (
             <Box
               children={[

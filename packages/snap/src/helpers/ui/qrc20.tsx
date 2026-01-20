@@ -16,7 +16,7 @@ import {
 
 import { FOOTER_TEXT } from '@/consts';
 import { Gap, PaddedBox } from '@/helpers';
-import { ParamsQRC20Type } from '@/types';
+import type { ParamsQRC20Type } from '@/types';
 
 export const renderAddQRC20 = (params?: ParamsQRC20Type) => {
   return (
@@ -46,7 +46,10 @@ export const renderAddQRC20 = (params?: ParamsQRC20Type) => {
             <Field
               error={params?.errorContractAddress}
               children={
-                <Input name="qrc20-contract-address" disabled={!!params?.token} />
+                <Input
+                  name="qrc20-contract-address"
+                  disabled={Boolean(params?.token)}
+                />
               }
             />,
           ]}
@@ -61,12 +64,17 @@ export const renderAddQRC20 = (params?: ParamsQRC20Type) => {
               />,
               <Text children="Symbol" />,
               <Section
-                children={<Text color="muted" children={params?.token?.symbol} />}
+                children={
+                  <Text color="muted" children={params?.token?.symbol} />
+                }
               />,
               <Text children="Decimals" />,
               <Section
                 children={
-                  <Text color="muted" children={String(params?.token?.decimals)} />
+                  <Text
+                    color="muted"
+                    children={String(params?.token?.decimals)}
+                  />
                 }
               />,
             ]}

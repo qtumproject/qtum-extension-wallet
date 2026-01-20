@@ -1,9 +1,18 @@
-// eslint-disable-next-line import/no-unassigned-import
 import type { TransactionRequest } from '@ethersproject/abstract-provider';
-import type { TypedDataDomain, TypedDataField, } from '@ethersproject/abstract-signer';
+import type {
+  TypedDataDomain,
+  TypedDataField,
+} from '@ethersproject/abstract-signer';
 import type { Deferrable } from '@ethersproject/properties';
 import { DialogType } from '@metamask/snaps-sdk';
-import { Box, Copyable, Divider, Heading, Row, Text } from '@metamask/snaps-sdk/jsx';
+import {
+  Box,
+  Copyable,
+  Divider,
+  Heading,
+  Row,
+  Text,
+} from '@metamask/snaps-sdk/jsx';
 import type { JsonRpcRequest } from '@metamask/utils';
 import type { SnapRequestParams } from '@qtumproject/qtum-wallet-connector';
 import { sleep, RPCMethods } from '@qtumproject/qtum-wallet-connector';
@@ -24,8 +33,11 @@ import { getQtumAddress } from '@/helpers/format';
 import { snapStorage } from '@/rpc';
 import { networks } from '@/storage';
 
-export const onRpcRequest = async ({ request }: {
-  request: JsonRpcRequest; origin: string;
+export const onRpcRequest = async ({
+  request,
+}: {
+  request: JsonRpcRequest;
+  origin: string;
 }) => {
   console.log('request', JSON.stringify(request));
 
@@ -505,7 +517,7 @@ export const onRpcRequest = async ({ request }: {
 
               return acc;
             },
-            {} as any,
+            {},
           ),
         );
 
@@ -609,8 +621,7 @@ export const onRpcRequest = async ({ request }: {
     }
 
     case RPCMethods.EthGetCode: {
-      const [address] =
-        request.params as [string];
+      const [address] = request.params as [string];
 
       const { contractCode } = await readAddressAsContract(address);
 
@@ -661,22 +672,19 @@ export const onRpcRequest = async ({ request }: {
 
         const tx = await provider.getTransaction(txHash);
 
-        return Object.entries(tx).reduce<any>(
-          (acc, [key, value]) => {
-            if (BigNumber.isBigNumber(value)) {
-              acc[key] = value.toHexString();
-
-              return acc;
-            } else if (typeof value === 'function') {
-              return acc;
-            }
-
-            acc[key] = value;
+        return Object.entries(tx).reduce<any>((acc, [key, value]) => {
+          if (BigNumber.isBigNumber(value)) {
+            acc[key] = value.toHexString();
 
             return acc;
-          },
-          {},
-        );
+          } else if (typeof value === 'function') {
+            return acc;
+          }
+
+          acc[key] = value;
+
+          return acc;
+        }, {});
       } catch (error) {
         console.error(error);
         throw error;
@@ -696,22 +704,19 @@ export const onRpcRequest = async ({ request }: {
 
         const txReceipt = await provider.getTransactionReceipt(txHash);
 
-        return Object.entries(txReceipt).reduce<any>(
-          (acc, [key, value]) => {
-            if (BigNumber.isBigNumber(value)) {
-              acc[key] = value.toHexString();
-
-              return acc;
-            } else if (typeof value === 'function') {
-              return acc;
-            }
-
-            acc[key] = value;
+        return Object.entries(txReceipt).reduce<any>((acc, [key, value]) => {
+          if (BigNumber.isBigNumber(value)) {
+            acc[key] = value.toHexString();
 
             return acc;
-          },
-          {},
-        );
+          } else if (typeof value === 'function') {
+            return acc;
+          }
+
+          acc[key] = value;
+
+          return acc;
+        }, {});
       } catch (error) {
         console.error(error);
         throw error;

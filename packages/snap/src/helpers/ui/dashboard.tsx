@@ -12,18 +12,20 @@ import {
   Card,
   Link,
   Tooltip,
-  Spinner
+  Spinner,
 } from '@metamask/snaps-sdk/jsx';
 
 import { FOOTER_TEXT, QRC20_PAGE_SIZE, WAITING_CONFIRMATIONS } from '@/consts';
-import { formatBalance, formatDateTime } from '@/helpers/format';
 import { PaddedBox, makeSpacerSVG, toTitleCase } from '@/helpers';
+import { formatBalance, formatDateTime } from '@/helpers/format';
 import type { DashboardType, NetworksType, TokenType } from '@/types';
 
 export const renderDashboard = (
-  networks: NetworksType, dashboard: DashboardType, tokens: TokenType[] = [], chainId?: string
+  networks: NetworksType,
+  dashboard: DashboardType,
+  tokens: TokenType[] = [],
+  chainId?: string,
 ) => {
-
   const loadingNative = dashboard.native === null;
   const loadingTokens = dashboard.tokens === null;
   const loadingHistories = dashboard.histories === null;
@@ -31,11 +33,20 @@ export const renderDashboard = (
 
   let start: number = 0;
   let visible: TokenType[] = [];
-  const totalPages = Math.max(1, Math.ceil(
-    (dashboard.tokens ? dashboard.tokens.length : tokens.length) / QRC20_PAGE_SIZE
-  ));
-  const currentPage = Math.min(Math.max(dashboard.tokensPage ?? 1, 1), totalPages);
-  const showPagination = (dashboard.tokens ? dashboard.tokens.length : tokens.length) > QRC20_PAGE_SIZE;
+  const totalPages = Math.max(
+    1,
+    Math.ceil(
+      (dashboard.tokens ? dashboard.tokens.length : tokens.length) /
+        QRC20_PAGE_SIZE,
+    ),
+  );
+  const currentPage = Math.min(
+    Math.max(dashboard.tokensPage ?? 1, 1),
+    totalPages,
+  );
+  const showPagination =
+    (dashboard.tokens ? dashboard.tokens.length : tokens.length) >
+    QRC20_PAGE_SIZE;
   if (!loadingTokens && dashboard.tokens) {
     start = (currentPage - 1) * QRC20_PAGE_SIZE;
     visible = dashboard.tokens.slice(start, start + QRC20_PAGE_SIZE);
@@ -57,7 +68,10 @@ export const renderDashboard = (
                 alignment="space-between"
                 children={[
                   <Text
-                    children={formatBalance(String(dashboard.native.balance), 18)}
+                    children={formatBalance(
+                      String(dashboard.native.balance),
+                      18,
+                    )}
                   />,
                   <Text
                     fontWeight="medium"
@@ -122,7 +136,12 @@ export const renderDashboard = (
                       children="Tokens"
                     />,
                     <Tooltip
-                      content={<Text size="sm" children="Locally saved QRC20 token list" />}
+                      content={
+                        <Text
+                          size="sm"
+                          children="Locally saved QRC20 token list"
+                        />
+                      }
                       children={<Icon name="info" />}
                     />,
                   ]}
@@ -190,7 +209,10 @@ export const renderDashboard = (
                             alignment="space-between"
                             children={[
                               <Text
-                                children={formatBalance(token.balance ?? '0', token.decimals)}
+                                children={formatBalance(
+                                  token.balance ?? '0',
+                                  token.decimals,
+                                )}
                               />,
                               <Text
                                 fontWeight="medium"
@@ -225,37 +247,39 @@ export const renderDashboard = (
           <Box
             children={
               tokens && tokens.length !== 0 ? (
-                Array.from({ length: countedTokens }).map((value, index, array) => (
-                  <Box
-                    direction="horizontal"
-                    crossAlignment="center"
-                    alignment="space-between"
-                    children={[
-                      <Skeleton
-                        height={20}
-                        width={index % 2 == 0 ? '30%' : '25%'}
-                        borderRadius="medium"
-                      />,
-                      <Box
-                        direction="horizontal"
-                        crossAlignment="center"
-                        children={[
-                          <Button
-                            name={'send-qrc20-loading'}
-                            children={<Icon name="send" />}
-                            disabled={true}
-                          />,
-                          <Button
-                            name={'delete-qrc20-loading'}
-                            children={<Icon name="trash" />}
-                            disabled={true}
-                          />,
-                          <Image src={makeSpacerSVG(8)} />,
-                        ]}
-                      />,
-                    ]}
-                  />
-                ))
+                Array.from({ length: countedTokens }).map(
+                  (_value, index, _array) => (
+                    <Box
+                      direction="horizontal"
+                      crossAlignment="center"
+                      alignment="space-between"
+                      children={[
+                        <Skeleton
+                          height={20}
+                          width={index % 2 === 0 ? '30%' : '25%'}
+                          borderRadius="medium"
+                        />,
+                        <Box
+                          direction="horizontal"
+                          crossAlignment="center"
+                          children={[
+                            <Button
+                              name={'send-qrc20-loading'}
+                              children={<Icon name="send" />}
+                              disabled={true}
+                            />,
+                            <Button
+                              name={'delete-qrc20-loading'}
+                              children={<Icon name="trash" />}
+                              disabled={true}
+                            />,
+                            <Image src={makeSpacerSVG(8)} />,
+                          ]}
+                        />,
+                      ]}
+                    />
+                  ),
+                )
               ) : (
                 <PaddedBox
                   size={20}
@@ -424,7 +448,9 @@ export const renderDashboard = (
                                 <Text
                                   size="sm"
                                   color="muted"
-                                  children={`· ${String(item.confirmations)}/${String(WAITING_CONFIRMATIONS)}`}
+                                  children={`· ${String(
+                                    item.confirmations,
+                                  )}/${String(WAITING_CONFIRMATIONS)}`}
                                 />
                               ),
                             ]}
@@ -446,17 +472,15 @@ export const renderDashboard = (
                                 color="muted"
                                 children={
                                   item.timestamp
-                                    ? formatDateTime(new Date(item.timestamp * 1000))
+                                    ? formatDateTime(
+                                        new Date(item.timestamp * 1000),
+                                      )
                                     : '-'
                                 }
                               />,
                             ]}
                           />,
-                          <Text
-                            size="sm"
-                            color="muted"
-                            children={item.type}
-                          />,
+                          <Text size="sm" color="muted" children={item.type} />,
                         ]}
                       />,
                     ]}
@@ -470,10 +494,7 @@ export const renderDashboard = (
             size={16}
             direction="vertical"
             children={
-              <PaddedBox
-                direction="horizontal"
-                children={<Spinner />}
-              />
+              <PaddedBox direction="horizontal" children={<Spinner />} />
             }
           />
         ),
@@ -503,4 +524,4 @@ export const renderDashboard = (
       ]}
     />
   );
-}
+};

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Interface } from '@ethersproject/abi';
 import { abiERC721, abiERC20, abiERC1155 } from '@metamask/metamask-eth-abis';
 import type { TransactionParams } from '@metamask/transaction-controller';
@@ -51,7 +50,7 @@ export const readAddressAsContract = async (
   let contractCode: string | null = null;
   try {
     contractCode = await provider.getCode(address);
-  } catch (err) {
+  } catch {
     contractCode = null;
   }
 
@@ -62,7 +61,6 @@ export const readAddressAsContract = async (
   return { contractCode, isContractAddress };
 };
 
-// eslint-disable-next-line
 export function isEqualCaseInsensitive(
   value1: string,
   value2: string,
@@ -73,7 +71,6 @@ export function isEqualCaseInsensitive(
   return value1.toLowerCase() === value2.toLowerCase();
 }
 
-// eslint-disable-next-line
 export async function determineTransactionType(
   txParams: TransactionParams,
 ): Promise<InferTransactionTypeResult> {

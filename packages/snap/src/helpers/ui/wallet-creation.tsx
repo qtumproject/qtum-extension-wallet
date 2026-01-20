@@ -1,9 +1,8 @@
-import { Box, Copyable, Divider, Heading, Text } from '@metamask/snaps-sdk/jsx';
 import { DialogType } from '@metamask/snaps-sdk';
+import { Box, Copyable, Divider, Heading, Text } from '@metamask/snaps-sdk/jsx';
 
 import { snapDialog } from '@/helpers';
 
-// eslint-disable-next-line
 export async function showWalletCreatedSnapDialog(
   ethAddr: string,
   qtumAddr: string,
