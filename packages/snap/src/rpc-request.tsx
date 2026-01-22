@@ -24,7 +24,7 @@ import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
 import { StorageEnum } from '@/enums';
 import {
   buildTxUi,
-  genPkHexFromEntropy,
+  createWallet,
   readAddressAsContract,
   showWalletCreatedSnapDialog,
   snapDialog,
@@ -108,32 +108,30 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.WalletFromMnemonic: {
-      const res = await snapDialog(
+      const result = await snapDialog(
         DialogType.Confirmation,
         <Box
           children={[
-            <Heading children="Create Wallet" />,
+            <Heading children="Create a Wallet" />,
             <Divider />,
             <Text children="Do you want to create wallet?" />,
           ]}
         />,
       );
-
-      if (!res) {
+      if (!result) {
         throw new Error('User rejected request');
       }
 
-      const wallet = QtumWallet.fromPrivateKey(await genPkHexFromEntropy());
+      try {
+        const { wallet } = await createWallet();
+        // const qtumAddress = await getQtumAddress(wallet.address);
+        //
+        // await showWalletCreatedSnapDialog(wallet.address, qtumAddress);
 
-      const qtumAddress = await getQtumAddress(wallet.address);
-
-      await showWalletCreatedSnapDialog(wallet.address, qtumAddress);
-
-      await snapStorage.setItem(StorageEnum.Identity, {
-        privateKey: wallet.privateKey,
-      });
-
-      return wallet.address;
+        return wallet.address;
+      } catch {
+        throw new Error('Something went wrong');
+      }
     }
 
     case RPCMethods.WalletExportPrivateKey: {
@@ -350,12 +348,7 @@ export const onRpcRequest = async ({
         ? ethers.BigNumber.from(params[0]).toString()
         : params[0];
 
-      try {
-        await networks.setCurrent(chainId);
-      } catch (error) {
-        console.error(error);
-      }
-
+      await networks.setCurrent(chainId);
       return null;
     }
 

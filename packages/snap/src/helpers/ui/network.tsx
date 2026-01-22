@@ -28,8 +28,7 @@ export const renderSwitchingNetworkDialog = async (
               <Text alignment="center" children={fromNetwork} />,
               <Text
                 alignment="center"
-                color={<Icon name="arrow-2-down" />}
-                children=""
+                children={<Icon name="arrow-2-down" />}
               />,
               <Text alignment="center" children={toNetwork} />,
             ]}
