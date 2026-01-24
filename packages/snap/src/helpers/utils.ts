@@ -1,5 +1,5 @@
-import { fromBase58Check } from '@qtumproject/qtum-wallet-connector';
 import { ethers } from 'ethers';
+import { fromBase58Check } from 'qtum-snap-connector';
 
 const BIP38 = require('bip38');
 // eslint-disable-next-line n/prefer-global/buffer

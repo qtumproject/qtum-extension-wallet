@@ -1,5 +1,5 @@
 {
-  "name": "@qtumproject/qtum-wallet-connector",
+  "name": "qtum-snap-connector",
   "version": "1.0.0-beta.9",
   "description": "A Provider to be used in ethers.js to interact with Qtum's wallet.",
   "repository": {

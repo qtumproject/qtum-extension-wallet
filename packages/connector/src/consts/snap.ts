@@ -1,1 +1,1 @@
-export const defaultSnapOrigin = 'npm:@qtumproject/qtum-wallet';
+export const defaultSnapOrigin = 'npm:qtum-snap';

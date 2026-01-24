@@ -1,8 +1,8 @@
 import { BN } from '@distributedlab/tools';
-import type { Chain } from '@qtumproject/qtum-wallet-connector';
-import { fromBase58Check } from '@qtumproject/qtum-wallet-connector';
 import { ethers } from 'ethers';
 import type { QtumWallet } from 'qtum-ethers-wrapper';
+import type { Chain } from 'qtum-snap-connector';
+import { fromBase58Check } from 'qtum-snap-connector';
 
 import { formatUnits } from '@/helpers/format';
 import { createQRC20 } from '@/helpers/qrc20';

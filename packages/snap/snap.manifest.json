@@ -7,12 +7,12 @@
     "url": "https://github.com/qtumproject/qtum-extension-wallet.git"
   },
   "source": {
-    "shasum": "7H8kjOxOenkwKT9ACjvtjE46q8QG8A2GDEGj2WiX+BQ=",
+    "shasum": "BXyYEApu3LLh0Rl7zrwY2qs5uHjky2ciFz6tB6QrU1c=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
         "iconPath": "images/icon.svg",
-        "packageName": "@qtumproject/qtum-wallet",
+        "packageName": "qtum-snap",
         "registry": "https://registry.npmjs.org/"
       }
     }

@@ -1,4 +1,4 @@
-import type { Chain } from '@qtumproject/qtum-wallet-connector';
+import type { Chain } from 'qtum-snap-connector';
 
 export const DEFAULT_NETWORKS_RPC_URLS: Chain[] = [
   {

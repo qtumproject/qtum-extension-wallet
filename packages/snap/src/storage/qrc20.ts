@@ -1,4 +1,4 @@
-import { sleep } from '@qtumproject/qtum-wallet-connector';
+import { sleep } from 'qtum-snap-connector';
 
 import { StorageEnum } from '@/enums';
 import { normalizeHexadecimalAddress } from '@/helpers';

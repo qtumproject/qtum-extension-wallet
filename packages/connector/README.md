@@ -7,17 +7,17 @@ Qtum Wallet connector is used to install snap and exposes methods for calling sn
 ### Installation
 
 ```bash
-npm install @qtumproject/qtum-wallet-connector
+npm install qtum-snap-connector
 ```
 
 ```bash
-yarn add @qtumproject/qtum-wallet-connector
+yarn add qtum-snap-connector
 ```
 
 ### Define raw provider (object which is similar to window.ethereum)
 
 ```typescript
-import { QtumWallet } from '@qtumproject/qtum-wallet-connector';
+import { QtumWallet } from 'qtum-snap-connector';
 
 export const qtumWallet = new QtumWallet();
 ```
@@ -35,7 +35,7 @@ const init = async () => {
 ### Check if snap or metamask is installed
 
 ```typescript
-import { isMetamaskInstalled } from '@qtumproject/qtum-wallet-connector';
+import { isMetamaskInstalled } from 'qtum-snap-connector';
 
 import { qtumWallet } from '@/path/to/qtumWallet';
 

@@ -12,11 +12,8 @@ import {
   type TransactionParams,
   TransactionType,
 } from '@metamask/transaction-controller';
-import type {
-  SnapRequestParams,
-  RPCMethods,
-} from '@qtumproject/qtum-wallet-connector';
 import { BigNumber } from 'ethers';
+import type { SnapRequestParams, RPCMethods } from 'qtum-snap-connector';
 
 import { normalizeHexadecimalAddress, snapDialog } from '@/helpers';
 import { formatUnits } from '@/helpers/format';

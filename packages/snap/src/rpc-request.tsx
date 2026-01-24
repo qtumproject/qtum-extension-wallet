@@ -14,10 +14,10 @@ import {
   Text,
 } from '@metamask/snaps-sdk/jsx';
 import type { JsonRpcRequest } from '@metamask/utils';
-import type { SnapRequestParams } from '@qtumproject/qtum-wallet-connector';
-import { sleep, RPCMethods } from '@qtumproject/qtum-wallet-connector';
 import { BigNumber, ethers } from 'ethers';
 import { QtumWallet } from 'qtum-ethers-wrapper';
+import type { SnapRequestParams } from 'qtum-snap-connector';
+import { sleep, RPCMethods } from 'qtum-snap-connector';
 
 import { getProvider, getWallet } from '@/config';
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';

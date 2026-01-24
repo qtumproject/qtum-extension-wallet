@@ -1,4 +1,4 @@
-import { RPCMethods } from '@qtumproject/qtum-wallet-connector';
+import { RPCMethods } from 'qtum-snap-connector';
 
 describe('onRpcRequest error paths', () => {
   async function loadOnRpcRequest() {

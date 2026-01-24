@@ -5,8 +5,8 @@ import {
   secp256k1,
   SLIP10Node,
 } from '@metamask/key-tree';
-import { sleep } from '@qtumproject/qtum-wallet-connector';
 import { QtumWallet } from 'qtum-ethers-wrapper';
+import { sleep } from 'qtum-snap-connector';
 
 import { getProvider } from '@/config';
 import { StorageEnum } from '@/enums';
