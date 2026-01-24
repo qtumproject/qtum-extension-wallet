@@ -1,4 +1,5 @@
 import versionJson from '../version.json';
+
 import { defaultSnapOrigin } from '@/consts';
 import type { RPCMethods } from '@/enums';
 import {
