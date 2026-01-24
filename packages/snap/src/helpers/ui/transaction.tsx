@@ -61,7 +61,7 @@ export const buildTxUi = async (
             tx.to ? (
               <Box
                 children={[
-                  <Text children="**To**:" />,
+                  <Text children="To:" />,
                   <Address
                     address={`0x${normalizeHexadecimalAddress(txTo)}`}
                   />,
@@ -92,7 +92,7 @@ export const buildTxUi = async (
             <Address address={`0x${normalizeHexadecimalAddress(txTo)}`} />,
             <Divider />,
             <Text children="Details" />,
-            <Text children={`**Data**: ${tx.data}`} />,
+            <Text children={`Data: ${tx.data}`} />,
           ]}
         />,
       );
@@ -128,7 +128,7 @@ export const buildTxUi = async (
             <Heading children="Send transaction" />,
             <Divider />,
             <Text children="Do you want to send transaction?" />,
-            <Text children={`**Data**: ${tx.data}`} />,
+            <Text children={`Data: ${tx.data}`} />,
           ]}
         />,
       );
@@ -140,7 +140,7 @@ export const buildTxUi = async (
           children={[
             <Heading children="Send transaction" />,
             <Divider />,
-            <Text children="**To**:" />,
+            <Text children="To:" />,
             <Address address={`0x${normalizeHexadecimalAddress(txTo)}`} />,
             <Divider />,
             <Row
@@ -153,7 +153,7 @@ export const buildTxUi = async (
               children={<Text children={formatUnits(gasFee.add(value))} />}
             />,
             <Divider />,
-            <Text children="**Data**:" />,
+            <Text children="Data:" />,
             <Text children={String(data)} />,
           ]}
         />,
