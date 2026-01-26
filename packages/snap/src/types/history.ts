@@ -21,6 +21,7 @@ export type HistoryItemType = {
   tokenContractAddress?: string;
   tokenName?: string;
   tokenDecimals?: number;
+  showAddToken?: boolean;
 };
 
 export type HistoriesType = {

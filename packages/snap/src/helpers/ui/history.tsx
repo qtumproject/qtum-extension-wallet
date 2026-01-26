@@ -157,6 +157,14 @@ export const renderHistory = (
                                 <Text
                                   children={`${item.amount} ${item.symbol}`}
                                 />,
+                                item.showAddToken && (
+                                  <Button
+                                    name={`add-token-history-${item.tokenContractAddress}`}
+                                    variant="primary"
+                                    size="sm"
+                                    children="Add Token"
+                                  />
+                                ),
                               ]}
                             />,
                             <Box
@@ -172,7 +180,9 @@ export const renderHistory = (
                                   <Text
                                     size="sm"
                                     color="muted"
-                                    children={`· ${String(item.confirmations)}/5`}
+                                    children={`· ${String(
+                                      item.confirmations,
+                                    )}/5`}
                                   />
                                 ),
                               ]}
@@ -219,7 +229,9 @@ export const renderHistory = (
                                 <Text
                                   size="sm"
                                   color="muted"
-                                  children={`${String(item.confirmations)} Confirmations`}
+                                  children={`${String(
+                                    item.confirmations,
+                                  )} Confirmations`}
                                 />,
                               ]}
                             />,

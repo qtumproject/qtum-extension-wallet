@@ -5,6 +5,7 @@ import { HISTORY_PAGE_SIZE, WAITING_CONFIRMATIONS } from '@/consts';
 import { formatUnits } from '@/helpers/format';
 import { toTitleCase } from '@/helpers/utils';
 import { getNativeBasicTransaction, getQRC20BalanceHistory } from '@/rpc';
+import { addShowAddTokenFlag } from '@/storage';
 import type {
   HistoriesType,
   HistoryItemType,
@@ -120,7 +121,12 @@ export async function getTop5History(
           two.timestamp - one.timestamp,
       )
       .slice(0, HISTORY_PAGE_SIZE);
-    return { items, totalCount: Number(items.length), isValid: true };
+    const histories = {
+      items,
+      totalCount: Number(items.length),
+      isValid: true,
+    };
+    return await addShowAddTokenFlag(histories, network.chainId);
   } catch {
     return { items: [], totalCount: 0, isValid: false };
   }

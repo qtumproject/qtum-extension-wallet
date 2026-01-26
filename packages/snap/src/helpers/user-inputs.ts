@@ -64,6 +64,7 @@ import {
   importPrivateKey,
 } from '@/helpers/wallet';
 import {
+  addShowAddTokenFlag,
   addToken,
   deleteToken,
   getToken,
@@ -78,6 +79,8 @@ import type {
   HistoriesType,
   HistoryType,
   KeyType,
+  TokenType,
+  HistoryItemType,
 } from '@/types';
 
 const QRCode = require('qrcode');
@@ -816,21 +819,70 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     return;
   }
 
-  if (inputs.event.name?.startsWith('delete-qrc20') && context.dashboard) {
+  if (
+    inputs.event.name?.startsWith('delete-qrc20') &&
+    context.dashboard?.address
+  ) {
     const contractAddress = inputs.event.name.replace('delete-qrc20-', '');
     const tokens = await deleteToken(
       contractAddress,
       context.networks.current.chainId,
     );
-    context.dashboard.tokens = await getTokensWithBalance(
-      tokens,
-      await getWallet(),
-    );
+    const wallet = await getWallet();
+    context.dashboard.tokens = await getTokensWithBalance(tokens, wallet);
     context.dashboard.tokensPage = 1;
+    context.dashboard.histories = await getTop5History(
+      context.dashboard.address.qtum,
+      context.networks.current,
+    );
     await updateInterface(
       renderDashboard(context.networks, context.dashboard),
       context,
     );
+  }
+
+  if (
+    inputs.event.name?.startsWith('add-token') &&
+    context.dashboard?.address
+  ) {
+    let contractAddress: string;
+    let tokenItem: HistoryItemType | undefined;
+    const wallet = await getWallet();
+    if (inputs.event.name.startsWith('add-token-history') && context.history) {
+      contractAddress = inputs.event.name.replace('add-token-history-', '');
+      tokenItem = context.history.items.find(
+        (item) => item.tokenContractAddress === contractAddress,
+      );
+    } else {
+      contractAddress = inputs.event.name.replace('add-token-activity-', '');
+      tokenItem = context.dashboard.histories?.items.find(
+        (item) => item.tokenContractAddress === contractAddress,
+      );
+    }
+    if (tokenItem) {
+      const tokens = await addToken(context.networks.current.chainId, {
+        contractAddress,
+        name: tokenItem.tokenName,
+        symbol: tokenItem.symbol,
+        decimals: tokenItem.tokenDecimals,
+      } as TokenType);
+      context.dashboard.tokens = null;
+      context.dashboard.histories = await getTop5History(
+        context.dashboard.address.qtum,
+        context.networks.current,
+      );
+      await updateInterface(
+        renderDashboard(context.networks, context.dashboard, tokens),
+        context,
+      );
+      context.dashboard.tokens = await getTokensWithBalance(tokens, wallet);
+      context.dashboard.tokensPage = 1;
+      await updateInterface(
+        renderDashboard(context.networks, context.dashboard),
+        context,
+      );
+    }
+    return;
   }
 
   if (inputs.event.name === 'dashboard-refresh' && context.dashboard?.address) {
@@ -881,11 +933,15 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       isValid: false,
     };
     await updateInterface(renderHistory(history, true), context);
-    const histories: HistoriesType = await getNativeHistory(
+    let histories: HistoriesType = await getNativeHistory(
       context.dashboard.address.qtum,
       context.networks.current,
       history.pageSize,
       history.offset,
+    );
+    histories = await addShowAddTokenFlag(
+      histories,
+      context.networks.current.chainId,
     );
     history.items = histories.items;
     history.hasMore = histories.totalCount > history.offset + history.pageSize;
@@ -923,11 +979,15 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       history.totalCount = histories.totalCount;
       history.isValid = histories.isValid;
     } else {
-      const histories: HistoriesType = await getQRC20History(
+      let histories: HistoriesType = await getQRC20History(
         context.dashboard.address.qtum,
         context.networks.current,
         history.pageSize,
         nextOffset,
+      );
+      histories = await addShowAddTokenFlag(
+        histories,
+        context.networks.current.chainId,
       );
       history.items = histories.items;
       history.hasMore = histories.totalCount > nextOffset + history.pageSize;
@@ -963,11 +1023,15 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       history.totalCount = histories.totalCount;
       history.isValid = histories.isValid;
     } else {
-      const histories: HistoriesType = await getQRC20History(
+      let histories: HistoriesType = await getQRC20History(
         context.dashboard.address.qtum,
         context.networks.current,
         history.pageSize,
         previousOffset,
+      );
+      histories = await addShowAddTokenFlag(
+        histories,
+        context.networks.current.chainId,
       );
       history.items = histories.items;
       history.hasMore =
@@ -1011,11 +1075,15 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       history.totalCount = histories.totalCount;
       history.isValid = histories.isValid;
     } else {
-      const histories: HistoriesType = await getQRC20History(
+      let histories: HistoriesType = await getQRC20History(
         context.dashboard.address.qtum,
         context.networks.current,
         history.pageSize,
         history.offset,
+      );
+      histories = await addShowAddTokenFlag(
+        histories,
+        context.networks.current.chainId,
       );
       history.items = histories.items;
       history.hasMore = histories.totalCount > history.pageSize;
@@ -1047,11 +1115,15 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       history.totalCount = histories.totalCount;
       history.isValid = histories.isValid;
     } else {
-      const histories: HistoriesType = await getQRC20History(
+      let histories: HistoriesType = await getQRC20History(
         context.dashboard.address.qtum,
         context.networks.current,
         history.pageSize,
         history.offset,
+      );
+      histories = await addShowAddTokenFlag(
+        histories,
+        context.networks.current.chainId,
       );
       history.items = histories.items;
       history.hasMore =

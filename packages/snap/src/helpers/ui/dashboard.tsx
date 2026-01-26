@@ -433,6 +433,14 @@ export const renderDashboard = (
                                 size="sm"
                                 children={`${item.amount} ${item.symbol}`}
                               />,
+                              item.showAddToken && (
+                                <Button
+                                  name={`add-token-activity-${item.tokenContractAddress}`}
+                                  variant="primary"
+                                  size="sm"
+                                  children="Add Token"
+                                />
+                              ),
                             ]}
                           />,
                           <Box

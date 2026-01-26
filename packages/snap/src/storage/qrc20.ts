@@ -3,7 +3,12 @@ import { sleep } from 'qtum-snap-connector';
 import { StorageEnum } from '@/enums';
 import { normalizeHexadecimalAddress } from '@/helpers';
 import { snapStorage } from '@/rpc';
-import type { QRC20Type, TokenType } from '@/types';
+import type {
+  HistoriesType,
+  HistoryItemType,
+  QRC20Type,
+  TokenType,
+} from '@/types';
 
 export const addToken = async (
   chainId: string,
@@ -76,4 +81,25 @@ export const deleteToken = async (
   );
   await saveTokens(updated, chainId);
   return updated;
+};
+
+export const addShowAddTokenFlag = async (
+  histories: HistoriesType,
+  chainId: string,
+): Promise<HistoriesType> => {
+  const items: HistoryItemType[] = await Promise.all(
+    histories.items.map(async (item) => ({
+      ...item,
+      showAddToken: Boolean(
+        item.isToken &&
+          item.tokenContractAddress &&
+          !(await hasToken(item.tokenContractAddress, chainId)),
+      ),
+    })),
+  );
+
+  return {
+    ...histories,
+    items,
+  };
 };
