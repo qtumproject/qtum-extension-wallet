@@ -1,4 +1,3 @@
-import { DialogType } from '@metamask/snaps-sdk';
 import type { Chain } from 'qtum-snap-connector';
 import { sleep } from 'qtum-snap-connector';
 
@@ -75,7 +74,6 @@ export const setCurrentNetwork = async (chainId: string) => {
   const dialogResult = await renderSwitchingNetworkDialog(
     storedNetworks.current.chainName,
     nextNetwork.chainName,
-    DialogType.Confirmation,
   );
   if (!dialogResult) {
     return;
@@ -85,12 +83,7 @@ export const setCurrentNetwork = async (chainId: string) => {
     ...storedNetworks,
     current: nextNetwork,
   });
-
-  await renderSwitchingNetworkDialog(
-    storedNetworks.current.chainName,
-    nextNetwork.chainName,
-    DialogType.Alert,
-  );
+  await sleep(500);
 };
 
 export const addNetwork = async (newChain: Chain) => {
