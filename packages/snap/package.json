@@ -42,7 +42,7 @@
     "@metamask/metamask-eth-abis": "^3.1.1",
     "@metamask/network-controller": "^25.0.0",
     "@metamask/snaps-jest": "^9.5.1",
-    "@metamask/snaps-sdk": "^10.1.0",
+    "@metamask/snaps-sdk": "^10.4.0",
     "@metamask/snaps-utils": "^11.6.1",
     "@metamask/transaction-controller": "^61.1.0",
     "@types/react": "^19.2.6",

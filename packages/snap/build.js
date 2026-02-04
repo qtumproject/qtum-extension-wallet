@@ -24,5 +24,7 @@ esbuild.build({
     global: 'global',
   },
   inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
+  jsx: 'automatic',
+  jsxImportSource: '@metamask/snaps-sdk',
 });
 console.log('FINISH building ESM bundle');

@@ -7,7 +7,7 @@
     "url": "https://github.com/qtumproject/qtum-extension-wallet.git"
   },
   "source": {
-    "shasum": "pjpFB7rZmBgr4xlFWdMhc8SuyDhILdBCoHq7wljTZSA=",
+    "shasum": "eIWbXRn35c0dxAe5FaXeErkCMyxCFtVGqJZfgAZk7n8=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -36,6 +36,6 @@
     "endowment:page-home": {},
     "snap_getEntropy": {}
   },
-  "platformVersion": "10.1.0",
+  "platformVersion": "10.4.0",
   "manifestVersion": "0.1"
 }

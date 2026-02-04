@@ -26,6 +26,20 @@ bundleString = bundleString.replace(
   '',
 );
 
+// Replace require calls for @metamask/snaps-sdk with proper module access
+bundleString = bundleString.replace(
+  /var\s+(\w+)\s+=\s+require\(["']@metamask\/snaps-sdk\/jsx["']\);/g,
+  'var $1 = snap;'
+);
+bundleString = bundleString.replace(
+  /var\s+(\w+)\s+=\s+require\(["']@metamask\/snaps-sdk\/jsx-runtime["']\);/g,
+  'var $1 = snap;'
+);
+bundleString = bundleString.replace(
+  /var\s+(\w+)\s+=\s+require\(["']@metamask\/snaps-sdk["']\);/g,
+  'var $1 = snap;'
+);
+
 // [Polygon ID] Fix Worker
 bundleString = 'var Worker = {};\n'.concat(bundleString);
 
