@@ -72,7 +72,6 @@ export const setCurrentNetwork = async (chainId: string) => {
   }
 
   const dialogResult = await renderSwitchingNetworkDialog(
-    storedNetworks.current.chainName,
     nextNetwork.chainName,
   );
   if (!dialogResult) {
