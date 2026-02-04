@@ -447,18 +447,20 @@ export const renderDashboard = (
                             direction="horizontal"
                             crossAlignment="center"
                             children={[
-                              <Text
-                                size="sm"
-                                color="muted"
-                                children={toTitleCase(item.status)}
-                              />,
-                              item.confirmations <= 5 && (
+                              WAITING_CONFIRMATIONS !== 0 &&
+                              item.confirmations <= WAITING_CONFIRMATIONS ? (
                                 <Text
                                   size="sm"
                                   color="muted"
-                                  children={`· ${String(
+                                  children={`${toTitleCase(item.status)} · ${String(
                                     item.confirmations,
                                   )}/${String(WAITING_CONFIRMATIONS)}`}
+                                />
+                              ) : (
+                                <Text
+                                  size="sm"
+                                  color="muted"
+                                  children={toTitleCase(item.status)}
                                 />
                               ),
                             ]}
