@@ -14,14 +14,8 @@ import {
   Spinner,
 } from '@metamask/snaps-sdk/jsx';
 
-import { FOOTER_TEXT } from '@/consts';
-import {
-  Ellipsis,
-  Gap,
-  makeSpacerSVG,
-  PaddedBox,
-  toTitleCase,
-} from '@/helpers';
+import { FOOTER_TEXT, WAITING_CONFIRMATIONS } from '@/consts';
+import { Ellipsis, makeSpacerSVG, PaddedBox, toTitleCase } from '@/helpers';
 import { formatDateTime } from '@/helpers/format';
 import type { HistoryType } from '@/types';
 
@@ -35,6 +29,7 @@ export const renderHistory = (
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const disablePrevious = page <= 1;
   const disableNext = page >= pageCount;
+  const showPagination = total > pageSize;
 
   return (
     <Box
@@ -171,18 +166,22 @@ export const renderHistory = (
                               direction="horizontal"
                               crossAlignment="center"
                               children={[
-                                <Text
-                                  size="sm"
-                                  color="muted"
-                                  children={toTitleCase(item.status)}
-                                />,
-                                item.confirmations <= 5 && (
+                                WAITING_CONFIRMATIONS !== 0 &&
+                                item.confirmations <= WAITING_CONFIRMATIONS ? (
                                   <Text
                                     size="sm"
                                     color="muted"
-                                    children={`· ${String(
-                                      item.confirmations,
-                                    )}/5`}
+                                    children={`${toTitleCase(
+                                      item.status,
+                                    )} · ${String(item.confirmations)}/${String(
+                                      WAITING_CONFIRMATIONS,
+                                    )}`}
+                                  />
+                                ) : (
+                                  <Text
+                                    size="sm"
+                                    color="muted"
+                                    children={toTitleCase(item.status)}
                                   />
                                 ),
                               ]}
@@ -262,38 +261,39 @@ export const renderHistory = (
                         />,
                       ]}
                     />,
-                    <Gap />,
                   ]}
                 />
               )),
-              <Box
-                direction="horizontal"
-                alignment="space-between"
-                crossAlignment="center"
-                children={[
-                  <Button
-                    name="history-previous"
-                    disabled={disablePrevious}
-                    children={<Icon name="arrow-left" />}
-                  />,
-                  <Box
-                    alignment="center"
-                    crossAlignment="center"
-                    children={
-                      <Text
-                        size="sm"
-                        color="muted"
-                        children={`${String(page)} / ${String(pageCount)}`}
-                      />
-                    }
-                  />,
-                  <Button
-                    name="history-next"
-                    disabled={disableNext}
-                    children={<Icon name="arrow-right" />}
-                  />,
-                ]}
-              />,
+              showPagination && (
+                <Box
+                  direction="horizontal"
+                  alignment="space-between"
+                  crossAlignment="center"
+                  children={[
+                    <Button
+                      name="history-previous"
+                      disabled={disablePrevious}
+                      children={<Icon name="arrow-left" />}
+                    />,
+                    <Box
+                      alignment="center"
+                      crossAlignment="center"
+                      children={
+                        <Text
+                          size="sm"
+                          color="muted"
+                          children={`${String(page)} / ${String(pageCount)}`}
+                        />
+                      }
+                    />,
+                    <Button
+                      name="history-next"
+                      disabled={disableNext}
+                      children={<Icon name="arrow-right" />}
+                    />,
+                  ]}
+                />
+              ),
             ]}
           />
         ),
