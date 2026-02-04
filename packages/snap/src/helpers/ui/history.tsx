@@ -6,7 +6,6 @@ import {
   Button,
   Icon,
   Section,
-  Image,
   SelectorOption,
   Card,
   Selector,
@@ -15,7 +14,7 @@ import {
 } from '@metamask/snaps-sdk/jsx';
 
 import { FOOTER_TEXT, WAITING_CONFIRMATIONS } from '@/consts';
-import { Ellipsis, makeSpacerSVG, PaddedBox, toTitleCase } from '@/helpers';
+import { Ellipsis, PaddedBox, toTitleCase } from '@/helpers';
 import { formatDateTime } from '@/helpers/format';
 import type { HistoryType } from '@/types';
 
@@ -123,177 +122,134 @@ export const renderHistory = (
             }
           />
         ),
-        !isLoading && history.items.length !== 0 && history.isValid && (
-          <Box
-            children={[
-              history.items.map((item) => (
+        !isLoading &&
+          history.items.length !== 0 &&
+          history.isValid &&
+          history.items.map((item) => [
+            <Section
+              direction="vertical"
+              children={[
                 <Box
+                  direction="horizontal"
+                  alignment="space-between"
                   children={[
-                    <Section
-                      direction="vertical"
+                    <Box
+                      direction="horizontal"
                       children={[
-                        <Box
-                          direction="horizontal"
-                          alignment="space-between"
-                          children={[
-                            <Box
-                              direction="horizontal"
-                              children={[
-                                <Icon
-                                  name={
-                                    ['send', 'contract'].includes(
-                                      item.direction,
-                                    )
-                                      ? 'minus'
-                                      : 'add'
-                                  }
-                                  size="md"
-                                />,
-                                <Text
-                                  children={`${item.amount} ${item.symbol}`}
-                                />,
-                                item.showAddToken && (
-                                  <Button
-                                    name={`add-token-history-${item.tokenContractAddress}`}
-                                    variant="primary"
-                                    size="sm"
-                                    children="Add Token"
-                                  />
-                                ),
-                              ]}
-                            />,
-                            <Box
-                              direction="horizontal"
-                              crossAlignment="center"
-                              children={[
-                                WAITING_CONFIRMATIONS !== 0 &&
-                                item.confirmations <= WAITING_CONFIRMATIONS ? (
-                                  <Text
-                                    size="sm"
-                                    color="muted"
-                                    children={`${toTitleCase(
-                                      item.status,
-                                    )} · ${String(item.confirmations)}/${String(
-                                      WAITING_CONFIRMATIONS,
-                                    )}`}
-                                  />
-                                ) : (
-                                  <Text
-                                    size="sm"
-                                    color="muted"
-                                    children={toTitleCase(item.status)}
-                                  />
-                                ),
-                              ]}
-                            />,
-                          ]}
+                        <Icon
+                          name={
+                            ['send', 'contract'].includes(item.direction)
+                              ? 'minus'
+                              : 'add'
+                          }
+                          size="md"
                         />,
-                        <Box
-                          direction="horizontal"
-                          alignment="space-between"
-                          children={[
-                            <Box
-                              direction="horizontal"
-                              alignment="start"
-                              children={[
-                                <Image src={makeSpacerSVG(20)} />,
-                                <Text
-                                  size="sm"
-                                  color="muted"
-                                  children={
-                                    item.timestamp
-                                      ? formatDateTime(
-                                          new Date(item.timestamp * 1000),
-                                        )
-                                      : '-'
-                                  }
-                                />,
-                              ]}
-                            />,
-                            <Text
-                              size="sm"
-                              color="muted"
-                              children={item.type}
-                            />,
-                          ]}
+                        <Text children={`${item.amount} ${item.symbol}`} />,
+                        item.showAddToken && (
+                          <Button
+                            name={`add-token-history-${item.tokenContractAddress}`}
+                            variant="primary"
+                            size="sm"
+                            children="Add Token"
+                          />
+                        ),
+                      ]}
+                    />,
+                    WAITING_CONFIRMATIONS !== 0 &&
+                    item.confirmations <= WAITING_CONFIRMATIONS ? (
+                      <Text
+                        size="sm"
+                        color="muted"
+                        children={`${toTitleCase(item.status)} · ${String(
+                          item.confirmations,
+                        )}/${String(WAITING_CONFIRMATIONS)}`}
+                      />
+                    ) : (
+                      <Text
+                        size="sm"
+                        color="muted"
+                        children={toTitleCase(item.status)}
+                      />
+                    ),
+                  ]}
+                />,
+                <Box
+                  direction="horizontal"
+                  alignment="space-between"
+                  children={[
+                    <Text
+                      size="sm"
+                      color="muted"
+                      children={
+                        item.timestamp
+                          ? formatDateTime(new Date(item.timestamp * 1000))
+                          : '-'
+                      }
+                    />,
+                    <Text size="sm" color="muted" children={item.type} />,
+                  ]}
+                />,
+                <Box
+                  direction="horizontal"
+                  alignment="space-between"
+                  children={[
+                    <Text
+                      size="sm"
+                      color="muted"
+                      children={`${String(item.confirmations)} Confirmations`}
+                    />,
+                    <Box
+                      direction="horizontal"
+                      alignment="end"
+                      crossAlignment="center"
+                      children={[
+                        <Text
+                          size="sm"
+                          color="muted"
+                          children={Ellipsis({
+                            data: item.transactionID,
+                          })}
                         />,
-                        <Box
-                          direction="horizontal"
-                          alignment="space-between"
-                          children={[
-                            <Box
-                              direction="horizontal"
-                              children={[
-                                <Image src={makeSpacerSVG(20)} />,
-                                <Text
-                                  size="sm"
-                                  color="muted"
-                                  children={`${String(
-                                    item.confirmations,
-                                  )} Confirmations`}
-                                />,
-                              ]}
-                            />,
-                            <Box
-                              direction="horizontal"
-                              alignment="end"
-                              crossAlignment="center"
-                              children={[
-                                <Text
-                                  size="sm"
-                                  color="muted"
-                                  children={Ellipsis({
-                                    data: item.transactionID,
-                                  })}
-                                />,
-                                <Text
-                                  size="sm"
-                                  children={
-                                    <Link
-                                      href={item.transactionLink}
-                                      children=""
-                                    />
-                                  }
-                                />,
-                              ]}
-                            />,
-                          ]}
+                        <Text
+                          size="sm"
+                          children={
+                            <Link href={item.transactionLink} children="" />
+                          }
                         />,
                       ]}
                     />,
                   ]}
-                />
-              )),
-              showPagination && (
-                <Box
-                  direction="horizontal"
-                  alignment="space-between"
-                  crossAlignment="center"
-                  children={[
-                    <Button
-                      name="history-previous"
-                      disabled={disablePrevious}
-                      children={<Icon name="arrow-left" />}
-                    />,
-                    <Box
-                      alignment="center"
-                      crossAlignment="center"
-                      children={
-                        <Text
-                          size="sm"
-                          color="muted"
-                          children={`${String(page)} / ${String(pageCount)}`}
-                        />
-                      }
-                    />,
-                    <Button
-                      name="history-next"
-                      disabled={disableNext}
-                      children={<Icon name="arrow-right" />}
-                    />,
-                  ]}
-                />
-              ),
+                />,
+              ]}
+            />,
+          ]),
+        showPagination && (
+          <Box
+            direction="horizontal"
+            alignment="space-between"
+            crossAlignment="center"
+            children={[
+              <Button
+                name="history-previous"
+                disabled={disablePrevious}
+                children={<Icon name="arrow-left" />}
+              />,
+              <Box
+                alignment="center"
+                crossAlignment="center"
+                children={
+                  <Text
+                    size="sm"
+                    color="muted"
+                    children={`${String(page)} / ${String(pageCount)}`}
+                  />
+                }
+              />,
+              <Button
+                name="history-next"
+                disabled={disableNext}
+                children={<Icon name="arrow-right" />}
+              />,
             ]}
           />
         ),
