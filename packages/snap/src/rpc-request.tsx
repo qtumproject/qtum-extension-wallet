@@ -135,6 +135,21 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.WalletExportPrivateKey: {
+      const res = await snapDialog(
+        DialogType.Confirmation,
+        <Box
+          children={[
+            <Heading children="Export Private Key" />,
+            <Divider />,
+            <Text children="Are you sure you want to export your private key? This is extremely sensitive information." />,
+          ]}
+        />,
+      );
+
+      if (!res) {
+        throw new Error('User rejected request');
+      }
+
       const wallet = await getWallet();
 
       return await snapDialog(
@@ -155,11 +170,11 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthSubscribe: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthUnsubscribe: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletGetAllSupportedChains: {
@@ -353,51 +368,51 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.WalletRequestPermissions: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletRevokePermissions: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletGetPermissions: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletRegisterOnboarding: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletWatchAsset: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletScanQrCode: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletGetSnaps: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletRequestSnaps: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletSnap: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletInvokeSnap: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthDecrypt: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetEncryptionPublicKey: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthRequestAccounts: {
@@ -522,7 +537,7 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.Web3ClientVersion: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthBlockNumber: {
@@ -552,7 +567,7 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthCoinbase: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthEstimateGas: {
@@ -576,41 +591,45 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGasPrice: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetBalance: {
       try {
-        const wallet = await getWallet();
+        const [address] =
+          request.params as SnapRequestParams[RPCMethods.EthGetBalance];
 
-        const balance = await wallet.getBalance();
+        const provider = await getProvider();
+
+        const balance = await (address
+          ? provider.getBalance(address)
+          : (await getWallet()).getBalance());
 
         return balance.toHexString();
       } catch (error) {
-        console.log(JSON.stringify(error));
+        console.error(error);
+        throw error;
       }
-
-      return '';
     }
 
     case RPCMethods.EthGetBlockByHash: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetBlockByNumber: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetBlockReceipts: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetBlockTransactionCountByHash: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetBlockTransactionCountByNumber: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetCode: {
@@ -622,11 +641,11 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetFilterChanges: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetFilterLogs: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetLogs: {
@@ -641,19 +660,19 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetProof: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetStorageAt: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetTransactionByBlockHashAndIndex: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetTransactionByBlockNumberAndIndex: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetTransactionByHash: {
@@ -685,7 +704,19 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetTransactionCount: {
-      return 'Not implemented';
+      try {
+        const [address, tag] =
+          request.params as SnapRequestParams[RPCMethods.EthGetTransactionCount];
+
+        const provider = await getProvider();
+
+        const count = await provider.getTransactionCount(address, tag);
+
+        return BigNumber.from(count).toHexString();
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
     }
 
     case RPCMethods.EthGetTransactionReceipt: {
@@ -717,39 +748,39 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetUncleCountByBlockHash: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetUncleCountByBlockNumber: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthMaxPriorityFeePerGas: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthNewBlockFilter: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthNewFilter: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthNewPendingTransactionFilter: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthSendRawTransaction: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthSyncing: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthUninstallFilter: {
-      return 'Not implemented';
+      throw new Error('Method not implemented');
     }
 
     default: {
