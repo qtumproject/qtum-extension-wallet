@@ -59,13 +59,22 @@ export const isMetamaskInstalled = async (): Promise<boolean> => {
 };
 
 export const checkSnapSupport = async () => {
-  const version = await window?.ethereum?.request?.({
+  const provider = await getProvider();
+  const version = (await provider?.request?.({
     method: 'web3_clientVersion',
-  });
+  })) as string | undefined;
 
-  const currentVersion = version.match(/\/v?(\d+\.\d+\.\d+)/u)?.[1] ?? null;
+  if (!version) {
+    return false;
+  }
+
+  const currentVersion = version.match(/\/v?(\d+\.\d+\.\d+)/u)?.[1] ?? '';
   const isMobile = version.endsWith('Mobile');
-  return compare(currentVersion, SUPPORTED_METAMASK_VERSION, '>=') && !isMobile;
+  return (
+    Boolean(currentVersion) &&
+    compare(currentVersion, SUPPORTED_METAMASK_VERSION, '>=') &&
+    !isMobile
+  );
 };
 
 export const getWalletSnaps = async (): Promise<GetSnapsResponse> => {
