@@ -26,15 +26,15 @@ describe('helpers/utils', () => {
       expect(toTitleCase('hello world')).toBe('Hello World');
 
       // With replace
-      expect(toLowerCase('FOO-BAR', /-/g, ' ')).toBe('foo bar');
-      expect(toUpperCase('foo-bar', /-/g, ' ')).toBe('FOO BAR');
-      expect(toTitleCase('foo-bar baz', /-/g, ' ')).toBe('Foo Bar Baz');
+      expect(toLowerCase('FOO-BAR', /-/gu, ' ')).toBe('foo bar');
+      expect(toUpperCase('foo-bar', /-/gu, ' ')).toBe('FOO BAR');
+      expect(toTitleCase('foo-bar baz', /-/gu, ' ')).toBe('Foo Bar Baz');
     });
   });
 
   describe('BIP32 path utils', () => {
     it('relativePathToDeriveSegments', () => {
-      expect(relativePathToDeriveSegments('m/44/1/0')).toEqual([
+      expect(relativePathToDeriveSegments('m/44/1/0')).toStrictEqual([
         'bip32:44',
         'bip32:1',
         'bip32:0',
@@ -46,12 +46,16 @@ describe('helpers/utils', () => {
     it('isValidQtumOrHexadecimalAddress', () => {
       // Ethereum address accepted by ethers (with 0x prefix)
       expect(
-        isValidQtumOrHexadecimalAddress('0x742d35Cc6634C0532925a3b844Bc454e4438f44e'),
+        isValidQtumOrHexadecimalAddress(
+          '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+        ),
       ).toBe(true);
 
       // 40-hex characters without 0x
       expect(
-        isValidQtumOrHexadecimalAddress('0123456789abcdef0123456789abcdef01234567'),
+        isValidQtumOrHexadecimalAddress(
+          '0123456789abcdef0123456789abcdef01234567',
+        ),
       ).toBe(true);
 
       // Invalid address
@@ -59,11 +63,11 @@ describe('helpers/utils', () => {
     });
 
     it('isValidPrivateKey', () => {
-      expect(isValidPrivateKey('0x' + '1'.repeat(64))).toBe(true);
+      expect(isValidPrivateKey(`0x${'1'.repeat(64)}`)).toBe(true);
       expect(isValidPrivateKey('1'.repeat(64))).toBe(true);
-      expect(isValidPrivateKey('0x' + '0'.repeat(64))).toBe(false); // zeros
+      expect(isValidPrivateKey(`0x${'0'.repeat(64)}`)).toBe(false); // zeros
       expect(isValidPrivateKey('0x1234')).toBe(false); // too short
-      expect(isValidPrivateKey('0x' + 'g'.repeat(64))).toBe(false); // non-hex
+      expect(isValidPrivateKey(`0x${'g'.repeat(64)}`)).toBe(false); // non-hex
     });
 
     it('normalizeHexadecimalAddress', () => {
@@ -88,7 +92,7 @@ describe('helpers/utils', () => {
   });
 
   describe('WIF and BIP38', () => {
-    const pk = '0x' + '1'.repeat(64);
+    const pk = `0x${'1'.repeat(64)}`;
 
     it('privateKeyToWIF / wifToPrivateKey roundtrip for mainnet (81)', async () => {
       const wif = await privateKeyToWIF(pk, 81, true);
@@ -115,11 +119,15 @@ describe('helpers/utils', () => {
       const decryptedWif = await decryptBIP38(enc, 'secret', 81);
       expect(await wifToPrivateKey(decryptedWif, 81)).toBe(pk.slice(2));
 
-      await expect(decryptBIP38(enc, 'wrong', 81)).rejects.toThrow('Wrong passphrase');
+      await expect(decryptBIP38(enc, 'wrong', 81)).rejects.toThrow(
+        'Wrong passphrase',
+      );
     });
 
     it('rejects unsupported chainId for WIF', async () => {
-      await expect(privateKeyToWIF(pk, 1)).rejects.toThrow('Unsupported chainId for WIF');
+      await expect(privateKeyToWIF(pk, 1)).rejects.toThrow(
+        'Unsupported chainId for WIF',
+      );
     });
   });
 });

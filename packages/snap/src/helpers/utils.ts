@@ -125,7 +125,7 @@ export async function privateKeyToWIF(
       ? privateKey.slice(2)
       : privateKey;
   const version: Record<number, number> = { 81: 0x80, 8889: 0xef };
-  return await WIF.encode(
+  return WIF.encode(
     version[chainId],
     Buffer.from(privateKey, 'hex'),
     compressed,
@@ -161,7 +161,7 @@ export async function wifToPrivateKey(
   if (!isValidWIF(wif)) {
     throw new Error('Invalid WIF');
   }
-  const decodedWIF = await WIF.decode(wif);
+  const decodedWIF = WIF.decode(wif);
   if (chainId) {
     const version: Record<number, number> = { 81: 0x80, 8889: 0xef };
     if (decodedWIF.version !== version[Number(chainId)]) {
@@ -175,7 +175,7 @@ export async function getChainIdFromWIF(wif: string): Promise<number> {
   if (!isValidWIF(wif)) {
     throw new Error('Invalid WIF');
   }
-  const decodedWIF = await WIF.decode(wif);
+  const decodedWIF = WIF.decode(wif);
   const version: Record<number, number> = { 0x80: 81, 0xef: 8889 };
   const chainId = version[decodedWIF.version];
   if (!chainId) {
@@ -199,12 +199,12 @@ export async function encryptBIP38(
   }
   let decodedWIF;
   try {
-    decodedWIF = await WIF.decode(wif);
+    decodedWIF = WIF.decode(wif);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     throw new Error('Invalid WIF');
   }
-  return await BIP38.encrypt(
+  return BIP38.encrypt(
     decodedWIF.privateKey,
     decodedWIF.compressed,
     passphrase,
@@ -222,8 +222,8 @@ export async function decryptBIP38(
     throw new Error('Invalid encrypted WIF');
   }
   try {
-    const decryptedWIF = await BIP38.decrypt(encryptedWIF, passphrase);
-    return await privateKeyToWIF(
+    const decryptedWIF = BIP38.decrypt(encryptedWIF, passphrase);
+    return privateKeyToWIF(
       decryptedWIF.privateKey.toString('hex'),
       chainId,
       decryptedWIF.compressed,
