@@ -6,7 +6,9 @@ export function toBase58Check(ethAddress: string, version: number) {
   const hash = Buffer.from(ethAddress.slice(2), 'hex');
   const payload = Buffer.allocUnsafe(21);
   payload.writeUInt8(version, 0);
+  // @ts-ignore
   hash.copy(payload, 1);
+  // @ts-ignore
   return bs58check.encode(payload);
 }
 

@@ -27,7 +27,8 @@ describe('helpers/format', () => {
     const mainnet = await getQtumAddress(hexAddr, 81);
     const testnet = await getQtumAddress(hexAddr, 8889);
 
-    const base58re = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/;
+    const base58re =
+      /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/u;
     expect(typeof mainnet).toBe('string');
     expect(mainnet.length).toBeGreaterThan(20);
     expect(base58re.test(mainnet)).toBe(true);
@@ -47,7 +48,7 @@ describe('helpers/format', () => {
     const did = 'did:key:z6MkfK9q9x5q1u6G7';
     const short = formatDidShort(did);
     expect(typeof short).toBe('string');
-    expect(short.includes('...')).toBe(true);
+    expect(short).toContain('...');
   });
 
   it('formatNumber removes trailing zeros and groups', () => {
@@ -61,16 +62,16 @@ describe('helpers/format', () => {
     expect(withDecimals).toBe('1.2345');
 
     // Balance prefixes for large numbers
-    expect(formatBalance('1000000')).toMatch(/1M$/);
-    expect(formatBalance('2500000000')).toMatch(/2.5B$/);
+    expect(formatBalance('1000000')).toMatch(/1M$/u);
+    expect(formatBalance('2500000000')).toMatch(/2.5B$/u);
   });
 
   it('date formatters return non-empty strings', () => {
     const d = '2025-01-31T16:25:00Z';
-    expect(formatDateDMYT(d)).toEqual(expect.any(String));
-    expect(formatDateMY(d)).toEqual(expect.any(String));
-    expect(formatDateDMY(d)).toEqual(expect.any(String));
-    expect(formatDateTime(d)).toEqual(expect.any(String));
-    expect(formatDateDM(d)).toEqual(expect.any(String));
+    expect(formatDateDMYT(d)).toStrictEqual(expect.any(String));
+    expect(formatDateMY(d)).toStrictEqual(expect.any(String));
+    expect(formatDateDMY(d)).toStrictEqual(expect.any(String));
+    expect(formatDateTime(d)).toStrictEqual(expect.any(String));
+    expect(formatDateDM(d)).toStrictEqual(expect.any(String));
   });
 });

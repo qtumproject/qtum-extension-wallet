@@ -13,9 +13,13 @@ export const renderSwitchingNetworkDialog = async (
       children={[
         <Heading children="Switch Network" />,
         <Divider />,
-        <Text>
-          Do you want to switch the network to <Bold>{toNetwork}</Bold>?
-        </Text>,
+        <Text
+          children={[
+            'Do you want to switch the network to ',
+            <Bold children={toNetwork} />,
+            '?',
+          ]}
+        />,
       ]}
     />,
   );
