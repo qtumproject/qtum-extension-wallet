@@ -45,7 +45,7 @@ export const renderHome = () => (
           />,
         ]}
       />,
-      <Divider />,
+      <Box children={<Divider />} />,
       <Section
         children={[
           <Button
@@ -84,7 +84,7 @@ export const renderDriveInternalMnemonic = (errorDerivationPath?: string) => (
   <Box
     children={[
       <Heading children="Derive from Internal Mnemonic" />,
-      <Divider />,
+      <Box children={<Divider />} />,
       <Form
         name="drive-internal-mnemonic-form"
         children={[
@@ -148,7 +148,7 @@ export const renderDriveExternalMnemonic = (
   <Box
     children={[
       <Heading children="Derive from external Mnemonic" />,
-      <Divider />,
+      <Box children={<Divider />} />,
       <Form
         name="drive-external-mnemonic-form"
         children={[
@@ -281,7 +281,7 @@ export const renderImportPrivateKey = (
           />,
         ]}
       />,
-      <Divider />,
+      <Box children={<Divider />} />,
       <Form
         name="import-key-form"
         children={[

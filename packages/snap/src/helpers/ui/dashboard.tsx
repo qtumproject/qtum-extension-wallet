@@ -118,7 +118,7 @@ export const renderDashboard = (
             />,
           ]}
         />,
-        <Divider />,
+        <Box children={<Divider />} />,
         <Section
           children={
             <Box
@@ -354,7 +354,7 @@ export const renderDashboard = (
             ]}
           />
         ),
-        <Divider />,
+        <Box children={<Divider />} />,
         <Section
           direction="horizontal"
           alignment="space-between"
@@ -452,9 +452,11 @@ export const renderDashboard = (
                                 <Text
                                   size="sm"
                                   color="muted"
-                                  children={`${toTitleCase(item.status)} · ${String(
-                                    item.confirmations,
-                                  )}/${String(WAITING_CONFIRMATIONS)}`}
+                                  children={`${toTitleCase(
+                                    item.status,
+                                  )} · ${String(item.confirmations)}/${String(
+                                    WAITING_CONFIRMATIONS,
+                                  )}`}
                                 />
                               ) : (
                                 <Text
@@ -508,7 +510,7 @@ export const renderDashboard = (
             }
           />
         ),
-        <Divider />,
+        <Box children={<Divider />} />,
         <Section
           children={[
             <Button

@@ -23,7 +23,7 @@ export const renderAddQRC20 = (params?: ParamsQRC20Type) => {
     <Box
       children={[
         <Heading children={`${params?.token ? 'Add' : 'Search'} QRC20`} />,
-        <Divider />,
+        <Box children={<Divider />} />,
         <Form
           name="qrc20-form"
           children={[
@@ -131,7 +131,7 @@ export const renderAddQRC20 = (params?: ParamsQRC20Type) => {
             ]}
           />
         ),
-        <Divider />,
+        <Box children={<Divider />} />,
         <Section
           children={[
             <Button

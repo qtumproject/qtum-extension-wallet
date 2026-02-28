@@ -141,7 +141,7 @@ export const renderExportPrivateKey = (
           />,
         ]}
       />,
-      <Divider />,
+      <Box children={<Divider />} />,
       exportType === 'private-key' && (
         <Box
           children={[
@@ -259,7 +259,7 @@ export const renderExportPrivateKey = (
           ]}
         />
       ),
-      <Divider />,
+      <Box children={<Divider />} />,
       <Section
         children={[
           exportType === 'encrypted-wif' && (

@@ -12,7 +12,7 @@ export async function showWalletCreatedSnapDialog(
     <Box
       children={[
         <Heading children="Your Wallet" />,
-        <Divider />,
+        <Box children={<Divider />} />,
 
         <Text children="Your Qtum address:" />,
         <Copyable value={qtumAddr} />,

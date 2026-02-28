@@ -67,7 +67,7 @@ export const renderSendTransaction = (
           />,
         ]}
       />,
-      <Divider />,
+      <Box children={<Divider />} />,
       <Box
         children={[
           <Box
@@ -144,7 +144,7 @@ export const renderSendTransaction = (
           />,
         ]}
       />,
-      <Divider />,
+      <Box children={<Divider />} />,
       !response && !isConfirm && loading && (
         <Box
           alignment="center"
@@ -292,7 +292,7 @@ export const renderSend = (
             />,
           ]}
         />,
-        <Divider />,
+        <Box children={<Divider />} />,
         <Form
           name="send-form"
           children={[
@@ -377,14 +377,19 @@ export const renderSend = (
                   <Text
                     color="muted"
                     size="sm"
-                    children={`${formatBalance(send.native.balance ?? 0, 18)} ${send.native.symbol}`}
+                    children={`${formatBalance(send.native.balance ?? 0, 18)} ${
+                      send.native.symbol
+                    }`}
                   />
                 ),
                 !loading && send.type === SendEnum.Token && send.token && (
                   <Text
                     color="muted"
                     size="sm"
-                    children={`${formatBalance(send.token.balance ?? 0, send.token.decimals)} ${send.token.symbol}`}
+                    children={`${formatBalance(
+                      send.token.balance ?? 0,
+                      send.token.decimals,
+                    )} ${send.token.symbol}`}
                   />
                 ),
               ]}

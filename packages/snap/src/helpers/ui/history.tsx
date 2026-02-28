@@ -69,7 +69,7 @@ export const renderHistory = (
             />,
           ]}
         />,
-        <Divider />,
+        <Box children={<Divider />} />,
         isLoading && (
           <PaddedBox
             size={16}
@@ -127,6 +127,7 @@ export const renderHistory = (
           history.isValid &&
           history.items.map((item) => [
             <Section
+              key={item.transactionID}
               direction="vertical"
               children={[
                 <Box
@@ -253,7 +254,7 @@ export const renderHistory = (
             ]}
           />
         ),
-        <Divider />,
+        <Box children={<Divider />} />,
         <Section
           children={
             <Button

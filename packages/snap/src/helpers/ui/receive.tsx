@@ -43,7 +43,7 @@ export const renderReceive = (receive: ReceiveType) => (
           />,
         ]}
       />,
-      <Divider />,
+      <Box children={<Divider />} />,
       receive.type === 'qtum' && (
         <Box
           children={[
@@ -99,7 +99,7 @@ export const renderReceive = (receive: ReceiveType) => (
           ]}
         />
       ),
-      <Divider />,
+      <Box children={<Divider />} />,
       <Section
         children={
           <Button

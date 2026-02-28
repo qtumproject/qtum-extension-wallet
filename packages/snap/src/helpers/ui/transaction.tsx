@@ -65,12 +65,12 @@ export const buildTxUi = async (
                 ]}
               />
             ) : null,
-            <Divider />,
+            <Box children={<Divider />} />,
             <Row
               label="Gas"
               children={<Text children={formatUnits(gasFee)} />}
             />,
-            <Divider />,
+            <Box children={<Divider />} />,
             <Row
               label="Total"
               children={<Text children={formatUnits(gasFee.add(value))} />}
@@ -87,7 +87,7 @@ export const buildTxUi = async (
           children={[
             <Heading children="Set a spending cap for your" />,
             <Address address={`0x${normalizeHexadecimalAddress(txTo)}`} />,
-            <Divider />,
+            <Box children={<Divider />} />,
             <Text children="Details" />,
             <Text children={`Data: ${tx.data}`} />,
           ]}
@@ -106,7 +106,7 @@ export const buildTxUi = async (
           children={[
             <Heading children={`Transfer ${name} (${symbol})`} />,
             <Address address={`0x${normalizeHexadecimalAddress(to)}`} />,
-            <Divider />,
+            <Box children={<Divider />} />,
             <Row label="To:" children={<Address address={to} />} />,
             <Row
               label="Amount:"
@@ -123,7 +123,7 @@ export const buildTxUi = async (
         <Box
           children={[
             <Heading children="Send transaction" />,
-            <Divider />,
+            <Box children={<Divider />} />,
             <Text children="Do you want to send transaction?" />,
             <Text children={`Data: ${tx.data}`} />,
           ]}
@@ -136,20 +136,20 @@ export const buildTxUi = async (
         <Box
           children={[
             <Heading children="Send transaction" />,
-            <Divider />,
+            <Box children={<Divider />} />,
             <Text children="To:" />,
             <Address address={`0x${normalizeHexadecimalAddress(txTo)}`} />,
-            <Divider />,
+            <Box children={<Divider />} />,
             <Row
               label="Gas"
               children={<Text children={formatUnits(gasFee)} />}
             />,
-            <Divider />,
+            <Box children={<Divider />} />,
             <Row
               label="Total"
               children={<Text children={formatUnits(gasFee.add(value))} />}
             />,
-            <Divider />,
+            <Box children={<Divider />} />,
             <Text children="Data:" />,
             <Text children={String(data)} />,
           ]}
