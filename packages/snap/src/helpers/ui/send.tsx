@@ -23,7 +23,6 @@ import {
 import { FOOTER_TEXT, QTUM_ICON } from '@/consts';
 import { SendEnum } from '@/enums';
 import { PaddedBox, Gap, totalAmount, formatUnits } from '@/helpers';
-import { formatBalance } from '@/helpers/format';
 import type {
   SendErrorsType,
   SendResponseType,
@@ -377,7 +376,7 @@ export const renderSend = (
                   <Text
                     color="muted"
                     size="sm"
-                    children={`${formatBalance(send.native.balance ?? 0, 18)} ${
+                    children={`${formatUnits(send.native.balance ?? 0, 18)} ${
                       send.native.symbol
                     }`}
                   />
@@ -386,7 +385,7 @@ export const renderSend = (
                   <Text
                     color="muted"
                     size="sm"
-                    children={`${formatBalance(
+                    children={`${formatUnits(
                       send.token.balance ?? 0,
                       send.token.decimals,
                     )} ${send.token.symbol}`}
