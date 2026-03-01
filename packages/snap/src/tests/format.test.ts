@@ -64,5 +64,22 @@ describe('format', () => {
 
   it('should format a balance', () => {
     expect(formatBalance('123000000000', 8)).toBe('1230');
+    expect(formatBalance('123123321000901', 18)).toBe('0');
+    expect(formatBalance('1231233210009001', 18)).toBe('0.001');
+    expect(formatBalance('12312332100090001', 18)).toBe('0.012');
+    expect(formatBalance('123000000000000091', 18)).toBe('0.123');
+    expect(formatBalance('123456789101112131123', 18)).toBe('123.456');
+    expect(formatBalance('1234567891011121311231', 18)).toBe('1234.56');
+    expect(formatBalance('12345678910111213112312', 18)).toBe('12345.6');
+    expect(formatBalance('123456789101112131123126', 18)).toBe('123456');
+    expect(formatBalance('1234567891011121311231269', 18)).toBe('1.234M');
+    expect(formatBalance('12345678910111213112312312', 18)).toBe('12.345M');
+    expect(formatBalance('123456789101112131123123126', 18)).toBe('123.456M');
+    expect(formatBalance('1234567891011121311231231269', 18)).toBe('1.234B');
+    expect(formatBalance('12345678910111213112312312697', 18)).toBe('12.345B');
+    expect(formatBalance('123456789101112131123123126978', 18)).toBe('123.456B');
+    expect(formatBalance('1234567891011121311231231269784', 18)).toBe('1.234T');
+    expect(formatBalance('12345678910111213112312312697843', 18)).toBe('12.345T');
+    expect(formatBalance('123456789101112131123123126978432', 18)).toBe('123.456T');
   });
 });

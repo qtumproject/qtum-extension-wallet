@@ -103,42 +103,16 @@ function removeTrailingZeros(amount: string) {
   return result;
 }
 
-function convertNumberWithPrefix(value: string) {
-  const M_PREFIX_AMOUNT = 1_000_000;
-  const B_PREFIX_AMOUNT = 1_000_000_000;
-  const T_PREFIX_AMOUNT = 1_000_000_000_000;
+function truncateAndFormat(bn: BN, decimals: number): string {
+  const multiplier = Math.pow(10, decimals);
+  const multiplied = bn.mul(BN.fromRaw(multiplier));
+  const flooredAsString = multiplied.toString().split('.')[0];
+  const floored = BN.fromRaw(flooredAsString);
+  const truncated = floored.div(BN.fromRaw(multiplier));
 
-  const getPrefix = (data: number): 'M' | 'B' | 'T' | '' => {
-    if (data >= T_PREFIX_AMOUNT) {
-      return 'T';
-    }
-    if (data >= B_PREFIX_AMOUNT) {
-      return 'B';
-    }
-    if (data >= M_PREFIX_AMOUNT) {
-      return 'M';
-    }
-
-    return '';
-  };
-
-  const numValue = Number(value.replace(/,/gu, ''));
-  const prefix = getPrefix(numValue);
-
-  const divider = {
-    M: M_PREFIX_AMOUNT,
-    B: B_PREFIX_AMOUNT,
-    T: T_PREFIX_AMOUNT,
-    '': 1,
-  }[prefix];
-
-  const finalAmount = BN.fromRaw(numValue / divider, 3).format({
-    decimals: 3,
-    groupSeparator: '',
-    decimalSeparator: '.',
-  });
-
-  return `${removeTrailingZeros(finalAmount)}${prefix}`;
+  return removeTrailingZeros(
+    truncated.format({ decimals, groupSeparator: '' }),
+  );
 }
 
 export function formatNumber(value: number, formatConfig?: BnFormatConfig) {
@@ -185,25 +159,69 @@ export function formatAmount(
   }
 }
 
-export function formatBalance(
-  amount: BnLike,
-  decimalsOrConfig?: BnConfigLike,
-  formatConfig?: BnFormatConfig,
-) {
+export function formatBalance(amount: BnLike, decimalsOrConfig?: BnConfigLike) {
   try {
-    const decimals =
-      typeof decimalsOrConfig === 'number'
-        ? decimalsOrConfig
-        : decimalsOrConfig?.decimals;
+    const bn =
+      amount instanceof BN
+        ? amount
+        : (typeof amount === 'string' &&
+              !amount.includes('.') &&
+              decimalsOrConfig !== undefined) ||
+            typeof amount === 'bigint'
+          ? BN.fromBigInt(amount, decimalsOrConfig)
+          : BN.fromRaw(amount, decimalsOrConfig);
 
-    const formatCfg = formatConfig || {
-      ...defaultBnFormatConfig,
-      ...(decimals && { decimals }),
-    };
+    if (bn.isZero) {
+      return '0';
+    }
 
-    const formattedAmount = formatAmount(amount, decimalsOrConfig, formatCfg);
+    const num = Number(bn.toString());
 
-    return convertNumberWithPrefix(formattedAmount);
+    const K = 1000;
+    const M = 1000000;
+    const B = 1000000000;
+    const T = 1000000000000;
+
+    if (num < 1) {
+      if (bn.lt(BN.fromRaw('0.001'))) {
+        return '0';
+      }
+      return truncateAndFormat(bn, 3);
+    }
+
+    if (num < K) {
+      return truncateAndFormat(bn, 3);
+    }
+
+    if (num < M) {
+      const intLen = bn.toString().split('.')[0].length;
+      if (intLen === 4) {
+        return truncateAndFormat(bn, 2);
+      }
+      if (intLen === 5) {
+        return truncateAndFormat(bn, 1);
+      }
+      return truncateAndFormat(bn, 0);
+    }
+
+    let prefix = '';
+    let divisor: number;
+
+    if (num >= T) {
+      prefix = 'T';
+      divisor = T;
+    } else if (num >= B) {
+      prefix = 'B';
+      divisor = B;
+    } else {
+      prefix = 'M';
+      divisor = M;
+    }
+
+    const divided = bn.div(BN.fromRaw(divisor));
+    const formatted = truncateAndFormat(divided, 3);
+
+    return `${formatted}${prefix}`;
   } catch {
     return '0';
   }
