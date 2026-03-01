@@ -147,7 +147,7 @@ export const renderDriveExternalMnemonic = (
 ) => (
   <Box
     children={[
-      <Heading children="Derive from external Mnemonic" />,
+      <Heading children="Derive from External Mnemonic" />,
       <Box children={<Divider />} />,
       <Form
         name="drive-external-mnemonic-form"
