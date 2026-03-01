@@ -1,32 +1,61 @@
 import {
-  toBase58Check,
   fromBase58Check,
   isAddressMatchNetwork,
-} from '../helpers';
+  toBase58Check,
+} from '../helpers/address';
 
-describe('address helper', () => {
-  const ethAddress = '0x7921223223322332233223322332233223322332';
+describe('address', () => {
+  const ethAddress = '0x79262044221047d387242953a2b7a615df96584b';
 
-  it('toBase58Check and fromBase58Check should be consistent', () => {
-    const mainnetVersion = 58;
+  describe('Testnet', () => {
+    const testnetAddress = 'qUbxbHZv11qvTstm1RiYwrUSbSg5Zqurdj';
     const testnetVersion = 120;
+    const testnetChainId = 8889;
 
-    const mainnetQtum = toBase58Check(ethAddress, mainnetVersion);
-    const testnetQtum = toBase58Check(ethAddress, testnetVersion);
+    it('should convert an ETH address to a QTUM testnet address', () => {
+      const qtumAddress = toBase58Check(ethAddress, testnetVersion);
+      expect(qtumAddress).toBe(testnetAddress);
+    });
 
-    expect(mainnetQtum).not.toBe(testnetQtum);
-    expect(fromBase58Check(mainnetQtum)).toBe(ethAddress.toLowerCase());
-    expect(fromBase58Check(testnetQtum)).toBe(ethAddress.toLowerCase());
+    it('should convert a QTUM testnet address to an ETH address', () => {
+      const address = fromBase58Check(testnetAddress);
+      expect(address).toBe(ethAddress);
+    });
+
+    it('should return true for a matching testnet network', () => {
+      const isMatch = isAddressMatchNetwork(testnetAddress, testnetChainId);
+      expect(isMatch).toBe(true);
+    });
+
+    it('should return false for a non-matching network', () => {
+      const isMatch = isAddressMatchNetwork(testnetAddress, 81); // Mainnet chainId
+      expect(isMatch).toBe(false);
+    });
   });
 
-  it('isAddressMatchNetwork should correctly identify network', () => {
-    const mainnetQtum = toBase58Check(ethAddress, 58);
-    const testnetQtum = toBase58Check(ethAddress, 120);
+  describe('Mainnet', () => {
+    const mainnetAddress = 'QXeZYZ63yq7bm1FPVR4nt5bfaAhbXFuHJn';
+    const mainnetVersion = 58;
+    const mainnetChainId = 81;
 
-    expect(isAddressMatchNetwork(mainnetQtum, 81)).toBe(true);
-    expect(isAddressMatchNetwork(mainnetQtum, 8889)).toBe(false);
+    it('should convert an ETH address to a QTUM mainnet address', () => {
+      const qtumAddress = toBase58Check(ethAddress, mainnetVersion);
+      expect(qtumAddress).toBe(mainnetAddress);
+    });
 
-    expect(isAddressMatchNetwork(testnetQtum, 8889)).toBe(true);
-    expect(isAddressMatchNetwork(testnetQtum, 81)).toBe(false);
+    it('should convert a QTUM mainnet address to an ETH address', () => {
+      const address = fromBase58Check(mainnetAddress);
+      expect(address).toBe(ethAddress);
+    });
+
+    it('should return true for a matching mainnet network', () => {
+      const isMatch = isAddressMatchNetwork(mainnetAddress, mainnetChainId);
+      expect(isMatch).toBe(true);
+    });
+
+    it('should return false for a non-matching network', () => {
+      const isMatch = isAddressMatchNetwork(mainnetAddress, 8889); // Testnet chainId
+      expect(isMatch).toBe(false);
+    });
   });
 });

@@ -1,72 +1,62 @@
-import { QtumProvider, QtumWallet } from 'qtum-ethers-wrapper';
+import {
+  createWallet,
+  deriveFromExternalMnemonic,
+  deriveFromInternalMnemonic,
+  importPrivateKey,
+} from '../helpers/wallet';
+import { snapStorage } from '../rpc';
+import { SnapMock } from './utils';
+import { StorageEnum } from '../enums';
 
-import { DEFAULT_NETWORKS_RPC_URLS } from '../consts';
+describe('wallet', () => {
+  const snapMock = new SnapMock();
 
-jest.mock('qtum-ethers-wrapper', () => {
-  const originalModule = jest.requireActual('qtum-ethers-wrapper');
-
-  return {
-    ...originalModule,
-    QtumProvider: jest.fn().mockImplementation(() => ({
-      _isProvider: true,
-      getNetwork: jest.fn().mockResolvedValue({ chainId: 81, name: 'qtum' }),
-      getBalance: jest.fn().mockResolvedValue({
-        toString: () => '100000000',
-      }),
-      on: jest.fn(),
-      removeListener: jest.fn(),
-    })),
-  };
-});
-
-// Hash of Zero Address -- DO NOT USE IN PRODUCTION
-const PK = '0x4f64fe1ce613546d34d666d8258c13c6296820fd13114d784203feb91276e838';
-
-const mainnetProvider = new QtumProvider(
-  DEFAULT_NETWORKS_RPC_URLS[0].rpcUrls[0],
-);
-
-const testnetProvider = new QtumProvider(
-  DEFAULT_NETWORKS_RPC_URLS[1].rpcUrls[0],
-);
-
-describe('qtum wallet', () => {
-  const wallet = new QtumWallet(
-    QtumWallet.fromPrivateKey(PK).privateKey,
-    mainnetProvider,
-  );
-
-  it('should get mainnet network', async () => {
-    const network = await mainnetProvider.getNetwork();
-
-    console.log('network', network);
-
-    expect(network.chainId).not.toBeNull();
+  beforeEach(() => {
+    (global as any).snap = snapMock;
   });
 
-  it('should get testnet network', async () => {
-    const network = await testnetProvider.getNetwork();
-
-    console.log('network', network);
-
-    expect(network.chainId).not.toBeNull();
+  afterEach(() => {
+    snapMock.reset();
   });
 
-  it('should show wallet private key', () => {
-    console.log('wallet.privateKey: ', wallet.privateKey);
-    expect(wallet.privateKey).toBe(PK);
+  it('should import a private key', async () => {
+    const privateKey =
+      '11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff';
+    const { wallet } = await importPrivateKey(privateKey);
+    expect(wallet.privateKey).toBe(`0x${privateKey}`);
+    expect(await snapStorage.getItem(StorageEnum.Identity)).toEqual({
+      privateKey: `0x${privateKey}`,
+    });
   });
 
-  it('should show wallet address', () => {
-    console.log('wallet.address: ', wallet.address);
-    expect(wallet.address).not.toBeNull();
+  it('should create a new wallet', async () => {
+    const { wallet } = await createWallet();
+    expect(wallet.privateKey).toBeDefined();
+    expect(await snapStorage.getItem(StorageEnum.Identity)).toEqual({
+      privateKey: wallet.privateKey,
+    });
   });
 
-  it('should show wallet balance', async () => {
-    const balance = await wallet.getBalance();
+  it('should derive from internal mnemonic', async () => {
+    const { wallet } = await deriveFromInternalMnemonic({
+      derivationPath: "m/44'/88'/0'/0/0",
+    });
+    expect(wallet.privateKey).toBeDefined();
+    expect(await snapStorage.getItem(StorageEnum.Identity)).toEqual({
+      privateKey: wallet.privateKey,
+    });
+  });
 
-    console.log('balance: ', balance.toString());
-
-    expect(balance.toString()).not.toBeNull();
+  it('should derive from external mnemonic', async () => {
+    const mnemonic =
+      'test test test test test test test test test test test junk';
+    const { wallet } = await deriveFromExternalMnemonic({
+      mnemonic,
+      derivationPath: "m/44'/88'/0'/0/0",
+    });
+    expect(wallet.privateKey).toBeDefined();
+    expect(await snapStorage.getItem(StorageEnum.Identity)).toEqual({
+      privateKey: wallet.privateKey,
+    });
   });
 });
