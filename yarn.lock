@@ -13294,6 +13294,7 @@ __metadata:
     compare-versions: "npm:^6.1.0"
     eslint: "npm:^8.27.0"
     ethers: "npm:5.7.2"
+    rimraf: "npm:^3.0.2"
     tsc-alias: "npm:^1.8.8"
     typechain: "npm:^8.3.2"
     typescript: "npm:4.7.4"

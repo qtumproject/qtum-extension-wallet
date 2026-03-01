@@ -22,6 +22,7 @@ export default [
       '**/eslint.config.mjs',
       'packages/connector/.eslintrc.js',
       'packages/connector/postbuild.js',
+      'packages/connector/src/tests/**',
       'packages/snap/build.js',
       'packages/snap/post-process.js',
       'packages/snap/snap.config.ts',

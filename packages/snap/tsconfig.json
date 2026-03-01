@@ -11,5 +11,6 @@
     "jsxImportSource": "@metamask/snaps-sdk"
   },
   "extends": "../../tsconfig.json",
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": []
 }
