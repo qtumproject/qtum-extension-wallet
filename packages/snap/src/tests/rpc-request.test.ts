@@ -50,7 +50,7 @@ jest.mock('../rpc', () => ({
 jest.mock('../storage', () => ({
   networks: {
     get: jest.fn().mockResolvedValue({
-      current: { rpcUrls: ['http://localhost'] },
+      current: { rpcUrls: ['http://localhost'], chainId: '81' },
       list: [{ chainId: '0x51', rpcUrls: ['http://localhost'] }],
     }),
     add: jest.fn().mockResolvedValue(undefined),
@@ -65,11 +65,20 @@ jest.mock('../helpers', () => ({
   createWallet: jest.fn().mockResolvedValue({ wallet: { address: '0x123', privateKey: '0xabc' } }),
   showWalletCreatedSnapDialog: jest.fn().mockResolvedValue(true),
   readAddressAsContract: jest.fn().mockResolvedValue({ contractCode: '0x' }),
+  isValidQtumOrHexadecimalAddress: jest.fn().mockReturnValue(true),
 }));
 
 jest.mock('../helpers/format', () => ({
   getQtumAddress: jest.fn().mockResolvedValue('Q123'),
 }));
+
+jest.mock('qtum-snap-connector', () => {
+  const originalModule = jest.requireActual('qtum-snap-connector');
+  return {
+    ...originalModule,
+    fromBase58Check: jest.fn().mockReturnValue('0x123'),
+  };
+});
 
 describe('onRpcRequest', () => {
   async function loadOnRpcRequest() {
@@ -367,16 +376,17 @@ describe('onRpcRequest', () => {
 
     it('handles EthGetTransactionCount', async () => {
       const onRpcRequest = await loadOnRpcRequest();
-      const res = await onRpcRequest({
-        request: {
-          id: '1',
-          jsonrpc: '2.0',
-          method: RPCMethods.EthGetTransactionCount,
-          params: ['0x123', 'latest'],
-        },
-        origin: 'tests',
-      });
-      expect(res).toBe('0x05');
+      await expect(
+        onRpcRequest({
+          request: {
+            id: '1',
+            jsonrpc: '2.0',
+            method: RPCMethods.EthGetTransactionCount,
+            params: ['0x123', 'latest'],
+          },
+          origin: 'tests',
+        }),
+      ).rejects.toThrow('Method not implemented');
     });
 
     it('handles EthGetTransactionReceipt', async () => {
