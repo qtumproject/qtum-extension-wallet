@@ -17,7 +17,7 @@ import type { JsonRpcRequest } from '@metamask/utils';
 import { BigNumber, ethers } from 'ethers';
 import { QtumWallet } from 'qtum-ethers-wrapper';
 import type { SnapRequestParams } from 'qtum-snap-connector';
-import { sleep, RPCMethods } from 'qtum-snap-connector';
+import { sleep, RPCMethods, fromBase58Check } from 'qtum-snap-connector';
 
 import { getProvider, getWallet } from '@/config';
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
@@ -28,6 +28,7 @@ import {
   readAddressAsContract,
   showWalletCreatedSnapDialog,
   snapDialog,
+  isValidQtumOrHexadecimalAddress,
 } from '@/helpers';
 import { getQtumAddress } from '@/helpers/format';
 import { snapStorage } from '@/rpc';
@@ -601,9 +602,23 @@ export const onRpcRequest = async ({
 
         const provider = await getProvider();
 
-        const balance = await (address
-          ? provider.getBalance(address)
-          : (await getWallet()).getBalance());
+        let balance;
+        if (address) {
+          const { current } = await networks.get();
+          if (!isValidQtumOrHexadecimalAddress(address, current.chainId)) {
+            throw new Error(
+              `Invalid ${current.chainName.toLowerCase()} address`,
+            );
+          }
+
+          const hexAddress = ethers.utils.isAddress(address)
+            ? address
+            : fromBase58Check(address);
+
+          balance = await provider.getBalance(hexAddress);
+        } else {
+          balance = await (await getWallet()).getBalance();
+        }
 
         return balance.toHexString();
       } catch (error) {
@@ -704,19 +719,7 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetTransactionCount: {
-      try {
-        const [address, tag] =
-          request.params as SnapRequestParams[RPCMethods.EthGetTransactionCount];
-
-        const provider = await getProvider();
-
-        const count = await provider.getTransactionCount(address, tag);
-
-        return BigNumber.from(count).toHexString();
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.EthGetTransactionReceipt: {
