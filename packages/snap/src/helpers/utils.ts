@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { fromBase58Check } from 'qtum-snap-connector';
+import { fromBase58Check, isAddressMatchNetwork } from 'qtum-snap-connector';
 
 const BIP38 = require('bip38');
 // eslint-disable-next-line n/prefer-global/buffer
@@ -53,7 +53,10 @@ export function relativePathToDeriveSegments(relative: string): string[] {
     .map((seg) => `bip32:${seg}`);
 }
 
-export function isValidQtumOrHexadecimalAddress(address: string): boolean {
+export function isValidQtumOrHexadecimalAddress(
+  address: string,
+  chainId?: number | string,
+): boolean {
   if (!address) {
     return false;
   } else if (
@@ -64,6 +67,11 @@ export function isValidQtumOrHexadecimalAddress(address: string): boolean {
   }
   try {
     fromBase58Check(address);
+    if (chainId) {
+      if (!isAddressMatchNetwork(address, Number(chainId))) {
+        return false;
+      }
+    }
     return true;
   } catch {
     return false;
