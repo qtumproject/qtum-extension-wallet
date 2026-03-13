@@ -431,22 +431,6 @@ export const onRpcRequest = async ({
     case RPCMethods.EthSignTypedDataV4: {
       const wallet = await getWallet();
 
-      const res = await snapDialog(
-        DialogType.Confirmation,
-        <Box
-          children={[
-            <Heading children="EthSignTypedDataV4" />,
-            <Divider />,
-
-            <Text children="Do you want to sign?" />,
-          ]}
-        />,
-      );
-
-      if (!res) {
-        throw new Error('User rejected request');
-      }
-
       const params = request.params as [
         string,
         {
@@ -455,6 +439,43 @@ export const onRpcRequest = async ({
           message: Record<string, any>;
         },
       ];
+
+      const { domain, message } = params[1];
+
+      const res = await snapDialog(
+        DialogType.Confirmation,
+        <Box
+          children={[
+            <Heading children="EthSignTypedDataV4" />,
+            <Divider />,
+
+            <Text children="Do you want to sign?" />,
+            <Row label="Domain" children={<Text>{domain?.name ?? ''}</Text>} />,
+            <Row
+              label="Contract"
+              children={<Text>{domain?.verifyingContract ?? ''}</Text>}
+            />,
+            <Divider />,
+            <Text children="Message:" />,
+            ...Object.entries(message).map(([key, value]) => (
+              <Row
+                label={key}
+                children={
+                  <Text>
+                    {typeof value === 'object'
+                      ? JSON.stringify(value, null, 2)
+                      : value.toString()}
+                  </Text>
+                }
+              />
+            )),
+          ]}
+        />,
+      );
+
+      if (!res) {
+        throw new Error('User rejected request');
+      }
 
       return await wallet._signTypedData(
         params[1].domain,
