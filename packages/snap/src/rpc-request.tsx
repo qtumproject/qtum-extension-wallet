@@ -35,6 +35,7 @@ import { snapStorage } from '@/rpc';
 import { networks } from '@/storage';
 
 export const onRpcRequest = async ({
+  origin,
   request,
 }: {
   request: JsonRpcRequest;
@@ -50,6 +51,7 @@ export const onRpcRequest = async ({
           children={[
             <Heading children="Create Wallet" />,
             <Divider />,
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Text children="Do you want to create wallet?" />,
           ]}
         />,
@@ -86,6 +88,7 @@ export const onRpcRequest = async ({
           children={[
             <Heading children="Import Wallet" />,
             <Divider />,
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Text children="Do you want to import wallet?" />,
           ]}
         />,
@@ -115,6 +118,7 @@ export const onRpcRequest = async ({
           children={[
             <Heading children="Create a Wallet" />,
             <Divider />,
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Text children="Do you want to create wallet?" />,
           ]}
         />,
@@ -142,6 +146,7 @@ export const onRpcRequest = async ({
           children={[
             <Heading children="Export Private Key" />,
             <Divider />,
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Text children="Are you sure you want to export your private key? This is extremely sensitive information." />,
           ]}
         />,
@@ -236,7 +241,7 @@ export const onRpcRequest = async ({
           children={[
             <Heading children="Remove Network" />,
             <Divider />,
-
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Row
               label="Network:"
               children={<Text children={isNetworkExists.chainName} />}
@@ -306,7 +311,7 @@ export const onRpcRequest = async ({
             children={[
               <Heading children="Add Network" />,
               <Divider />,
-
+              <Row label="Origin" children={<Text>{origin}</Text>} />,
               <Text children={storedNetworks.current.chainName} />,
               <Row
                 label="Chain ID:"
@@ -448,7 +453,7 @@ export const onRpcRequest = async ({
           children={[
             <Heading children="EthSignTypedDataV4" />,
             <Divider />,
-
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Text children="Do you want to sign?" />,
             <Row label="Domain" children={<Text>{domain?.name ?? ''}</Text>} />,
             <Row
@@ -501,7 +506,7 @@ export const onRpcRequest = async ({
           children={[
             <Heading children="Personal Sign" />,
             <Divider />,
-
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Text children="Do you want to sign the message?" />,
             <Text children={message} />,
           ]}
@@ -524,7 +529,7 @@ export const onRpcRequest = async ({
 
         const wallet = await getWallet();
 
-        const res = await buildTxUi(transaction);
+        const res = await buildTxUi(transaction, origin);
 
         if (!res) {
           throw new Error('User rejected request');

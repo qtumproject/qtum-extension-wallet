@@ -25,6 +25,7 @@ import {
 
 export const buildTxUi = async (
   tx: SnapRequestParams[RPCMethods.EthSendTransaction][0],
+  origin: string,
 ) => {
   const txTo = (await tx.to) as string;
   const data = (await tx.data) as string;
@@ -45,6 +46,7 @@ export const buildTxUi = async (
         <Box
           children={[
             <Heading children="Sending QTUM" />,
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Row
               label={formatUnits(value!)}
               children={
@@ -86,6 +88,7 @@ export const buildTxUi = async (
         <Box
           children={[
             <Heading children="Set a spending cap for your" />,
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Address address={`0x${normalizeHexadecimalAddress(txTo)}`} />,
             <Box children={<Divider />} />,
             <Text children="Details" />,
@@ -105,6 +108,7 @@ export const buildTxUi = async (
         <Box
           children={[
             <Heading children={`Transfer ${name} (${symbol})`} />,
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Address address={`0x${normalizeHexadecimalAddress(to)}`} />,
             <Box children={<Divider />} />,
             <Row label="To:" children={<Address address={to} />} />,
@@ -123,6 +127,7 @@ export const buildTxUi = async (
         <Box
           children={[
             <Heading children="Send transaction" />,
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Box children={<Divider />} />,
             <Text children="Do you want to send transaction?" />,
             <Text children={`Data: ${tx.data}`} />,
@@ -136,6 +141,7 @@ export const buildTxUi = async (
         <Box
           children={[
             <Heading children="Send transaction" />,
+            <Row label="Origin" children={<Text>{origin}</Text>} />,
             <Box children={<Divider />} />,
             <Text children="To:" />,
             <Address address={`0x${normalizeHexadecimalAddress(txTo)}`} />,
