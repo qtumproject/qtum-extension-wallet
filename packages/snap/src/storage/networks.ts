@@ -26,6 +26,20 @@ export const getNetworks = async (): Promise<NetworksType> => {
   return { list, current };
 };
 
+export const getNetworkByChainName = async (
+  chainName: string,
+  networks?: NetworksType,
+): Promise<Chain> => {
+  const { list } = networks || (await getNetworks());
+  const network = list.find((nt) => {
+    return String(nt.chainName) === String(chainName);
+  });
+  if (!network) {
+    throw new TypeError('Network not found');
+  }
+  return network;
+};
+
 export const getNetwork = async (
   chainId: string,
   networks?: NetworksType,

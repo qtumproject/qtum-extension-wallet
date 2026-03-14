@@ -24,7 +24,7 @@ export const renderDashboard = (
   networks: NetworksType,
   dashboard: DashboardType,
   tokens: TokenType[] = [],
-  chainId?: string,
+  chainName?: string,
 ) => {
   const loadingNative = dashboard.native === null;
   const loadingTokens = dashboard.tokens === null;
@@ -106,12 +106,12 @@ export const renderDashboard = (
             <Selector
               name="networks"
               title="Select network"
-              value={chainId ?? networks.current.chainId}
+              value={chainName ?? networks.current.chainName}
               disabled={loadingAny}
               children={networks.list.map((network) => (
                 <SelectorOption
                   key={String(network.chainId)}
-                  value={String(network.chainId)}
+                  value={String(network.chainName)}
                   children={<Card title={network.chainName} value="" />}
                 />
               ))}

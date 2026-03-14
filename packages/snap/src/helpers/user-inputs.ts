@@ -67,6 +67,7 @@ import {
   addShowAddTokenFlag,
   addToken,
   deleteToken,
+  getNetworkByChainName,
   getToken,
   getTokens,
   hasToken,
@@ -110,14 +111,14 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
     context.dashboard.native = null;
     context.dashboard.tokens = null;
     context.dashboard.histories = null;
-    const network = await getNetwork(inputs.event.value as string);
+    const network = await getNetworkByChainName(inputs.event.value as string);
     const tokens = await getTokens(network.chainId);
     await updateInterface(
       renderDashboard(
         context.networks,
         context.dashboard,
         tokens,
-        network.chainId,
+        network.chainName,
       ),
       context,
     );

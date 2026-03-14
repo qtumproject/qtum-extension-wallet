@@ -12,6 +12,7 @@ import {
   Heading,
   Row,
   Text,
+  Bold,
 } from '@metamask/snaps-sdk/jsx';
 import type { JsonRpcRequest } from '@metamask/utils';
 import { BigNumber, ethers } from 'ethers';
@@ -280,14 +281,96 @@ export const onRpcRequest = async ({
       const [newChain] =
         request.params as SnapRequestParams[RPCMethods.WalletAddEthereumChain];
 
-      const storedNetworks = await networks.get();
+      if (!newChain.rpcUrls.every((url) => url.startsWith('https://'))) {
+        return await snapDialog(
+          DialogType.Alert,
+          <Box
+            children={[
+              <Heading children="Invalid RPC URL" />,
+              <Divider />,
+              <Text children="All RPC URLs must use the https:// protocol." />,
+            ]}
+          />,
+        );
+      }
 
       const chainId = ethers.utils.isHexString(newChain.chainId)
         ? ethers.BigNumber.from(newChain.chainId).toString()
         : newChain.chainId;
 
-      const isNetworkExists = storedNetworks.list.find(
-        (el) => el.chainId === chainId,
+      for (const rpcUrl of newChain.rpcUrls) {
+        try {
+          const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+          const remoteChainId = await provider.send('eth_chainId', []);
+          if (BigNumber.from(remoteChainId).toString() !== chainId) {
+            return await snapDialog(
+              DialogType.Alert,
+              <Box
+                children={[
+                  <Heading children="Chain ID Mismatch" />,
+                  <Divider />,
+                  <Text
+                    children={[
+                      'The RPC URL ',
+                      <Bold children={rpcUrl} />,
+                      ' returned a chain ID of ',
+                      <Bold
+                        children={BigNumber.from(remoteChainId).toString()}
+                      />,
+                      ', but the expected chain ID is ',
+                      <Bold children={chainId} />,
+                      '.',
+                    ]}
+                  />,
+                ]}
+              />,
+            );
+          }
+        } catch {
+          return await snapDialog(
+            DialogType.Alert,
+            <Box
+              children={[
+                <Heading children="Invalid RPC URL" />,
+                <Divider />,
+                <Text
+                  children={[
+                    'The RPC URL ',
+                    <Bold children={rpcUrl} />,
+                    ' is not a valid RPC endpoint.',
+                  ]}
+                />,
+              ]}
+            />,
+          );
+        }
+      }
+
+      const storedNetworks = await networks.get();
+
+      if (!['81', '8889'].includes(chainId)) {
+        return await snapDialog(
+          DialogType.Alert,
+          <Box
+            children={[
+              <Heading children="Unsupported Chain ID" />,
+              <Divider />,
+              <Text
+                children={[
+                  'Only Chain ID ',
+                  <Bold children="81" />,
+                  ' and ',
+                  <Bold children="8889" />,
+                  ' are supported.',
+                ]}
+              />,
+            ]}
+          />,
+        );
+      }
+
+      const isNetworkExists = storedNetworks.list.find((el) =>
+        el.rpcUrls.some((url) => newChain.rpcUrls.includes(url)),
       );
 
       if (isNetworkExists) {
@@ -298,7 +381,7 @@ export const onRpcRequest = async ({
               <Heading children="Network already exists" />,
               <Divider />,
 
-              <Text children="Network with this chainId already exists" />,
+              <Text children="A network with one of the provided RPC URLs already exists." />,
             ]}
           />,
         );
