@@ -46,130 +46,19 @@ export const onRpcRequest = async ({
 
   switch (request.method) {
     case RPCMethods.WalletCreateRandom: {
-      const res = await snapDialog(
-        DialogType.Confirmation,
-        <Box
-          children={[
-            <Heading children="Create Wallet" />,
-            <Divider />,
-            <Row label="Origin" children={<Text>{origin}</Text>} />,
-            <Text children="Do you want to create wallet?" />,
-          ]}
-        />,
-      );
-
-      if (!res) {
-        throw new Error('User rejected request');
-      }
-
-      const wallet = QtumWallet.createRandom();
-
-      const qtumAddress = await getQtumAddress(wallet.address);
-
-      await showWalletCreatedSnapDialog(wallet.address, qtumAddress);
-
-      await snapStorage.setItem(StorageEnum.Identity, {
-        privateKey: wallet.privateKey,
-      });
-
-      return wallet.address;
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletFromPrivateKey: {
-      const [privateKey] =
-        request.params as SnapRequestParams[RPCMethods.WalletFromPrivateKey];
-
-      if (!privateKey) {
-        throw new TypeError('Private key not provided');
-      }
-
-      const res = await snapDialog(
-        DialogType.Confirmation,
-        <Box
-          children={[
-            <Heading children="Import Wallet" />,
-            <Divider />,
-            <Row label="Origin" children={<Text>{origin}</Text>} />,
-            <Text children="Do you want to import wallet?" />,
-          ]}
-        />,
-      );
-
-      if (!res) {
-        throw new Error('User rejected request');
-      }
-
-      const wallet = QtumWallet.fromPrivateKey(privateKey);
-
-      const qtumAddress = await getQtumAddress(wallet.address);
-
-      await showWalletCreatedSnapDialog(wallet.address, qtumAddress);
-
-      await snapStorage.setItem(StorageEnum.Identity, {
-        privateKey: wallet.privateKey,
-      });
-
-      return wallet.address;
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletFromMnemonic: {
-      const result = await snapDialog(
-        DialogType.Confirmation,
-        <Box
-          children={[
-            <Heading children="Create a Wallet" />,
-            <Divider />,
-            <Row label="Origin" children={<Text>{origin}</Text>} />,
-            <Text children="Do you want to create wallet?" />,
-          ]}
-        />,
-      );
-      if (!result) {
-        throw new Error('User rejected request');
-      }
-
-      try {
-        const { wallet } = await createWallet();
-        // const qtumAddress = await getQtumAddress(wallet.address);
-        //
-        // await showWalletCreatedSnapDialog(wallet.address, qtumAddress);
-
-        return wallet.address;
-      } catch {
-        throw new Error('Something went wrong');
-      }
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletExportPrivateKey: {
-      const res = await snapDialog(
-        DialogType.Confirmation,
-        <Box
-          children={[
-            <Heading children="Export Private Key" />,
-            <Divider />,
-            <Row label="Origin" children={<Text>{origin}</Text>} />,
-            <Text children="Are you sure you want to export your private key? This is extremely sensitive information." />,
-          ]}
-        />,
-      );
-
-      if (!res) {
-        throw new Error('User rejected request');
-      }
-
-      const wallet = await getWallet();
-
-      return await snapDialog(
-        DialogType.Alert,
-        <Box
-          children={[
-            <Heading children="Wallet private key" />,
-            <Divider />,
-            <Text children="Сopy:" />,
-            <Copyable value={wallet.privateKey} sensitive={true} />,
-          ]}
-        />,
-      );
+      throw new Error('Method not implemented');
     }
 
     case RPCMethods.WalletGetAddress: {
