@@ -183,6 +183,7 @@ export const renderExportPrivateKey = (
                 <Input
                   name="export-bip38-passphrase"
                   placeholder="(Optional)"
+                  type="password"
                 />
               }
             />,
