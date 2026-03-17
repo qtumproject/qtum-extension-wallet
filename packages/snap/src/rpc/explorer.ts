@@ -13,15 +13,17 @@ export async function getNativeBasicTransaction(
   limit: number,
   offset: number,
 ): Promise<NativeBasicTransactionsResponse> {
-  return (await (
-    await fetch(
-      `${
-        network.blockExplorerUrls[0]
-      }api/address/${address}/basic-txs?limit=${encodeURIComponent(
-        String(limit),
-      )}&offset=${encodeURIComponent(String(offset))}`,
-    )
-  ).json()) as NativeBasicTransactionsResponse;
+  const response = await fetch(
+    `${
+      network.blockExplorerUrls[0]
+    }api/address/${address}/basic-txs?limit=${encodeURIComponent(
+      String(limit),
+    )}&offset=${encodeURIComponent(String(offset))}`,
+  );
+  if (!response.ok) {
+    throw new Error(`Explorer API error: ${response.status}`);
+  }
+  return (await response.json()) as NativeBasicTransactionsResponse;
 }
 
 export async function getNativeBalanceHistory(
@@ -30,15 +32,17 @@ export async function getNativeBalanceHistory(
   limit: number,
   offset: number,
 ): Promise<NativeBalanceHistoryResponse> {
-  return (await (
-    await fetch(
-      `${
-        network.blockExplorerUrls[0]
-      }api/address/${address}/balance-history?limit=${encodeURIComponent(
-        String(limit),
-      )}&offset=${encodeURIComponent(String(offset))}`,
-    )
-  ).json()) as NativeBalanceHistoryResponse;
+  const response = await fetch(
+    `${
+      network.blockExplorerUrls[0]
+    }api/address/${address}/balance-history?limit=${encodeURIComponent(
+      String(limit),
+    )}&offset=${encodeURIComponent(String(offset))}`,
+  );
+  if (!response.ok) {
+    throw new Error(`Explorer API error: ${response.status}`);
+  }
+  return (await response.json()) as NativeBalanceHistoryResponse;
 }
 
 export async function getQRC20BalanceHistory(
@@ -47,24 +51,28 @@ export async function getQRC20BalanceHistory(
   limit: number,
   offset: number,
 ): Promise<QRC20BalanceHistoryResponse> {
-  return (await (
-    await fetch(
-      `${
-        network.blockExplorerUrls[0]
-      }api/address/${address}/qrc20-balance-history?limit=${encodeURIComponent(
-        String(limit),
-      )}&offset=${encodeURIComponent(String(offset))}`,
-    )
-  ).json()) as QRC20BalanceHistoryResponse;
+  const response = await fetch(
+    `${
+      network.blockExplorerUrls[0]
+    }api/address/${address}/qrc20-balance-history?limit=${encodeURIComponent(
+      String(limit),
+    )}&offset=${encodeURIComponent(String(offset))}`,
+  );
+  if (!response.ok) {
+    throw new Error(`Explorer API error: ${response.status}`);
+  }
+  return (await response.json()) as QRC20BalanceHistoryResponse;
 }
 
 export async function getContract(
   contractAddress: string,
   network: Chain,
 ): Promise<ContractResponse> {
-  return (await (
-    await fetch(
-      `${network.blockExplorerUrls[0]}api/contract/${contractAddress}`,
-    )
-  ).json()) as ContractResponse;
+  const response = await fetch(
+    `${network.blockExplorerUrls[0]}api/contract/${contractAddress}`,
+  );
+  if (!response.ok) {
+    throw new Error(`Explorer API error: ${response.status}`);
+  }
+  return (await response.json()) as ContractResponse;
 }
