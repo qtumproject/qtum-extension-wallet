@@ -42,8 +42,6 @@ export const onRpcRequest = async ({
   request: JsonRpcRequest;
   origin: string;
 }) => {
-  console.log('request', JSON.stringify(request));
-
   switch (request.method) {
     case RPCMethods.WalletCreateRandom: {
       throw new Error('Method not implemented');
