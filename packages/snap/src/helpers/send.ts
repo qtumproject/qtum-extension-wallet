@@ -11,7 +11,7 @@ import type { SendResponseType, GasEstimationType } from '@/types';
 
 export const sendNative = async (
   recipient: string,
-  amount: any,
+  amount: string | number,
   decimals: number,
   wallet: QtumWallet,
   network: Chain,
@@ -45,7 +45,7 @@ export const sendNative = async (
 export const sendQRC20 = async (
   token: string,
   recipient: string,
-  amount: any,
+  amount: string | number,
   decimals: number,
   wallet: QtumWallet,
   network: Chain,
@@ -80,7 +80,7 @@ export const sendQRC20 = async (
 
 export const estimateNative = async (
   recipient: string,
-  amount: any,
+  amount: string | number,
   decimals: number,
   wallet: QtumWallet,
 ): Promise<GasEstimationType | undefined> => {
@@ -110,7 +110,7 @@ export const estimateNative = async (
 export const estimateQRC20 = async (
   token: string,
   recipient: string,
-  amount: any,
+  amount: string | number,
   decimals: number,
   wallet: QtumWallet,
 ): Promise<GasEstimationType | undefined> => {

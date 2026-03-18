@@ -1,6 +1,8 @@
 import { ethers } from 'ethers';
 import { fromBase58Check, isAddressMatchNetwork } from 'qtum-snap-connector';
 
+import type { DecodedWIF } from '@/types';
+
 const BIP38 = require('bip38');
 // eslint-disable-next-line n/prefer-global/buffer
 const { Buffer } = require('buffer');
@@ -145,7 +147,7 @@ export function isValidWIF(wif: string, chainId?: number | string): boolean {
     return false;
   }
 
-  let decodedWIF: any;
+  let decodedWIF: DecodedWIF;
   try {
     decodedWIF = WIF.decode(wif);
   } catch {
@@ -205,7 +207,7 @@ export async function encryptBIP38(
   if (!wif) {
     throw new Error('Invalid WIF');
   }
-  let decodedWIF;
+  let decodedWIF: DecodedWIF;
   try {
     decodedWIF = WIF.decode(wif);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

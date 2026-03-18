@@ -55,46 +55,6 @@ export class QtumWallet extends QtumSnapBase implements ExternalProvider {
     }
   }
 
-  async walletFromPrivateKey(
-    privateKey: string,
-    callback: (error: any, response: any) => void,
-  ) {
-    try {
-      const response = await this.sendSnapRequest(
-        RPCMethods.WalletFromPrivateKey,
-        [privateKey],
-      );
-
-      callback(null, response);
-    } catch (error) {
-      callback(error, null);
-    }
-  }
-
-  async walletFromMnemonic(callback: (error: any, response: any) => void) {
-    try {
-      const response = await this.sendSnapRequest(
-        RPCMethods.WalletFromMnemonic,
-      );
-
-      callback(null, response);
-    } catch (error) {
-      callback(error, null);
-    }
-  }
-
-  async walletExportPrivateKey(callback: (error: any, response: any) => void) {
-    try {
-      const response = await this.sendSnapRequest(
-        RPCMethods.WalletExportPrivateKey,
-      );
-
-      callback(null, response);
-    } catch (error) {
-      callback(error, null);
-    }
-  }
-
   async walletGetAddress(callback: (error: any, response: any) => void) {
     try {
       const response = await this.sendSnapRequest(RPCMethods.WalletGetAddress);

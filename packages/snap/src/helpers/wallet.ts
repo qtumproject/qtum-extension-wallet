@@ -41,7 +41,7 @@ export async function deriveFromInternalMnemonic(options: {
       curve: 'secp256k1',
     },
   });
-  const rootNode = await SLIP10Node.fromJSON(rootNodeJson as any);
+  const rootNode = await SLIP10Node.fromJSON(rootNodeJson);
   const segments = relativePathToDeriveSegments(derivationPath) as BIP32Node[];
   const derivedNode = await rootNode.derive(segments);
 

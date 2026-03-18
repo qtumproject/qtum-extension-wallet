@@ -16,6 +16,8 @@ export * from './qrc20';
 export * from './receive';
 export * from './send';
 export * from './storage';
+export * from './transaction';
+export * from './wif';
 
 export type GapType = {
   space?: number;

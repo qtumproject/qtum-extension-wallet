@@ -7,7 +7,6 @@ import type { Deferrable } from '@ethersproject/properties';
 import { DialogType } from '@metamask/snaps-sdk';
 import {
   Box,
-  Copyable,
   Divider,
   Heading,
   Row,
@@ -16,23 +15,18 @@ import {
 } from '@metamask/snaps-sdk/jsx';
 import type { JsonRpcRequest } from '@metamask/utils';
 import { BigNumber, ethers } from 'ethers';
-import { QtumWallet } from 'qtum-ethers-wrapper';
 import type { SnapRequestParams } from 'qtum-snap-connector';
 import { sleep, RPCMethods, fromBase58Check } from 'qtum-snap-connector';
 
 import { getProvider, getWallet } from '@/config';
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
-import { StorageEnum } from '@/enums';
 import {
   buildTxUi,
-  createWallet,
   readAddressAsContract,
-  showWalletCreatedSnapDialog,
   snapDialog,
   isValidQtumOrHexadecimalAddress,
 } from '@/helpers';
 import { getQtumAddress } from '@/helpers/format';
-import { snapStorage } from '@/rpc';
 import { networks } from '@/storage';
 
 export const onRpcRequest = async ({
@@ -509,7 +503,7 @@ export const onRpcRequest = async ({
           Object.entries(transaction).reduce<Deferrable<TransactionRequest>>(
             (acc, [key, value]) => {
               if (key === 'gas') {
-                acc.gasLimit = value as any;
+                acc.gasLimit = value as BigNumber;
 
                 return acc;
               }
@@ -699,19 +693,22 @@ export const onRpcRequest = async ({
           return null;
         }
 
-        return Object.entries(tx).reduce<any>((acc, [key, value]) => {
-          if (BigNumber.isBigNumber(value)) {
-            acc[key] = value.toHexString();
+        return Object.entries(tx).reduce<Record<string, unknown>>(
+          (acc, [key, value]) => {
+            if (BigNumber.isBigNumber(value)) {
+              acc[key] = value.toHexString();
+
+              return acc;
+            } else if (typeof value === 'function') {
+              return acc;
+            }
+
+            acc[key] = value;
 
             return acc;
-          } else if (typeof value === 'function') {
-            return acc;
-          }
-
-          acc[key] = value;
-
-          return acc;
-        }, {});
+          },
+          {},
+        );
       } catch (error) {
         console.error(error);
         throw error;
@@ -735,19 +732,22 @@ export const onRpcRequest = async ({
           return null;
         }
 
-        return Object.entries(txReceipt).reduce<any>((acc, [key, value]) => {
-          if (BigNumber.isBigNumber(value)) {
-            acc[key] = value.toHexString();
+        return Object.entries(txReceipt).reduce<Record<string, unknown>>(
+          (acc, [key, value]) => {
+            if (BigNumber.isBigNumber(value)) {
+              acc[key] = value.toHexString();
+
+              return acc;
+            } else if (typeof value === 'function') {
+              return acc;
+            }
+
+            acc[key] = value;
 
             return acc;
-          } else if (typeof value === 'function') {
-            return acc;
-          }
-
-          acc[key] = value;
-
-          return acc;
-        }, {});
+          },
+          {},
+        );
       } catch (error) {
         console.error(error);
         throw error;
