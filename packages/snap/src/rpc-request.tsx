@@ -695,6 +695,10 @@ export const onRpcRequest = async ({
 
         const tx = await provider.getTransaction(txHash);
 
+        if (!tx) {
+          return null;
+        }
+
         return Object.entries(tx).reduce<any>((acc, [key, value]) => {
           if (BigNumber.isBigNumber(value)) {
             acc[key] = value.toHexString();
@@ -726,6 +730,10 @@ export const onRpcRequest = async ({
         const provider = await getProvider();
 
         const txReceipt = await provider.getTransactionReceipt(txHash);
+
+        if (!txReceipt) {
+          return null;
+        }
 
         return Object.entries(txReceipt).reduce<any>((acc, [key, value]) => {
           if (BigNumber.isBigNumber(value)) {
