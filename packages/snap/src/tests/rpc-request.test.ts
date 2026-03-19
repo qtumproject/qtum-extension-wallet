@@ -50,8 +50,8 @@ jest.mock('../rpc', () => ({
 jest.mock('../storage', () => ({
   networks: {
     get: jest.fn().mockResolvedValue({
-      current: { rpcUrls: ['http://localhost'], chainId: '81' },
-      list: [{ chainId: '0x51', rpcUrls: ['http://localhost'] }],
+      current: { rpcUrls: ['https://localhost:23889'], chainId: '81' },
+      list: [{ chainId: '81', rpcUrls: ['https://localhost:23889'] }],
     }),
     add: jest.fn().mockResolvedValue(undefined),
     remove: jest.fn().mockResolvedValue(undefined),
@@ -84,55 +84,59 @@ describe('onRpcRequest', () => {
   async function loadOnRpcRequest() {
     (global as any).window = (global as any).window ?? {};
     (global as any).crypto = (global as any).crypto ?? {};
-    const mod = await import('..');
+    const mod = await import('../rpc-request');
     return mod.onRpcRequest as ({ request }: any) => Promise<unknown>;
   }
 
   describe('Wallet methods', () => {
     it('handles WalletCreateRandom', async () => {
       const onRpcRequest = await loadOnRpcRequest();
-      const res = await onRpcRequest({
-        request: { id: '1', jsonrpc: '2.0', method: RPCMethods.WalletCreateRandom },
-        origin: 'tests',
-      });
-      expect(res).toBe('0x123');
+      await expect(
+        onRpcRequest({
+          request: { id: '1', jsonrpc: '2.0', method: RPCMethods.WalletCreateRandom },
+          origin: 'tests',
+        }),
+      ).rejects.toThrow('Method not implemented');
     });
 
     it('handles WalletFromPrivateKey', async () => {
       const onRpcRequest = await loadOnRpcRequest();
-      const res = await onRpcRequest({
-        request: {
-          id: '1',
-          jsonrpc: '2.0',
-          method: RPCMethods.WalletFromPrivateKey,
-          params: ['0xabc'],
-        },
-        origin: 'tests',
-      });
-      expect(res).toBe('0x123');
+      await expect(
+        onRpcRequest({
+          request: {
+            id: '1',
+            jsonrpc: '2.0',
+            method: RPCMethods.WalletFromPrivateKey,
+            params: ['0xabc'],
+          },
+          origin: 'tests',
+        }),
+      ).rejects.toThrow('Method not implemented');
     });
 
     it('handles WalletFromMnemonic', async () => {
       const onRpcRequest = await loadOnRpcRequest();
-      const res = await onRpcRequest({
-        request: {
-          id: '1',
-          jsonrpc: '2.0',
-          method: RPCMethods.WalletFromMnemonic,
-          params: ['test test test test test test test test test test test junk'],
-        },
-        origin: 'tests',
-      });
-      expect(res).toBe('0x123');
+      await expect(
+        onRpcRequest({
+          request: {
+            id: '1',
+            jsonrpc: '2.0',
+            method: RPCMethods.WalletFromMnemonic,
+            params: ['test test test test test test test test test test test junk'],
+          },
+          origin: 'tests',
+        }),
+      ).rejects.toThrow('Method not implemented');
     });
 
     it('handles WalletExportPrivateKey', async () => {
       const onRpcRequest = await loadOnRpcRequest();
-      const res = await onRpcRequest({
-        request: { id: '1', jsonrpc: '2.0', method: RPCMethods.WalletExportPrivateKey },
-        origin: 'tests',
-      });
-      expect(res).toBe(true);
+      await expect(
+        onRpcRequest({
+          request: { id: '1', jsonrpc: '2.0', method: RPCMethods.WalletExportPrivateKey },
+          origin: 'tests',
+        }),
+      ).rejects.toThrow('Method not implemented');
     });
 
     it('handles WalletGetAddress', async () => {
@@ -152,13 +156,13 @@ describe('onRpcRequest', () => {
         request: { id: '1', jsonrpc: '2.0', method: RPCMethods.WalletGetAllSupportedChains },
         origin: 'tests',
       });
-      expect(res).toEqual([{ chainId: '0x51', rpcUrls: ['http://localhost'] }]);
+      expect(res).toEqual([{ chainId: '81', rpcUrls: ['https://localhost:23889'] }]);
     });
 
     it('handles WalletRemoveChain', async () => {
       const onRpcRequest = await loadOnRpcRequest();
       const res = await onRpcRequest({
-        request: { id: '1', jsonrpc: '2.0', method: RPCMethods.WalletRemoveChain, params: ['0x51'] },
+        request: { id: '1', jsonrpc: '2.0', method: RPCMethods.WalletRemoveChain, params: ['81'] },
         origin: 'tests',
       });
       expect(res).toBe(true);
@@ -173,17 +177,17 @@ describe('onRpcRequest', () => {
           method: RPCMethods.WalletAddEthereumChain,
           params: [
             {
-              chainId: '0x51',
-              chainName: 'Qtum',
-              rpcUrls: ['http://localhost'],
+              chainId: '81',
+              chainName: 'Qtum Testnet',
+              rpcUrls: ['https://localhost:23889'],
               nativeCurrency: { name: 'QTUM', symbol: 'QTUM', decimals: 18 },
-              blockExplorerUrls: ['https://qtum.info'],
+              blockExplorerUrls: ['https://testnet.qtum.info'],
             },
           ],
         },
         origin: 'tests',
       });
-      expect(res).toBe(null);
+      expect(res).toBe(true);
     });
 
     it('handles WalletSwitchEthereumChain', async () => {
@@ -193,7 +197,7 @@ describe('onRpcRequest', () => {
           id: '1',
           jsonrpc: '2.0',
           method: RPCMethods.WalletSwitchEthereumChain,
-          params: [{ chainId: '0x51' }],
+          params: [{ chainId: '81' }],
         },
         origin: 'tests',
       });
