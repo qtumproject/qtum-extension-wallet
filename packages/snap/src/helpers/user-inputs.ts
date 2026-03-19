@@ -432,7 +432,7 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
       (context.send.native?.balance &&
         toBaseUnits(amount, 18).gte(context.send.native.balance)) ||
       (context.send.token?.balance &&
-        toBaseUnits(amount, context.send.token.decimals).gt( // Changed gte to gt
+        toBaseUnits(amount, context.send.token.decimals).gt(
           context.send.token.balance,
         ))
     ) {

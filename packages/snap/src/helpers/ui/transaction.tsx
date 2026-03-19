@@ -35,7 +35,7 @@ export const buildTxUi = async (
 
   const value = BigNumber.from((await tx.value) ?? 0);
   const gasLimit = BigNumber.from(
-    (await tx.gasLimit) ?? (await (tx as TransactionParamsWithGas).gas) ?? 0,
+    (await tx.gasLimit) ?? (tx as TransactionParamsWithGas).gas ?? 0,
   );
   const gasPrice = BigNumber.from((await tx.gasPrice) ?? 0);
   const gasFee = gasLimit.mul(gasPrice);
