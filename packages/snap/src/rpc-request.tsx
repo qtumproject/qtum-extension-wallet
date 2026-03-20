@@ -25,6 +25,7 @@ import {
   readAddressAsContract,
   snapDialog,
   isValidQtumOrHexadecimalAddress,
+  serialize,
 } from '@/helpers';
 import { getQtumAddress } from '@/helpers/format';
 import { networks } from '@/storage';
@@ -692,23 +693,7 @@ export const onRpcRequest = async ({
         if (!tx) {
           return null;
         }
-
-        return Object.entries(tx).reduce<Record<string, unknown>>(
-          (acc, [key, value]) => {
-            if (BigNumber.isBigNumber(value)) {
-              acc[key] = value.toHexString();
-
-              return acc;
-            } else if (typeof value === 'function') {
-              return acc;
-            }
-
-            acc[key] = value;
-
-            return acc;
-          },
-          {},
-        );
+        return serialize(tx);
       } catch (error) {
         console.error(error);
         throw error;
@@ -731,23 +716,7 @@ export const onRpcRequest = async ({
         if (!txReceipt) {
           return null;
         }
-
-        return Object.entries(txReceipt).reduce<Record<string, unknown>>(
-          (acc, [key, value]) => {
-            if (BigNumber.isBigNumber(value)) {
-              acc[key] = value.toHexString();
-
-              return acc;
-            } else if (typeof value === 'function') {
-              return acc;
-            }
-
-            acc[key] = value;
-
-            return acc;
-          },
-          {},
-        );
+        return serialize(txReceipt);
       } catch (error) {
         console.error(error);
         throw error;

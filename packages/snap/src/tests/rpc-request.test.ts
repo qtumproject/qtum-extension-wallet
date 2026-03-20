@@ -60,6 +60,7 @@ jest.mock('../storage', () => ({
 }));
 
 jest.mock('../helpers', () => ({
+  ...jest.requireActual('../helpers'),
   snapDialog: jest.fn().mockResolvedValue(true),
   buildTxUi: jest.fn().mockResolvedValue(true),
   createWallet: jest.fn().mockResolvedValue({ wallet: { address: '0x123', privateKey: '0xabc' } }),
@@ -375,7 +376,10 @@ describe('onRpcRequest', () => {
         },
         origin: 'tests',
       });
-      expect(res).toEqual({ hash: '0xhash' });
+      expect(res).toEqual({
+        hash: '0xhash',
+        wait: expect.any(Function),
+      });
     });
 
     it('handles EthGetTransactionCount', async () => {

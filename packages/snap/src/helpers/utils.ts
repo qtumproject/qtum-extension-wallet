@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { fromBase58Check, isAddressMatchNetwork } from 'qtum-snap-connector';
 
 import type { DecodedWIF } from '@/types';
@@ -42,6 +42,28 @@ export function toTitleCase(
     ? titleCase.replace(searchValue, replaceValue)
     : titleCase;
 }
+
+export const serialize = (value: any): any => {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  if (BigNumber.isBigNumber(value)) {
+    return value.toHexString();
+  }
+  if (Array.isArray(value)) {
+    return value.map(serialize);
+  }
+  if (typeof value === 'object') {
+    return Object.entries(value).reduce<Record<string, unknown>>(
+      (acc, [key, val]) => {
+        acc[key] = serialize(val);
+        return acc;
+      },
+      {},
+    );
+  }
+  return value;
+};
 
 export const makeSpacerSVG = (width: number = 1, height: number = 1): string =>
   `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="${width}" height="${height}" fill="transparent"/></svg>`;
