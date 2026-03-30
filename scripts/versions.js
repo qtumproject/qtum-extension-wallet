@@ -54,7 +54,7 @@ function applyVersion() {
         `../packages/${pkg}/src/version.json`,
       );
       const packageJsonVersion = require(packageJsonVersionPath);
-      packageJsonVersion.version = `${VERSION}`;
+      packageJsonVersion.version = `>=${VERSION}`;
 
       fs.writeFile(
         packageJsonVersionPath,
