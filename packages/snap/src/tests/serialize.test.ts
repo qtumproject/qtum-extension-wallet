@@ -149,7 +149,7 @@ describe('serialize', () => {
     });
   });
 
-  it('should not convert functions to null', () => {
+  it('should remove functions from object', () => {
     const myFunc = () => 'hello';
     const obj = {
       a: 1,
@@ -160,7 +160,7 @@ describe('serialize', () => {
       },
     };
     const result = serialize(obj);
-    expect(result.b).toBe(myFunc);
-    expect(typeof result.c.e).toBe('function');
+    expect(result.b).toBeUndefined();
+    expect(result.c.e).toBeUndefined();
   });
 });

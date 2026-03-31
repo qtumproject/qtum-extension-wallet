@@ -378,23 +378,21 @@ describe('onRpcRequest', () => {
       });
       expect(res).toEqual({
         hash: '0xhash',
-        wait: expect.any(Function),
       });
     });
 
     it('handles EthGetTransactionCount', async () => {
       const onRpcRequest = await loadOnRpcRequest();
-      await expect(
-        onRpcRequest({
-          request: {
-            id: '1',
-            jsonrpc: '2.0',
-            method: RPCMethods.EthGetTransactionCount,
-            params: ['0x123', 'latest'],
-          },
-          origin: 'tests',
-        }),
-      ).rejects.toThrow('Method not implemented');
+      const res = await onRpcRequest({
+        request: {
+          id: '1',
+          jsonrpc: '2.0',
+          method: RPCMethods.EthGetTransactionCount,
+          params: ['0x123', 'latest'],
+        },
+        origin: 'tests',
+      });
+      expect(res).toBe('0x05');
     });
 
     it('handles EthGetTransactionReceipt', async () => {
