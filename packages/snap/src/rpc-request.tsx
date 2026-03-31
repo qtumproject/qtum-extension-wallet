@@ -623,7 +623,28 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetBlockByNumber: {
-      throw new Error('Method not implemented');
+      try {
+        const [blockNumber, includeTransactions] =
+          request.params as SnapRequestParams[RPCMethods.EthGetBlockByNumber];
+
+        const provider = await getProvider();
+
+        let block;
+        if (includeTransactions) {
+          block = await provider.getBlockWithTransactions(
+            BigNumber.from(blockNumber).toNumber(),
+          );
+        } else {
+          block = await provider.getBlock(
+            BigNumber.from(blockNumber).toNumber(),
+          );
+        }
+
+        return serialize(block);
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
     }
 
     case RPCMethods.EthGetBlockReceipts: {
@@ -701,7 +722,22 @@ export const onRpcRequest = async ({
     }
 
     case RPCMethods.EthGetTransactionCount: {
-      throw new Error('Method not implemented');
+      try {
+        const [address, blockTag] =
+          request.params as SnapRequestParams[RPCMethods.EthGetTransactionCount];
+
+        const provider = await getProvider();
+
+        const transactionCount = await provider.getTransactionCount(
+          address,
+          blockTag,
+        );
+
+        return BigNumber.from(transactionCount).toHexString();
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
     }
 
     case RPCMethods.EthGetTransactionReceipt: {
