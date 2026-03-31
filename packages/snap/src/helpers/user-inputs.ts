@@ -771,11 +771,16 @@ export const onUserInput: OnUserInputHandler = async (inputs) => {
   if (
     inputs.event.name === 'add-qrc20' &&
     context.dashboard &&
-    context.addQRC20?.token
+    context.addQRC20?.token &&
+    context.dashboard.address
   ) {
     context.dashboard.tokens = null;
     await addToken(context.networks.current.chainId, context.addQRC20.token);
     const tokens = await getTokens(context.networks.current.chainId);
+    context.dashboard.histories = await getTop5History(
+      context.dashboard.address.qtum,
+      context.networks.current,
+    );
     await updateInterface(
       renderDashboard(context.networks, context.dashboard, tokens),
       context,
