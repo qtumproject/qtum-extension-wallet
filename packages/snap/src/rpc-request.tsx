@@ -711,9 +711,6 @@ export const onRpcRequest = async ({
 
         const tx = await provider.getTransaction(txHash);
 
-        if (!tx) {
-          return null;
-        }
         return serialize(tx);
       } catch (error) {
         console.error(error);
@@ -749,9 +746,6 @@ export const onRpcRequest = async ({
 
         const txReceipt = await provider.getTransactionReceipt(txHash);
 
-        if (!txReceipt) {
-          return null;
-        }
         return serialize(txReceipt);
       } catch (error) {
         console.error(error);

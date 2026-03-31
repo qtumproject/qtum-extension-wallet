@@ -43,26 +43,38 @@ export function toTitleCase(
     : titleCase;
 }
 
-export const serialize = (value: any): any => {
-  if (value === null || value === undefined) {
+export const serialize = (data: any): any => {
+  if (data === null || data === undefined) {
     return null;
   }
-  if (BigNumber.isBigNumber(value)) {
-    return value.toHexString();
+  // Handle Ethers BigNumbers
+  if (BigNumber.isBigNumber(data)) {
+    return data.toHexString();
   }
-  if (Array.isArray(value)) {
-    return value.map(serialize);
+  // Handle native BigInt (common in newer Snaps/Ethers v6)
+  if (typeof data === 'bigint') {
+    return data.toString();
   }
-  if (typeof value === 'object') {
-    return Object.entries(value).reduce<Record<string, unknown>>(
-      (acc, [key, val]) => {
-        acc[key] = serialize(val);
+  // Remove functions (MetaMask will crash on these)
+  if (typeof data === 'function') {
+    return undefined;
+  }
+  if (Array.isArray(data)) {
+    return data.map(serialize).filter((value) => value !== undefined);
+  }
+  if (typeof data === 'object') {
+    return Object.entries(data).reduce<Record<string, unknown>>(
+      (acc, [key, value]) => {
+        const serializedValue = serialize(value);
+        if (serializedValue !== undefined) {
+          acc[key] = serializedValue;
+        }
         return acc;
       },
       {},
     );
   }
-  return value;
+  return data;
 };
 
 export const makeSpacerSVG = (width: number = 1, height: number = 1): string =>
