@@ -4412,10 +4412,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.17.7":
-  version: 4.17.7
-  resolution: "@types/lodash@npm:4.17.7"
-  checksum: 10/b8177f19cf962414a66989837481b13f546afc2e98e8d465bec59e6ac03a59c584eb7053ce511cde3a09c5f3096d22a5ae22cfb56b23f3b0da75b0743b6b1a44
+"@types/lodash@npm:4.17.24":
+  version: 4.17.24
+  resolution: "@types/lodash@npm:4.17.24"
+  checksum: 10/0f2082565f60f9787eefc046edc38458054512be5a8b3584ef0bad5fd9e85d0ab55ec5a1fbfae1ed6ba015cf1f9e837d5fb4da1f99fc60b8f74b2a46146fb00f
   languageName: node
   linkType: hard
 
@@ -11564,10 +11564,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4.17.23":
-  version: 4.17.23
-  resolution: "lodash@npm:4.17.23"
-  checksum: 10/82504c88250f58da7a5a4289f57a4f759c44946c005dd232821c7688b5fcfbf4a6268f6a6cdde4b792c91edd2f3b5398c1d2a0998274432cff76def48735e233
+"lodash@npm:4.18.1":
+  version: 4.18.1
+  resolution: "lodash@npm:4.18.1"
+  checksum: 10/306fea53dfd39dad1f03d45ba654a2405aebd35797b673077f401edb7df2543623dc44b9effbb98f69b32152295fff725a4cec99c684098947430600c6af0c3f
   languageName: node
   linkType: hard
 
@@ -13325,7 +13325,7 @@ __metadata:
     "@metamask/snaps-utils": "npm:11.6.1"
     "@metamask/transaction-controller": "npm:61.1.0"
     "@types/intl": "npm:1.2.0"
-    "@types/lodash": "npm:4.17.7"
+    "@types/lodash": "npm:4.17.24"
     "@types/qrcode": "npm:1"
     "@types/react": "npm:19.2.6"
     "@types/react-dom": "npm:19.2.3"
@@ -13348,7 +13348,7 @@ __metadata:
     intl: "npm:1.2.5"
     key-did-provider-ed25519: "npm:3.0.2"
     key-did-resolver: "npm:3.0.0"
-    lodash: "npm:4.17.23"
+    lodash: "npm:4.18.1"
     node-stdlib-browser: "npm:1.2.0"
     nodemon: "npm:2.0.20"
     npm-commands: "npm:1.2.1"
