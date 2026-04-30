@@ -1,4 +1,4 @@
-import { RPCMethods } from 'qtum-snap-connector';
+import { RPCMethods } from '@qtumproject/qtum-wallet-connector';
 
 const mockProvider = {
   getBalance: jest.fn().mockResolvedValue({ toHexString: () => '0x5f5e100' }),
@@ -73,8 +73,8 @@ jest.mock('../helpers/format', () => ({
   getQtumAddress: jest.fn().mockResolvedValue('Q123'),
 }));
 
-jest.mock('qtum-snap-connector', () => {
-  const originalModule = jest.requireActual('qtum-snap-connector');
+jest.mock('@qtumproject/qtum-wallet-connector', () => {
+  const originalModule = jest.requireActual('@qtumproject/qtum-wallet-connector');
   return {
     ...originalModule,
     fromBase58Check: jest.fn().mockReturnValue('0x123'),

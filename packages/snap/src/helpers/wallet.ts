@@ -6,7 +6,7 @@ import {
   SLIP10Node,
 } from '@metamask/key-tree';
 import { QtumWallet } from 'qtum-ethers-wrapper';
-import { sleep } from 'qtum-snap-connector';
+import { sleep } from '@qtumproject/qtum-wallet-connector';
 
 import { getProvider } from '@/config';
 import { StorageEnum } from '@/enums';

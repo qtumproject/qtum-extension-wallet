@@ -7,7 +7,7 @@ import type {
 import { BN, time } from '@distributedlab/tools';
 import type { BigNumberish } from 'ethers';
 import { ethers } from 'ethers';
-import { toBase58Check } from 'qtum-snap-connector';
+import { toBase58Check } from '@qtumproject/qtum-wallet-connector';
 
 import { getProvider, getWallet } from '@/config';
 import {

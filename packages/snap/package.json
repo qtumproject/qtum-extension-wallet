@@ -1,6 +1,6 @@
 {
-  "name": "qtum-snap",
-  "version": "1.0.0",
+  "name": "@qtumproject/qtum-wallet",
+  "version": "1.0.0-rc.1",
   "description": "Qtum Wallet acts as an RPC proxy, forwarding MetaMask requests to the Qtum network via the Qtum ethers adapter. To function securely, it requires the snap_getBip32Entropy permission (specifically for path m/44'/88'). This provides the benefit of deriving your local Qtum addresses and securely signing transactions directly within the Snap. The risk is limited to this specific Qtum derivation path, ensuring your main Ethereum keys and core recovery phrase remain isolated and unexposed.",
   "repository": {
     "type": "git",
@@ -45,6 +45,7 @@
     "@metamask/snaps-sdk": "10.4.0",
     "@metamask/snaps-utils": "11.6.1",
     "@metamask/transaction-controller": "61.1.0",
+    "@qtumproject/qtum-wallet-connector": "workspace:^",
     "@types/react": "19.2.6",
     "@types/react-dom": "19.2.3",
     "bip38": "3.1.1",
@@ -57,7 +58,6 @@
     "lodash": "4.18.1",
     "qrcode": "1.5.4",
     "qtum-ethers-wrapper": "2.1.2",
-    "qtum-snap-connector": "workspace:^",
     "qtumjs-lib": "0.0.8",
     "setimmediate": "1.0.5",
     "typia": "4.1.3",

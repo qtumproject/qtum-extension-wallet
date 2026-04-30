@@ -6,7 +6,7 @@ import type {
 } from '@metamask/snaps-sdk';
 import { ethers } from 'ethers';
 import type { QtumWallet } from 'qtum-ethers-wrapper';
-import { fromBase58Check } from 'qtum-snap-connector';
+import { fromBase58Check } from '@qtumproject/qtum-wallet-connector';
 
 import { clearWallet, getWallet } from '@/config';
 import { HISTORY_PAGE_SIZE, QRC20_PAGE_SIZE } from '@/consts';

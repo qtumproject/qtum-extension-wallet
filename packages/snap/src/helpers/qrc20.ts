@@ -1,8 +1,8 @@
 import type { Provider } from '@ethersproject/providers';
 import type { Signer } from 'ethers';
 import type { QtumWallet } from 'qtum-ethers-wrapper';
-import type { Chain } from 'qtum-snap-connector';
-import { Erc20__factory } from 'qtum-snap-connector';
+import type { Chain } from '@qtumproject/qtum-wallet-connector';
+import { Erc20__factory } from '@qtumproject/qtum-wallet-connector';
 
 import { getContract } from '@/rpc';
 import type {

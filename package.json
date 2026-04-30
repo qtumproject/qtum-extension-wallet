@@ -1,5 +1,5 @@
 {
-  "name": "qtum-snap-monorepo",
+  "name": "@qtumproject/qtum-wallet-monorepo",
   "private": true,
   "description": "Monorepo for the Qtum Wallet project.",
   "homepage": "https://github.com/qtumproject/qtum-extension-wallet",
@@ -16,9 +16,9 @@
     "packages/*"
   ],
   "scripts": {
-    "apply-version": "node scripts/versions.js $0 && yarn build:connector && yarn workspace qtum-snap preversion",
+    "apply-version": "node scripts/versions.js $0 && yarn build:connector && yarn workspace @qtumproject/qtum-wallet preversion",
     "build": "yarn workspaces foreach -pv --topological-dev --verbose --all run build",
-    "build:connector": "yarn workspace qtum-snap-connector build",
+    "build:connector": "yarn workspace @qtumproject/qtum-wallet-connector build",
     "postinstall": "patch-package",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:eslint": "eslint . --cache --ext js,ts",

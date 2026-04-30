@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import type { Chain } from 'qtum-snap-connector';
+import type { Chain } from '@qtumproject/qtum-wallet-connector';
 
 import { HISTORY_PAGE_SIZE, WAITING_CONFIRMATIONS } from '@/consts';
 import { formatUnits } from '@/helpers/format';

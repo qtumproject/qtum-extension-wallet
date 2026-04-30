@@ -1,5 +1,5 @@
-import type { Chain } from 'qtum-snap-connector';
-import { sleep } from 'qtum-snap-connector';
+import type { Chain } from '@qtumproject/qtum-wallet-connector';
+import { sleep } from '@qtumproject/qtum-wallet-connector';
 
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';
 import { StorageEnum } from '@/enums';

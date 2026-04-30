@@ -1,4 +1,4 @@
-import type { Chain } from 'qtum-snap-connector';
+import type { Chain } from '@qtumproject/qtum-wallet-connector';
 
 export type NetworksType = {
   list: Chain[];

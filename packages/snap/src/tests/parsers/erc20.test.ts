@@ -7,7 +7,7 @@ jest.mock('../../config', () => ({
   getProvider: jest.fn(),
 }));
 
-jest.mock('qtum-snap-connector', () => ({
+jest.mock('@qtumproject/qtum-wallet-connector', () => ({
   Erc20__factory: {
     connect: jest.fn(),
   },
@@ -19,7 +19,7 @@ describe('erc20 parser', () => {
   const mockDecimals = jest.fn();
 
   beforeEach(() => {
-    const { Erc20__factory } = require('qtum-snap-connector');
+    const { Erc20__factory } = require('@qtumproject/qtum-wallet-connector');
     Erc20__factory.connect.mockReturnValue({
       name: mockName,
       symbol: mockSymbol,

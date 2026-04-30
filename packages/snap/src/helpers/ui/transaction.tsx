@@ -13,7 +13,7 @@ import {
   TransactionType,
 } from '@metamask/transaction-controller';
 import { BigNumber } from 'ethers';
-import type { SnapRequestParams, RPCMethods } from 'qtum-snap-connector';
+import type { SnapRequestParams, RPCMethods } from '@qtumproject/qtum-wallet-connector';
 
 import { normalizeHexadecimalAddress, snapDialog } from '@/helpers';
 import { formatUnits } from '@/helpers/format';

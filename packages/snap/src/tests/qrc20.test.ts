@@ -18,7 +18,7 @@ jest.mock('../rpc', () => ({
   getContract: jest.fn(),
 }));
 
-jest.mock('qtum-snap-connector', () => ({
+jest.mock('@qtumproject/qtum-wallet-connector', () => ({
   Erc20__factory: {
     connect: jest.fn(),
     createInterface: jest.fn(),
@@ -31,7 +31,7 @@ describe('qrc20', () => {
   const mockProvider = new providers.JsonRpcProvider();
 
   beforeEach(() => {
-    const { Erc20__factory } = require('qtum-snap-connector');
+    const { Erc20__factory } = require('@qtumproject/qtum-wallet-connector');
     Erc20__factory.connect.mockImplementation(mockConnect);
     Erc20__factory.createInterface.mockImplementation(mockCreateInterface);
     jest
