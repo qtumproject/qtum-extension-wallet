@@ -62,6 +62,22 @@ bundleString = bundleString.replaceAll(
 bundleString = bundleString.replaceAll('fs2.readFileSync;', 'null;');
 bundleString = bundleString.replaceAll('fs3.readFileSync;', 'null;');
 
+// [qtum-ethers-wrapper / lodash] Replace Node Buffer.copy with Uint8Array.set
+// Under SES/snap sandbox the source can be a plain Uint8Array without .copy.
+// Both Buffer and Uint8Array have .set, which is equivalent when no source slice is used.
+bundleString = bundleString.replaceAll(
+  'buffer.copy(this._buffer, this._position);',
+  'this._buffer.set(buffer, this._position);',
+);
+bundleString = bundleString.replaceAll(
+  'buffer.copy(result);',
+  'result.set(buffer);',
+);
+bundleString = bundleString.replaceAll(
+  'buffer.copy(result2);',
+  'result2.set(buffer);',
+);
+
 console.log('[End]: Custom transform');
 
 fs.writeFileSync(bundlePath, bundleString);
