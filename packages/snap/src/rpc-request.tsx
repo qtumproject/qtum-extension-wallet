@@ -14,9 +14,13 @@ import {
   Bold,
 } from '@metamask/snaps-sdk/jsx';
 import type { JsonRpcRequest } from '@metamask/utils';
-import { BigNumber, ethers } from 'ethers';
 import type { SnapRequestParams } from '@qtumproject/qtum-wallet-connector';
-import { sleep, RPCMethods, fromBase58Check } from '@qtumproject/qtum-wallet-connector';
+import {
+  sleep,
+  RPCMethods,
+  fromBase58Check,
+} from '@qtumproject/qtum-wallet-connector';
+import { BigNumber, ethers } from 'ethers';
 
 import { getProvider, getWallet } from '@/config';
 import { DEFAULT_NETWORKS_RPC_URLS } from '@/consts';

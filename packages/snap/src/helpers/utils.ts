@@ -1,5 +1,8 @@
+import {
+  fromBase58Check,
+  isAddressMatchNetwork,
+} from '@qtumproject/qtum-wallet-connector';
 import { BigNumber, ethers } from 'ethers';
-import { fromBase58Check, isAddressMatchNetwork } from '@qtumproject/qtum-wallet-connector';
 
 import type { DecodedWIF } from '@/types';
 
