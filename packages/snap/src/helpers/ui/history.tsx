@@ -140,7 +140,7 @@ export const renderHistory = (
                         <Icon
                           name={
                             ['send', 'contract'].includes(item.direction)
-                              ? 'minus'
+                              ? 'minus-bold'
                               : 'add'
                           }
                           size="md"

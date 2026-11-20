@@ -88,12 +88,12 @@ export const renderDashboard = (
               children={[
                 <Button
                   name="send-native"
-                  children={<Icon name="send" size="md" />}
+                  children={<Icon name="arrow-2-up-right" size="md" />}
                   disabled={loadingAny}
                 />,
                 <Button
                   name="receive-page"
-                  children={<Icon name="receive" size="md" />}
+                  children={<Icon name="received" size="md" />}
                   disabled={loadingAny}
                 />,
                 <Button
@@ -228,7 +228,7 @@ export const renderDashboard = (
                         children={[
                           <Button
                             name={`send-qrc20-${token.contractAddress}`}
-                            children={<Icon name="send" />}
+                            children={<Icon name="arrow-2-up-right" />}
                           />,
                           <Button
                             name={`delete-qrc20-${token.contractAddress}`}
@@ -265,7 +265,7 @@ export const renderDashboard = (
                           children={[
                             <Button
                               name={'send-qrc20-loading'}
-                              children={<Icon name="send" />}
+                              children={<Icon name="arrow-2-up-right" />}
                               disabled={true}
                             />,
                             <Button
@@ -424,7 +424,7 @@ export const renderDashboard = (
                               <Icon
                                 name={
                                   ['send', 'contract'].includes(item.direction)
-                                    ? 'minus'
+                                    ? 'minus-bold'
                                     : 'add'
                                 }
                                 size="md"
